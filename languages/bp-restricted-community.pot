@@ -1,0 +1,68 @@
+# Copyright (C) 2015 BP Restricted Community
+# This file is distributed under the same license as the BP Restricted Community package.
+msgid ""
+msgstr ""
+"Project-Id-Version: BP Restricted Community 1.0.0-alpha\n"
+"Report-Msgid-Bugs-To: https://github.com/imath/bp-restricted-community/issues\n"
+"POT-Creation-Date: 2015-11-29 16:56:44+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: bp-restricted-community.php:307
+msgid "Limited Email Registrations"
+msgstr ""
+
+#: bp-restricted-community.php:341
+msgid "If you want to limit site registrations to certain domains. One domain per line."
+msgstr ""
+
+#: bp-restricted-community.php:414
+msgid "We were not able to validate your email, please try again."
+msgstr ""
+
+#: bp-restricted-community.php:493
+msgid "%s requires at least version %s of BuddyPress."
+msgstr ""
+
+#: bp-restricted-community.php:497
+msgid "%s needs the <a href=\"%s\">Restricted Site Access</a> plugin to be active."
+msgstr ""
+
+#: templates/members/bp-restricted-community-header.php:25
+msgid "Register"
+msgstr ""
+
+#: templates/members/bp-restricted-community-header.php:25
+msgid "Activate"
+msgstr ""
+
+#: templates/members/bp-restricted-community-header.php:44
+msgid "https://wordpress.org/"
+msgstr ""
+
+#: templates/members/bp-restricted-community-header.php:45
+msgid "Powered by WordPress"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "BP Restricted Community"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/imath/bp-restricted-community"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Restrict the access to your BuddyPress community"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "imath"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/imath"
+msgstr ""
