@@ -161,6 +161,10 @@ class BP_Restricted_Community {
 
 				// Add a security check when a user registers
 				add_action( 'bp_signup_validate', array( $this, 'validate_js_email' ) );
+
+			// If signup is disable simply fix Restricted Site Access for BuddyPress specific case (if needed: Approach #4)
+			} else {
+				add_action( 'restrict_site_access_handling', array( $this, 'fix_restricted_site_access_for_buddypress' ), 10, 1 );
 			}
 
 			if ( true === (bool) $this->use_site_icon || ( $this->signup_allowed &&  ( empty( $this->rsa_options['approach'] ) || 1 === $this->rsa_options['approach'] ) ) ) {
@@ -364,6 +368,26 @@ if ( 'undefined' !== jQuery ) {
 	}
 
 	/**
+	 * Hook the Restrict Site Access approach #4 to make sure BuddyPress pages
+	 * are not shown in this case
+	 *
+	 * @since 1.0.0
+	 */
+	public function fix_restricted_site_access_for_buddypress( $approach ) {
+		if ( empty( $approach ) || 4 !== $approach || ! is_buddypress() ) {
+			return;
+		}
+
+		$redirect = false;
+
+		if ( ! empty( $this->rsa_options['page'] ) ) {
+			$redirect = get_permalink( $this->rsa_options['page'] );
+		}
+
+		bp_core_redirect( $redirect );
+	}
+
+	/**
 	 * Filter the Restrict Site Access main function and adapt it for our BuddyPress needs
 	 *
 	 * @since 1.0.0
@@ -382,13 +406,7 @@ if ( 'undefined' !== jQuery ) {
 		// BuddyPress is resetting the post query, so redirecting is better than editing the query vars like it's
 		// done at line 171 of restricted_site_access.php. This is only needed when the option is set to a site's page.
 		if ( ! empty( $this->rsa_options['approach'] ) && 4 === $this->rsa_options['approach'] && is_buddypress() ) {
-			$redirect = false;
-
-			if ( ! empty( $this->rsa_options['page'] ) ) {
-				$redirect = get_permalink( $this->rsa_options['page'] );
-			}
-
-			bp_core_redirect( $redirect );
+			$this->fix_restricted_site_access_for_buddypress( $this->rsa_options['approach'] );
 
 		// Login screen is the target of this plugin, allow BuddyPress registration and activation
 		} elseif ( bp_is_register_page() || bp_is_activation_page() ) {

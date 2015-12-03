@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: BP Restricted Community 1.0.0-alpha\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/bp-restricted-community/issues\n"
-"POT-Creation-Date: 2015-11-29 16:56:44+00:00\n"
-"PO-Revision-Date: 2015-11-29 17:57+0100\n"
+"POT-Creation-Date: 2015-12-03 18:13:32+00:00\n"
+"PO-Revision-Date: 2015-12-03 19:14+0100\n"
 "Last-Translator: imath <mathchristo@yahoo.fr>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -15,26 +15,26 @@ msgstr ""
 "X-Generator: Poedit 1.7.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: bp-restricted-community.php:307
+#: bp-restricted-community.php:311
 msgid "Limited Email Registrations"
 msgstr "Inscription limitée aux emails contenant les domaines"
 
-#: bp-restricted-community.php:341
+#: bp-restricted-community.php:345
 msgid "If you want to limit site registrations to certain domains. One domain per line."
 msgstr ""
 "Si vous souhaitez que les seules personnes autorisées à s&#39;inscrire soient celles "
 "disposant d’une adresse de messagerie liée à certains noms de domaines. Un domaine par "
 "ligne."
 
-#: bp-restricted-community.php:414
+#: bp-restricted-community.php:432
 msgid "We were not able to validate your email, please try again."
 msgstr "Nous n&#39;avons pas été en mesure de valider votre email, merci de réessayer."
 
-#: bp-restricted-community.php:493
+#: bp-restricted-community.php:511
 msgid "%s requires at least version %s of BuddyPress."
 msgstr "BP Restricted Community requiert à minima la version %s de BuddyPress"
 
-#: bp-restricted-community.php:497
+#: bp-restricted-community.php:515
 msgid "%s needs the <a href=\"%s\">Restricted Site Access</a> plugin to be active."
 msgstr ""
 "%s a besoin que le plugin <a href=\"%s\">Restricted Site Access</a> soit activé sur "
