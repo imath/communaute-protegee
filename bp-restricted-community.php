@@ -11,7 +11,7 @@
  * Plugin Name:       BP Restricted Community
  * Plugin URI:        https://github.com/imath/bp-restricted-community
  * Description:       Restrict the access to your BuddyPress community
- * Version:           1.0.0-alpha
+ * Version:           1.0.0-beta
  * Author:            imath
  * Author URI:        https://github.com/imath
  * Text Domain:       bp-restricted-community
@@ -39,7 +39,7 @@ class BP_Restricted_Community {
 	/**
 	 * BuddyPress db version
 	 */
-	public static $bp_db_version_required = 10071;
+	public static $bp_db_version_required = 11105;
 
 	/**
 	 * Initialize the plugin
@@ -71,7 +71,7 @@ class BP_Restricted_Community {
 	 */
 	private function setup_globals() {
 		/** Plugin globals ********************************************/
-		$this->version       = '1.0.0-alpha';
+		$this->version       = '1.0.0-beta';
 		$this->domain        = 'bp-restricted-community';
 		$this->name          = 'BP Restricted Community';
 		$this->file          = __FILE__;
