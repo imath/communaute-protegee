@@ -204,14 +204,9 @@ class BP_Restricted_Community {
 	public function register_scripts() {
 		$scripts = apply_filters( 'bp_restricted_community_register_scripts', array(
 			array(
-				'handle' => 'bp-restricted-community-password-verify',
-				'file'   => bp_get_theme_compat_url() . "js/password-verify{$this->minified}.js",
-				'deps'   => array( 'password-strength-meter' ),
-			),
-			array(
 				'handle' => 'bp-restricted-community-register',
 				'file'   => $this->plugin_js . "register{$this->minified}.js",
-				'deps'   => array( 'jquery', 'bp-restricted-community-password-verify' ),
+				'deps'   => array( 'jquery', 'user-profile' ),
 			),
 		) );
 
@@ -493,10 +488,48 @@ if ( 'undefined' !== jQuery ) {
 			if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
 				add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
 				wp_localize_script( 'bp-restricted-community-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
+
+				// Replace BuddyPress's way of setting the password by the WordPress's one.
+				add_action( 'bp_account_details_fields', array( $this, 'use_wp_pwd_control' ) );
 			}
 
 			do_action( 'bp_restricted_community_enqueue_scripts' );
 		}
+	}
+
+	/**
+	 * Use the WordPress control to set the password during registration
+	 *
+	 * @since 1.0.0
+	 */
+	public function use_wp_pwd_control() {
+		?>
+		<div class="user-pass1-wrap">
+
+			<div class="wp-pwd">
+				<div class="password-input-wrapper">
+					<input type="password" data-reveal="1" data-pw="<?php echo esc_attr( wp_generate_password( 16 ) ); ?>" name="signup_password" id="pass1" class="input password-input" size="24" value="" autocomplete="off" aria-describedby="pass-strength-result" />
+					<button type="button" class="button button-secondary wp-hide-pw hide-if-no-js">
+						<span class="dashicons dashicons-hidden" aria-hidden="true"></span>
+					</button>
+				</div>
+				<div id="pass-strength-result" class="hide-if-no-js" aria-live="polite"><?php esc_html_e( 'Strength indicator', 'bp-restricted-community' ); ?></div>
+			</div>
+			<div class="pw-weak">
+				<label>
+					<input type="checkbox" name="pw_weak" class="pw-checkbox" />
+					<?php esc_html_e( 'Confirm use of weak password', 'bp-restricted-community' ); ?>
+				</label>
+			</div>
+		</div>
+
+		<p class="user-pass2-wrap">
+			<label for="pass2"><?php esc_html_e( 'Confirm new password', 'bp-restricted-community' ); ?></label><br />
+			<input type="password" name="signup_password_confirm" id="pass2" class="input" size="20" value="" autocomplete="off" />
+		</p>
+
+		<p class="description indicator-hint"><?php echo wp_get_password_hint(); ?></p>
+		<?php
 	}
 
 	/**
