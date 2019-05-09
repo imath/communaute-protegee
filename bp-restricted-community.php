@@ -170,6 +170,7 @@ class BP_Restricted_Community {
 			if ( true === (bool) $this->use_site_icon || ( $this->signup_allowed &&  ( empty( $this->rsa_options['approach'] ) || 1 === $this->rsa_options['approach'] ) ) ) {
 				add_action( 'login_init',                   array( $this, 'enqueue_scripts' ) );
 				add_action( 'bp_restricted_community_init', array( $this, 'enqueue_scripts' ) );
+				add_action( 'bp_enqueue_scripts',           array( $this, 'enqueue_scripts' ), 40 );
 			}
 
 		// There's something wrong, inform the Administrator
@@ -277,7 +278,7 @@ class BP_Restricted_Community {
 	 * @since 1.0.0
 	 */
 	public function template_dir() {
-		if ( ! bp_is_register_page() && ! bp_is_activation_page() ) {
+		if ( ! bp_is_register_page() && ! bp_is_activation_page() && ! bp_is_active( 'settings' ) && ! bp_is_user_settings_general() ) {
 			return;
 		}
 
@@ -490,46 +491,92 @@ if ( 'undefined' !== jQuery ) {
 				wp_localize_script( 'bp-restricted-community-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
 
 				// Replace BuddyPress's way of setting the password by the WordPress's one.
-				add_action( 'bp_account_details_fields', array( $this, 'use_wp_pwd_control' ) );
+				add_action( 'bp_account_details_fields', array( $this, 'register_with_wp_pwd_control' ) );
 			}
 
 			do_action( 'bp_restricted_community_enqueue_scripts' );
+
+		} elseif ( bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
+			wp_dequeue_script( 'bp-legacy-password-verify-password-verify' );
+			wp_enqueue_script( 'user-profile' );
+
+			// Remove BuddyPress Password fields.
+			wp_add_inline_script( 'user-profile', '
+				( function() {
+					document.querySelector( \'#settings-form\' ).setAttribute( \'id\', \'your-profile\' );
+					document.querySelector( \'#pass1\' ).remove();
+					document.querySelector( \'label[for="pass1"] span\' ).remove();
+					document.querySelector( \'#pass-strength-result\' ).remove();
+					document.querySelector( \'#pass2\' ).remove();
+					document.querySelector( \'label[for="pass2"]\' ).remove();
+				} )();
+			' );
+
+			wp_add_inline_style( 'bp-parent-css', '
+				body.settings #buddypress .wp-pwd button {
+					padding: 6px;
+					margin-top: 0;
+					margin-bottom: 3px;
+					vertical-align: middle;
+				}
+				body.buddypress.settings #pass1,
+				body.buddypress.settings #pass1-text,
+				#buddypress #pass-strength-result {
+					width: 16em;
+				}
+
+				body.buddypress.settings #pass1-text,
+				body.buddypress.settings .pw-weak,
+				body.buddypress.settings #pass-strength-result {
+					display: none;
+				}
+
+				body.buddypress.settings .show-password #pass1-text {
+					display: inline-block;
+				}
+
+				body.buddypress.settings .show-password #pass1 {
+					display: none;
+				}
+
+				body.buddypress.settings #your-profile #submit:disabled {
+					color: #767676;
+					opacity: 0.4;
+				}
+
+				body.buddypress.settings.js .wp-pwd,
+				body.buddypress.settings.js .user-pass2-wrap {
+					display: none;
+				}
+
+				body.buddypress.settings.no-js .wp-generate-pw,
+				body.buddypress.settings.no-js .wp-cancel-pw,
+				body.buddypress.settings.no-js .wp-hide-pw {
+					display: none;
+				}
+			', 'after' );
+
+			// Replace BuddyPress's way of setting the password by the WordPress's one.
+			add_action( 'bp_core_general_settings_before_submit', array( $this, 'update_with_wp_pwd_control' ) );
 		}
 	}
 
 	/**
-	 * Use the WordPress control to set the password during registration
+	 * Use the WordPress control to set the password during registration.
 	 *
 	 * @since 1.0.0
 	 */
-	public function use_wp_pwd_control() {
-		?>
-		<div class="user-pass1-wrap">
+	public function register_with_wp_pwd_control() {
+		bp_get_template_part( 'members/register-password' );
+	}
 
-			<div class="wp-pwd">
-				<div class="password-input-wrapper">
-					<input type="password" data-reveal="1" data-pw="<?php echo esc_attr( wp_generate_password( 16 ) ); ?>" name="signup_password" id="pass1" class="input password-input" size="24" value="" autocomplete="off" aria-describedby="pass-strength-result" />
-					<button type="button" class="button button-secondary wp-hide-pw hide-if-no-js">
-						<span class="dashicons dashicons-hidden" aria-hidden="true"></span>
-					</button>
-				</div>
-				<div id="pass-strength-result" class="hide-if-no-js" aria-live="polite"><?php esc_html_e( 'Strength indicator', 'bp-restricted-community' ); ?></div>
-			</div>
-			<div class="pw-weak">
-				<label>
-					<input type="checkbox" name="pw_weak" class="pw-checkbox" />
-					<?php esc_html_e( 'Confirm use of weak password', 'bp-restricted-community' ); ?>
-				</label>
-			</div>
-		</div>
-
-		<p class="user-pass2-wrap">
-			<label for="pass2"><?php esc_html_e( 'Confirm new password', 'bp-restricted-community' ); ?></label><br />
-			<input type="password" name="signup_password_confirm" id="pass2" class="input" size="20" value="" autocomplete="off" />
-		</p>
-
-		<p class="description indicator-hint"><?php echo wp_get_password_hint(); ?></p>
-		<?php
+	/**
+	 * Use the WordPress control to update the password from the user's profile.
+	 *
+	 * @since 1.0.0
+	 */
+	public function update_with_wp_pwd_control() {
+		bp_get_template_part( 'members/single/settings/general-password' );
 	}
 
 	/**
