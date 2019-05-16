@@ -2,18 +2,17 @@
 # This file is distributed under the same license as the BP Restricted Community package.
 msgid ""
 msgstr ""
-"Project-Id-Version: BP Restricted Community 1.0.0-alpha\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/bp-restricted-"
-"community\n"
-"POT-Creation-Date: 2019-05-09 14:37:36+00:00\n"
-"PO-Revision-Date: 2019-05-09 16:44+0100\n"
-"Last-Translator: imath <mathchristo@yahoo.fr>\n"
+"Project-Id-Version: BP Restricted Community 1.0.0-beta\n"
+"Report-Msgid-Bugs-To: https://github.com/imath/bp-restricted-community/issues\n"
+"POT-Creation-Date: 2019-05-16 01:35:35+00:00\n"
+"PO-Revision-Date: 2019-05-16 03:36+0100\n"
+"Last-Translator: imath <contact@imathi.eu>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.7.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: bp-restricted-community.php:307
@@ -21,30 +20,25 @@ msgid "Limited Email Registrations"
 msgstr "Inscription limitée aux emails contenant les domaines"
 
 #: bp-restricted-community.php:341
-msgid ""
-"If you want to limit site registrations to certain domains. One domain per "
-"line."
+msgid "If you want to limit site registrations to certain domains. One domain per line."
 msgstr ""
-"Si vous souhaitez que les seules personnes autorisées à s&#39;inscrire "
-"soient celles disposant d’une adresse de messagerie liée à certains noms de "
-"domaines. Un domaine par ligne."
+"Si vous souhaitez que les seules personnes autorisées à s&#39;inscrire soient celles "
+"disposant d’une adresse de messagerie liée à certains noms de domaines. Un domaine par "
+"ligne."
 
 #: bp-restricted-community.php:428
 msgid "We were not able to validate your email, please try again."
-msgstr ""
-"Nous n&#39;avons pas été en mesure de valider votre email, merci de "
-"réessayer."
+msgstr "Nous n&#39;avons pas été en mesure de valider votre email, merci de réessayer."
 
 #: bp-restricted-community.php:591
 msgid "%s requires at least version %s of BuddyPress."
 msgstr "BP Restricted Community requiert à minima la version %s de BuddyPress"
 
 #: bp-restricted-community.php:595
-msgid ""
-"%s needs the <a href=\"%s\">Restricted Site Access</a> plugin to be active."
+msgid "%s needs the <a href=\"%s\">Restricted Site Access</a> plugin to be active."
 msgstr ""
-"%s a besoin que le plugin <a href=\"%s\">Restricted Site Access</a> soit "
-"activé sur votre WordPress."
+"%s a besoin que le plugin <a href=\"%s\">Restricted Site Access</a> soit activé sur "
+"votre WordPress."
 
 #: templates/members/bp-restricted-community-header.php:25
 msgid "Register"
