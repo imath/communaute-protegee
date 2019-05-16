@@ -1,3 +1,4 @@
+/* global bpRestrictCommunity */
 ( function( $ ) {
 	// Register form
 	if ( typeof bpRestrictCommunity !== 'undefined' ) {
@@ -30,7 +31,7 @@
 			} else {
 				$( '#blog-details' ).hide();
 			}
-		} )
+		} );
 
 	// Register completed step or Activate form
 	} else {
