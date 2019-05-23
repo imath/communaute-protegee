@@ -16,7 +16,7 @@ module.exports = function( grunt ) {
 		checktextdomain: {
 			options: {
 				correct_domain: false,
-				text_domain: ['bp-restricted-community'],
+				text_domain: ['communaute-blindee'],
 				keywords: [
 					'__:1,2d',
 					'_e:1,2d',
@@ -44,12 +44,12 @@ module.exports = function( grunt ) {
 				options: {
 					domainPath: '/languages',
 					exclude: ['/node_modules'],
-					mainFile: 'bp-restricted-community.php',
-					potFilename: 'bp-restricted-community.pot',
+					mainFile: 'communaute-blindee.php',
+					potFilename: 'communaute-blindee.pot',
 					processPot: function( pot ) {
 						pot.headers['last-translator']      = 'imath <contact@imathi.eu>';
 						pot.headers['language-team']        = 'FRENCH <contact@imathi.eu>';
-						pot.headers['report-msgid-bugs-to'] = 'https://github.com/imath/bp-restricted-community/issues';
+						pot.headers['report-msgid-bugs-to'] = 'https://github.com/imath/communaute-blindee/issues';
 						return pot;
 					},
 					type: 'wp-plugin'

@@ -1,5 +1,5 @@
-BP Restricted Community
-=======================
+Communautée blindée
+===================
 
 This is a BuddyPress plugin to fully take advantage of the [Restricted Access Site](https://wordpress.org/plugins/restricted-site-access/) WordPress plugin for your community.
 
@@ -12,9 +12,9 @@ The Restricted Access Site WordPress plugin should be enough to restrict the acc
 Available in french and english.
 
 
-Tested with
------------
+Requires
+--------
 
-+ WordPress 4.4
-+ BuddyPress 2.4 (Required)
-+ Restricted Access Site 5.1
++ WordPress 5.0
++ BuddyPress 4.0
++ Restricted Access Site 7.1

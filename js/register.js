@@ -3,21 +3,25 @@
 	// Register form
 	if ( typeof bpRestrictCommunity !== 'undefined' ) {
 		// Make the BP Button like a WP one
-		$( '#register #signup_submit' ).addClass( 'button button-primary button-large' ).prop( 'id', 'wp-submit' );
+		$( '#register [name="signup_submit"]' ).addClass( 'button button-primary button-large' );
 
-		$( '#signup_password' ).first().remove();
+		/*$( '#signup_password' ).first().remove();
 		$( '#pass-strength-result' ).first().remove();
 		$( 'label[for="signup_password_confirm"]' ).remove();
-		$( '#signup_password_confirm' ).first().remove();
+		$( '#signup_password_confirm' ).first().remove();*/
 
 		// Remove Field visibility
 		$( '.field-visibility-settings-notoggle, .field-visibility-settings-toggle, .field-visibility-settings' ).remove();
 
 		// Add an hidden field
-		$( '#signup_form' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', bpRestrictCommunity.field_key ) );
+		$( '[name="signup_form"]' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', bpRestrictCommunity.field_key ) );
+
+		if ( $( '[name="signup_form"]' ).find( '.layout-wrap' ).length ) {
+			$( '#basic-details-section' ).find( '.layout-wrap' ).append( $( '.privacy-policy-accept' ).addClass( 'register-section' ) );
+		}
 
 		// This will be checked on the server side to try to prevent spam registrations
-		$( '#signup_form' ).on( 'submit', function( event ) {
+		$( '[name="signup_form"]' ).on( 'submit', function( event ) {
 			$( event.currentTarget ).find( 'input[name="' + bpRestrictCommunity.field_key + '"]' ).val( $( 'input[name="signup_email"]' ).val() );
 		} );
 

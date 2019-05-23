@@ -11,6 +11,10 @@
 	margin-bottom: 2em;
 }
 
+#register div.register-section fieldset {
+	border: none;
+}
+
 #buddypress .standard-form#signup_form div div.error,
 #message.bp-template-notice {
 	background: #faa;
@@ -84,12 +88,18 @@
 }
 
 #buddypress .standard-form #basic-details-section,
-#buddypress .standard-form #profile-details-section {
+#buddypress .standard-form #profile-details-section,
+#buddypress .standard-form .privacy-policy-accept {
 	float: left;
 	width: 48%;
 }
+#buddypress .standard-form .privacy-policy-accept,
 #buddypress .standard-form #profile-details-section {
 	float: right;
+}
+
+#buddypress .standard-form .privacy-policy-accept {
+	margin: 2em 0;
 }
 
 #buddypress .standard-form #blog-details-section {
