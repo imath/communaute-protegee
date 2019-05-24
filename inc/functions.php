@@ -235,3 +235,95 @@ function communaute_blindee_registration_feedback() {
 		}
 	}
 }
+
+/**
+ * @param string $message
+ * @param string $key
+ * @return string
+ */
+function communaute_blindee_encrypt( $message, $key = '' ) {
+	$nonce = random_bytes( 24 );
+
+	if ( ! $key ) {
+		$key = substr( AUTH_SALT, 0, 32 );
+	}
+
+	return base64_encode(
+		$nonce . sodium_crypto_aead_xchacha20poly1305_ietf_encrypt(
+			$message,
+			$nonce,
+			$nonce,
+			$key
+		)
+	);
+}
+
+/**
+ * @param string $message
+ * @param string $key
+ * @return string
+ */
+function communaute_blindee_decrypt( $message, $key = '' ) {
+	$decoded    = base64_decode( $message );
+	$nonce      = substr( $decoded, 0, 24 );
+	$ciphertext = substr( $decoded, 24 );
+
+	if ( ! $key ) {
+		$key = substr( AUTH_SALT, 0, 32 );
+	}
+
+	return sodium_crypto_aead_xchacha20poly1305_ietf_decrypt(
+		$ciphertext,
+		$nonce,
+		$nonce,
+		$key
+	);
+}
+
+function communaute_blindee_before_signup_save( $args = array() ) {
+	if ( ! isset( $args['meta']['profile_field_ids'] ) ) {
+		return $args;
+	}
+
+	$profile_field_ids = explode( ',', $args['meta']['profile_field_ids'] );
+	$encrypted_fields  = array( 1 );
+
+	foreach ( $profile_field_ids as $field_id ) {
+		if ( ! in_array( (int) $field_id, $encrypted_fields, true ) ) {
+			continue;
+		}
+
+		if ( isset( $args['meta']['field_' . $field_id] ) ) {
+			// Validate the field.
+			$field = xprofile_get_field( $field_id, null, false );
+			$args['meta']['field_' . $field_id] = communaute_blindee_encrypt( $args['meta']['field_1'] );
+		}
+	}
+
+	return $args;
+}
+add_filter( 'bp_after_bp_core_signups_add_args_parse_args', 'communaute_blindee_before_signup_save' );
+
+function communaute_blindee_not_logged_in_privacy_policy_url( $url = '' ) {
+	if ( is_user_logged_in() ) {
+		return $url;
+	}
+
+	return str_replace( home_url( '/' ), bp_get_signup_page(), $url );
+}
+add_filter( 'privacy_policy_url', 'communaute_blindee_not_logged_in_privacy_policy_url', 10, 1 );
+
+function communaute_blindee_decrypt_signup_objects( $return ) {
+	global $bp_members_signup_list_table;
+
+	if ( isset( $bp_members_signup_list_table->items ) && is_array( $bp_members_signup_list_table->items ) ) {
+		foreach ( $bp_members_signup_list_table->items as $i => $signup ) {
+			if ( isset( $signup->user_name ) ) {
+				$bp_members_signup_list_table->items[$i]->user_name = communaute_blindee_decrypt( $signup->user_name );
+			}
+		}
+	}
+
+	return $return;
+}
+add_filter( 'bp_members_ms_signup_row_actions', 'communaute_blindee_decrypt_signup_objects', 10, 1 );

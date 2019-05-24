@@ -76,7 +76,109 @@ add_action( 'template_notices', 'communaute_blindee_registration_feedback', 0 );
 						<?php bp_get_template_part( 'members/register-password' ); ?>
 					</div>
 
+					<?php if ( bp_is_active( 'xprofile' ) ) : ?>
+
+						<?php
+
+						/**
+						 * Fires before the display of member registration xprofile fields.
+						 *
+						 * @since 1.2.4
+						 */
+						do_action( 'bp_before_signup_profile_fields' ); ?>
+
+						<div class="register-section" id="profile-details-section">
+
+							<h2><?php _e( 'Profile Details', 'buddypress' ); ?></h2>
+
+							<?php /* Use the profile field loop to render input fields for the 'base' profile field group */ ?>
+							<?php if ( bp_is_active( 'xprofile' ) ) : if ( bp_has_profile( array( 'profile_group_id' => 1, 'fetch_field_data' => false ) ) ) : while ( bp_profile_groups() ) : bp_the_profile_group(); ?>
+
+							<?php while ( bp_profile_fields() ) : bp_the_profile_field(); ?>
+
+								<div<?php bp_field_css_class( 'editfield' ); ?>>
+									<fieldset>
+
+									<?php
+									$field_type = bp_xprofile_create_field_type( bp_get_the_profile_field_type() );
+									$field_type->edit_field_html();
+
+									/**
+									 * Fires before the display of the visibility options for xprofile fields.
+									 *
+									 * @since 1.7.0
+									 */
+									do_action( 'bp_custom_profile_edit_fields_pre_visibility' ); ?>
+
+									<?php
+
+									/**
+									 * Fires after the display of the visibility options for xprofile fields.
+									 *
+									 * @since 1.1.0
+									 */
+									do_action( 'bp_custom_profile_edit_fields' ); ?>
+
+									</fieldset>
+								</div>
+
+							<?php endwhile; ?>
+
+							<input type="hidden" name="signup_profile_field_ids" id="signup_profile_field_ids" value="<?php bp_the_profile_field_ids(); ?>" />
+
+							<?php endwhile; endif; endif; ?>
+
+							<?php
+
+							/**
+							 * Fires and displays any extra member registration xprofile fields.
+							 *
+							 * @since 1.9.0
+							 */
+							do_action( 'bp_signup_profile_fields' ); ?>
+
+						</div><!-- #profile-details-section -->
+
+					<?php endif; ?>
+
 				<?php endif ;?>
+
+				<?php
+				/**
+				 * Fires before the display of the registration submit buttons.
+				 *
+				 * @since 1.1.0
+				 */
+				do_action( 'bp_before_registration_submit_buttons' ); ?>
+
+				<?php if ( bp_signup_requires_privacy_policy_acceptance() ) : ?>
+				<div class="privacy-policy-accept">
+					<?php do_action( 'bp_signup_signup_privacy_policy_errors' ); ?>
+
+					<label for="signup-privacy-policy-accept">
+						<input type="hidden" name="signup-privacy-policy-check" value="1" />
+
+						<?php /* translators: link to Privacy Policy */ ?>
+						<input type="checkbox" name="signup-privacy-policy-accept" id="signup-privacy-policy-accept" required /> <?php printf( esc_html__( 'I have read and agree to this site\'s %s.', 'buddypress' ), sprintf( '<a href="%s">%s</a>', esc_url( get_privacy_policy_url() ), esc_html__( 'Privacy Policy', 'buddypress' ) ) ); ?>
+					</label>
+				</div>
+
+				<?php endif; ?>
+
+				<div class="submit">
+					<input type="submit" name="signup_submit" id="submit" class="button button-primary button-large" value="<?php esc_attr_e( 'Complete Sign Up', 'communaute-blindee' ); ?>" />
+				</div>
+
+				<?php
+
+				/**
+				 * Fires after the display of the registration submit buttons.
+				 *
+				 * @since 1.1.0
+				 */
+				do_action( 'bp_after_registration_submit_buttons' ); ?>
+
+				<?php wp_nonce_field( 'bp_new_signup' ); ?>
 
 			<?php endif ; ?>
 		</form>
