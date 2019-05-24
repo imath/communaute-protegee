@@ -2,19 +2,19 @@
 /**
  * Register template
  */
-bp_get_template_part( 'members/bp-restricted-community-header' ); ?>
+bp_get_template_part( 'members/bp-restricted-community-header' );
+add_action( 'template_notices', 'communaute_blindee_registration_feedback', 0 );
+?>
 
 <div id="register" class="<?php echo sanitize_html_class( bp_get_current_signup_step() ); ?>">
 	<h1><a href="<?php echo esc_url( communaute_blindee()->register_header_url ); ?>" title="<?php echo esc_attr( communaute_blindee()->register_header_title ); ?>" tabindex="-1"><?php bloginfo( 'name' ); ?></a></h1>
 
-	<div id="buddypress">
-		<form action="" name="signup_form" id="signup-form" class="standard-form signup-form clearfix" method="post">
+	<div id="template-notices" role="alert" aria-atomic="true">
+		<?php do_action( 'template_notices' ); ?>
+	</div>
 
-			<?php if ( has_action( 'template_notices' ) ) : ?>
-				<div id="template-notices" role="alert" aria-atomic="true">
-					<?php do_action( 'template_notices' ); ?>
-				</div>
-			<?php endif ; ?>
+	<div id="buddypress">
+		<form action="" name="signup_form" id="signup-form" class="standard-form signup-form" method="post">
 
 			<?php if ( 'privacy-policy' === bp_get_current_signup_step() ) : ?>
 

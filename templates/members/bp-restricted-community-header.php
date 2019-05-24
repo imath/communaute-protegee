@@ -25,6 +25,20 @@ add_filter( 'show_admin_bar', '__return_false' );
 <title><?php bloginfo('name'); ?> &rsaquo; <?php bp_is_register_page() ? esc_html_e( 'Register', 'bp-restricted-community' ) : esc_html_e( 'Activate', 'bp-restricted-community' ); ?></title>
 
 <?php
+// Ensure we're using an absolute URL.
+$current_url  = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+$filtered_url = remove_query_arg( communaute_blindee_get_removable_query_args(), $current_url );
+
+// Remove some query args from the URL
+?>
+<link id="communaute-blindee-canonical" rel="canonical" href="<?php echo esc_url( $filtered_url ); ?>" />
+<script>
+	if ( window.history.replaceState ) {
+		window.history.replaceState( null, null, document.getElementById( 'communaute-blindee-canonical' ).href + window.location.hash );
+	}
+</script>
+<?php
+
 wp_admin_css( 'login', true );
 
 /**
@@ -35,7 +49,7 @@ do_action( 'login_head' );
 /**
  * Use this to run custom actions on BuddyPress register/activate pages
  */
-do_action( 'bp_restricted_community_head' );
+do_action( 'communaute_blindee_head' );
 
 if ( is_multisite() ) {
 	$register_header_url   = network_home_url();

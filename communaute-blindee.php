@@ -157,7 +157,7 @@ class Communaute_Blindee {
 			add_filter( 'site_icon_image_sizes',          array( $this, 'login_screen_icon_size' ), 10, 1 );
 			add_action( 'bp_restricted_community_init',   array( $this, 'register_scripts' ), 1 );
 			add_action( 'bp_restricted_community_footer', 'wp_print_footer_scripts', 20 );
-			add_action( 'bp_restricted_community_head',   'wp_print_styles', 20 );
+			add_action( 'communaute_blindee_head',   'wp_print_styles', 20 );
 
 			if ( $this->signup_allowed ) {
 				// Register the template directory

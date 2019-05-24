@@ -119,6 +119,13 @@ function communaute_blindee_set_email_content( $content = '' ) {
 	return make_clickable( $content );
 }
 
+function communaute_blindee_get_removable_query_args() {
+	return array(
+		'_communaute_blindee_status',
+		'_communaute_blindee_nonce',
+	);
+}
+
 function communaute_blindee_privacy_policy_email( WP_Post $privacy_page ) {
 	if ( ! isset( $_POST['privacy_policy_email'] ) ) {
 		return;
@@ -149,3 +156,82 @@ function communaute_blindee_privacy_policy_email( WP_Post $privacy_page ) {
 	}
 }
 add_action( 'communaute_blindee_privacy_step', 'communaute_blindee_privacy_policy_email', 10, 1 );
+
+function communaute_blindee_get_feedback( $code = '' ) {
+	$feedbacks = array(
+		'invalid' => array(
+			'type'    => 'error',
+			'message' => __( 'Please check your email address.', 'communaute-blindee' ),
+		),
+		'domain_banned' => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, that email address is not allowed!', 'communaute-blindee' ),
+		),
+		'domain_not_allowed'      => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, that email address is not allowed!', 'communaute-blindee' ),
+		),
+		'in_use'                  => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, that email address is already used!', 'communaute-blindee' ),
+		),
+		'privacy-policy-sent'     => array(
+			'type'    => 'info',
+			'message' => __( 'The privacy policy was successfully sent!', 'communaute-blindee' ),
+		),
+		'privacy-policy-not-sent' => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, there was a problem sending the privacy policy. Pleas try again later.', 'communaute-blindee' ),
+		),
+	);
+
+	if ( $code ) {
+		if ( ! isset( $feedbacks[ $code ] ) )  {
+			return '';
+		}
+
+		return $feedbacks[ $code ];
+	}
+
+	return $feedbacks;
+}
+
+function communaute_blindee_registration_feedback() {
+	$qv = wp_parse_args( $_GET, array(
+		'_communaute_blindee_status' => false,
+	) );
+
+	if ( ! $qv['_communaute_blindee_status'] ) {
+		return;
+	}
+
+	if ( ! is_array( $qv['_communaute_blindee_status'] ) ) {
+		$qv['_communaute_blindee_status'] = (array) $qv['_communaute_blindee_status'];
+	}
+
+	$errors = array();
+	$infos  = array();
+
+	foreach ( $qv['_communaute_blindee_status'] as $feedback_key ) {
+		$feedback = communaute_blindee_get_feedback( $feedback_key );
+		if ( ! isset( $feedback['message'] ) ) {
+			continue;
+		}
+
+		if ( 'error' === $feedback['type'] ) {
+			$errors[] = $feedback['message'];
+		} else {
+			$infos[] = $feedback['message'];
+		}
+	}
+
+	if ( $errors ) {
+		printf( '<div id="login_error">%1$s</div>%2$s', join( "<br/>", array_map( 'esc_html', $errors ) ), "\n" );
+	}
+
+	if ( $infos ) {
+		foreach ( $infos as $info ) {
+			printf( '<p class="message">%1$s</p>%2$s', esc_html( $info ), "\n" );
+		}
+	}
+}
