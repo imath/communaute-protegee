@@ -2,7 +2,7 @@
 /**
  * Restricted Site Access companion to polish BuddyPress integration.
  *
- * @package   Communaute_Blindee
+ * @package   Communaute Blindee
  * @author    imath
  * @license   GPL-2.0+
  * @link      https://imathi.eu
@@ -142,6 +142,7 @@ class Communaute_Blindee {
 
 	private function includes() {
 		require trailingslashit( $this->plugin_dir . 'inc' ) . 'functions.php';
+		require trailingslashit( $this->plugin_dir . 'inc' ) . 'screens.php';
 	}
 
 	/**
@@ -593,7 +594,7 @@ if ( 'undefined' !== jQuery ) {
 endif;
 
 // Let's start !
-function communautee_blindee() {
+function communaute_blindee() {
 	return Communaute_Blindee::start();
 }
-add_action( 'bp_include', 'communautee_blindee', 9 );
+add_action( 'bp_include', 'communaute_blindee', 9 );
