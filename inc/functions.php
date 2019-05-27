@@ -286,7 +286,11 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 	}
 
 	$profile_field_ids = explode( ',', $args['meta']['profile_field_ids'] );
-	$encrypted_fields  = array( 1 );
+	$encrypted_fields  = array();
+
+	if ( bp_is_active( 'xprofile' ) ) {
+		$encrypted_fields = communaute_blindee_xprofile_get_encrypted_fields();
+	}
 
 	foreach ( $profile_field_ids as $field_id ) {
 		if ( ! in_array( (int) $field_id, $encrypted_fields, true ) ) {
@@ -294,8 +298,6 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 		}
 
 		if ( isset( $args['meta']['field_' . $field_id] ) ) {
-			// Validate the field.
-			$field = xprofile_get_field( $field_id, null, false );
 			$args['meta']['field_' . $field_id] = communaute_blindee_encrypt( $args['meta']['field_1'] );
 		}
 	}

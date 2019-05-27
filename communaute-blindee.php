@@ -143,6 +143,10 @@ class Communaute_Blindee {
 	private function includes() {
 		require trailingslashit( $this->plugin_dir . 'inc' ) . 'functions.php';
 		require trailingslashit( $this->plugin_dir . 'inc' ) . 'screens.php';
+
+		if ( bp_is_active( 'xprofile' ) ) {
+			require trailingslashit( $this->plugin_dir . 'inc' ) . 'personal-data.php';
+		}
 	}
 
 	/**
