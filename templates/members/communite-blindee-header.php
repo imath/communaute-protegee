@@ -8,7 +8,7 @@ header('Content-Type: '.get_bloginfo('html_type').'; charset='.get_bloginfo('cha
 /**
  * Fires when the register & activate pages are initialized.
  */
-do_action( 'bp_restricted_community_init' );
+do_action( 'communaute_blindee_init' );
 
 // Do not display admin bar
 add_filter( 'show_admin_bar', '__return_false' );

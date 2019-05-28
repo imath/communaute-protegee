@@ -2,7 +2,7 @@
 /**
  * Register template
  */
-bp_get_template_part( 'members/bp-restricted-community-header' );
+bp_get_template_part( 'members/communite-blindee-header' );
 add_action( 'template_notices', 'communaute_blindee_registration_feedback', 0 );
 ?>
 
@@ -187,4 +187,4 @@ add_action( 'template_notices', 'communaute_blindee_registration_feedback', 0 );
 </div>
 <div class="clear"></div>
 
-<?php bp_get_template_part( 'members/bp-restricted-community-footer' ); ?>
+<?php bp_get_template_part( 'members/communite-blindee-footer' ); ?>

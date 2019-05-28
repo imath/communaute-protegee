@@ -102,7 +102,7 @@
 	margin: 2em 0;
 }
 
-#buddypress .standard-form #blog-details-section {
+#buddypress .standard-form div.submit {
 	clear:both;
 	width: 100%;
 }

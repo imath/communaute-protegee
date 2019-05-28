@@ -7,6 +7,301 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Loads translation.
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_load_textdomain() {
+	$communaute_blindee = communaute_blindee();
+	load_plugin_textdomain( communaute_blindee()->domain, false, trailingslashit( basename( communaute_blindee()->plugin_dir ) ) . 'languages' );
+}
+add_action( 'bp_loaded', 'communaute_blindee_load_textdomain' );
+
+/**
+ * Checks BuddyPress version is supported.
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_bp_version_check() {
+	// taking no risk
+	if ( ! function_exists( 'bp_get_db_version' ) ) {
+		return false;
+	}
+
+	return communaute_blindee()->required_bpdb_version <= bp_get_db_version();
+}
+
+/**
+ * Check if the Restricted Site Access plugin is activated.
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_dependency_check() {
+	$dependency = class_exists( 'Restricted_Site_Access' );
+
+	if ( $dependency && defined( 'RSA_VERSION' ) ) {
+		return version_compare( communaute_blindee()->required_rsa_version, RSA_VERSION, '>=' );
+	} else {
+		return false;
+	}
+}
+
+function communaute_blindee_required_setup() {
+	$setup_ok = ! bp_get_signup_allowed();
+
+	if ( ! $setup_ok && ! is_multisite() && defined( 'BP_SIGNUPS_SKIP_USER_CREATION' ) && BP_SIGNUPS_SKIP_USER_CREATION ) {
+		$setup_ok = true;
+	}
+
+	return $setup_ok;
+}
+
+/**
+ * Check if the plugin is activated on the network.
+ *
+ * @since 1.0.0
+ *
+ * @return boolean True if active on network. False otherwise.
+ */
+function communaute_blindee_is_active_on_network() {
+	$communaute_blindee = communaute_blindee();
+
+	$network_plugins = get_site_option( 'active_sitewide_plugins', array() );
+	return isset( $network_plugins[ $communaute_blindee->basename ] );
+}
+
+function communaute_blindee_rsa_approach_for_signups() {
+	$communaute_blindee = communaute_blindee();
+	return isset( $communaute_blindee->rsa_options['approach'] ) && 1 === $communaute_blindee->rsa_options['approach'];
+}
+
+/**
+ * Register scripts for the specific templates.
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_register_scripts() {
+	$communaute_blindee = communaute_blindee();
+
+	$scripts = apply_filters( 'communaute_blindee_register_scripts', array(
+		array(
+			'handle' => 'communaute-blindee-register',
+			'file'   => $communaute_blindee->plugin_js . "register{$communaute_blindee->minified}.js",
+			'deps'   => array( 'jquery', 'user-profile' ),
+		),
+	) );
+
+	foreach ( (array) $scripts as $script ) {
+		wp_register_script( $script['handle'], $script['file'], $script['deps'], $communaute_blindee->version, true );
+	}
+}
+
+/**
+ * Locate the stylesheet to use for our custom templates
+ *
+ * You can override the one used by the plugin by putting yours
+ * inside yourtheme/css/communaute-blindee-register.min.css
+ *
+ * @since 1.0.0
+ *
+ * @param string  $stylesheet The stylesheet name.
+ * @return string             The stylesheet URI.
+ */
+function communaute_blindee_locate_stylesheet( $stylesheet = '' ) {
+	if ( ! $stylesheet ) {
+		return '';
+	}
+
+	$communaute_blindee = communaute_blindee();
+	$stylesheet_path    = bp_locate_template( 'css/' . $stylesheet . $communaute_blindee->minified . '.css' );
+
+	if ( 0 === strpos( $stylesheet_path, $communaute_blindee->plugin_dir ) ) {
+		$stylesheet_uri = str_replace( $communaute_blindee->plugin_dir, $communaute_blindee->plugin_url, $stylesheet_path );
+	} else {
+		$stylesheet_uri = str_replace( WP_CONTENT_DIR, content_url(), $stylesheet_path );
+	}
+
+	return apply_filters( 'communaute_blindee_locate_stylesheet', $stylesheet_uri, $stylesheet );
+}
+
+/**
+ * Check if the current IP has access the way Restricted Site Access does
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_current_ip_has_access() {
+	$retval             = false;
+	$communaute_blindee = communaute_blindee();
+
+	if ( ! empty( $communaute_blindee->rsa_options['allowed'] ) ) {
+		$remote_ip = Restricted_Site_Access::get_client_ip_address();
+
+		// iterate through the allowed list.
+		foreach ( $communaute_blindee->rsa_options['allowed'] as $line ) {
+			if ( Restricted_Site_Access::ip_in_range( $remote_ip, $line ) ) {
+				$retval = true;
+				break;
+			}
+		}
+	}
+
+	return $retval;
+}
+
+/**
+ * Enqueue Needed Scripts for our custom BuddyPress templates
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_enqueue_scripts() {
+	$site_icon = communaute_blindee_get_site_icon();
+
+	if ( true === (bool) $site_icon ) {
+		wp_add_inline_style( 'login', sprintf( '
+			.login h1 a {
+				background-image: none, url(%s);
+			}
+		', $site_icon ) );
+	}
+
+	if ( ! communaute_blindee_current_ip_has_access() && ( bp_is_register_page() || bp_is_activation_page() ) ) {
+		$communaute_blindee = communaute_blindee();
+
+		// Clean up styles.
+		foreach ( wp_styles()->queue as $css_handle ) {
+			wp_dequeue_style( $css_handle );
+		}
+
+		// Clean up scripts.
+		foreach ( wp_scripts()->queue as $js_handle ) {
+			wp_dequeue_script( $js_handle );
+		}
+
+		// Enqueue style.
+		wp_enqueue_style( 'communaute-blindee-register-style',
+			communaute_blindee_locate_stylesheet( 'communaute-blindee-register' ),
+			array( 'login' ),
+			$communaute_blindee->version
+		);
+
+		// Enqueue script.
+		wp_enqueue_script( 'communaute-blindee-register' );
+
+		// The register form need some specific stuff
+		if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
+			add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
+			wp_localize_script( 'communaute-blindee-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
+		}
+	}
+}
+
+/**
+ * Returns the Plugin template directory if needed.
+ *
+ * @since 1.0.0
+ *
+ * @return string|void The Plugin template directory if needed.
+ */
+function communaute_blindee_templates_dir() {
+	if ( ! bp_is_register_page() && ! bp_is_activation_page() ) {
+		return;
+	}
+
+	// Restrict Site Access is not using the login screen
+	if ( ! communaute_blindee_rsa_approach_for_signups() ) {
+		return;
+	}
+
+	// If an IP is allowed it will get the regular BuddyPress Register/Activate templates
+	if ( communaute_blindee_current_ip_has_access() ) {
+		return;
+	}
+
+	// Use the plugin's templates
+	return apply_filters( 'communaute_blindee_templates_dir', communaute_blindee()->templates_dir );
+}
+
+/**
+ * Register the template dir into BuddyPress template stack
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_register_templates_dir() {
+	// After Theme, but before BP Legacy
+	bp_register_template_stack( 'communaute_blindee_templates_dir',  13 );
+}
+
+/**
+ * Filter the Restrict Site Access main function and adapt it for our BuddyPress needs
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_allow_bp_registration( $is_restricted = true ) {
+	// Not restricted, do nothing
+	if ( ! $is_restricted ) {
+		return $is_restricted;
+	}
+
+	// Bail if the current ip has access
+	if ( communaute_blindee_current_ip_has_access() ) {
+		return $is_restricted;
+	}
+
+	if ( bp_is_register_page() || bp_is_activation_page() ) {
+		$is_restricted = ! communaute_blindee_rsa_approach_for_signups();
+	}
+
+	return $is_restricted;
+}
+
+/**
+ * Extra check for submitted registrations
+ *
+ * This is to try to prevent spam registrations
+ *
+ * @since 1.0.0
+ */
+function communaute_blindee_validate_js_email() {
+	$bp        = buddypress();
+	$errors    = new WP_Error();
+	$field_key = wp_hash( date( 'YMDH' ) );
+
+	if ( empty( $_POST[ $field_key ] ) || empty( $_POST['signup_email'] ) || $_POST[ $field_key ] !== $_POST['signup_email'] ) {
+		$errors->add( 'signup_email', __( 'We were not able to validate your email, please try again.', 'communaute-blindee' ) );
+		$bp->signup->errors['signup_email'] = $errors->errors['signup_email'][0];
+	}
+}
+
+/**
+ * Get the site icon to replace WordPress login logo
+ *
+ * @since 1.0.0
+ *
+ * @return string the URL to the site icon.
+ */
+function communaute_blindee_get_site_icon() {
+	$communaute_blindee = communaute_blindee();
+
+	if ( ! isset( $communaute_blindee->site_icon ) ) {
+		$communaute_blindee->site_icon = apply_filters( 'communaute_blindee_get_site_icon', get_site_icon_url( 84 ) );
+	}
+
+	return $communaute_blindee->site_icon;
+}
+
+/**
+ * Add Registration restrictions by email domain
+ *
+ * @since 1.0.0
+ *
+ * @param array $icon_sizes The icon sizes.
+ * @return array The icon sizes.
+ */
+function communaute_blindee_login_screen_icon_size( $icon_sizes = array() ) {
+	return array_merge( $icon_sizes, array( 84 ) );
+}
+
+/**
  * Get email templates
  *
  * @since 1.0.0

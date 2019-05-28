@@ -36,19 +36,19 @@ msgstr ""
 msgid "%s needs the <a href=\"%s\">Restricted Site Access</a> plugin to be active."
 msgstr ""
 
-#: templates/members/bp-restricted-community-header.php:25
+#: templates/members/communite-blindee-header.php:25
 msgid "Register"
 msgstr ""
 
-#: templates/members/bp-restricted-community-header.php:25
+#: templates/members/communite-blindee-header.php:25
 msgid "Activate"
 msgstr ""
 
-#: templates/members/bp-restricted-community-header.php:44
+#: templates/members/communite-blindee-header.php:44
 msgid "https://wordpress.org/"
 msgstr ""
 
-#: templates/members/bp-restricted-community-header.php:45
+#: templates/members/communite-blindee-header.php:45
 msgid "Powered by WordPress"
 msgstr ""
 
