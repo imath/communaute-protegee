@@ -6,18 +6,6 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-/**
- *
- *
- *
- *
- * @todo Les inscriptions transformées ne doivent pas être doublement cryptées.
- *
- *
- *
- *
- */
-
 // Disable WP/BP Display Name synchronization.
 add_filter( 'bp_disable_profile_sync', '__return_true' );
 
@@ -60,10 +48,37 @@ function communaute_blindee_xprofile_encrypt_metabox( BP_XProfile_Field $field )
 }
 add_action( 'xprofile_field_after_sidebarbox', 'communaute_blindee_xprofile_encrypt_metabox', 10, 1 );
 
-function communaute_blindee_xprofile_envrypt_data_before_save( $value = '', $id = 0, $reserialize = true, BP_XProfile_ProfileData $profile_data ) {
-	$id = (int) $id;
+/**
+ * Is the current page a page to activate signups ?
+ *
+ * @since 1.0.0
+ *
+ * @return boolean True if it's an activation page, false otherwise.
+ */
+function communaute_blindee_activating_signup() {
+	$uri_parts = wp_parse_url( $_SERVER['REQUEST_URI'] );
+	$return    = false;
 
-	if ( ! $value || ! isset( $profile_data->field_id ) ) {
+	if ( ! isset( $uri_parts['path'] ) && ! isset( $uri_parts['query'] ) ) {
+		return $return;
+	}
+
+	// Check front-end activation.
+	$activate_url_path = wp_parse_url( bp_get_activation_page(), PHP_URL_PATH );
+	if ( false !== strpos( $uri_parts['path'], $activate_url_path ) ) {
+		$return = true;
+
+	// Check back-end activation.
+	} elseif ( false !== strpos( $uri_parts['path'], '/wp-admin/users.php' ) && isset( $uri_parts['query'] ) ) {
+		$query_args = wp_parse_args( $uri_parts['query'], array( 'page' => '' ) );
+		$return     = 'bp-signups' === $query_args['page'];
+	}
+
+	return $return;
+}
+
+function communaute_blindee_xprofile_encrypt_data_before_save( $value = '', $id = 0, $reserialize = true, BP_XProfile_ProfileData $profile_data ) {
+	if ( ! $value || ! isset( $profile_data->field_id ) || communaute_blindee_activating_signup() ) {
 		return $value;
 	}
 
@@ -75,7 +90,7 @@ function communaute_blindee_xprofile_envrypt_data_before_save( $value = '', $id 
 
 	return $value;
 }
-add_filter( 'xprofile_data_value_before_save', 'communaute_blindee_xprofile_envrypt_data_before_save', 2, 4 );
+add_filter( 'xprofile_data_value_before_save', 'communaute_blindee_xprofile_encrypt_data_before_save', 2, 4 );
 
 function communaute_blindee_xprofile_decrypt_data( $value = '', $field_id = 0  ) {
 	if ( ! $value || ! $field_id ) {

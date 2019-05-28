@@ -575,6 +575,14 @@ function communaute_blindee_decrypt( $message, $key = '' ) {
 	);
 }
 
+/**
+ * Encrypt Profile fieds used during the user registration.
+ *
+ * @since 1.0.0
+ *
+ * @param array $args Signup Data.
+ * @return array Signup Data.
+ */
 function communaute_blindee_before_signup_save( $args = array() ) {
 	if ( ! isset( $args['meta']['profile_field_ids'] ) ) {
 		return $args;
@@ -593,13 +601,26 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 		}
 
 		if ( isset( $args['meta']['field_' . $field_id] ) ) {
-			$args['meta']['field_' . $field_id] = communaute_blindee_encrypt( $args['meta']['field_1'] );
+			$args['meta']['field_' . $field_id] = communaute_blindee_encrypt( $args['meta']['field_'  . $field_id] );
 		}
 	}
 
 	return $args;
 }
 add_filter( 'bp_after_bp_core_signups_add_args_parse_args', 'communaute_blindee_before_signup_save' );
+
+/**
+ * @todo Check multisite registration.
+ */
+function communaute_blindee_before_multisite_signup_save( $meta = array() ) {
+	if ( ! isset( $meta['profile_field_ids'] ) ) {
+		return $meta;
+	}
+
+	$encrypted = communaute_blindee_before_signup_save( array( 'meta' => $meta ) );
+	return reset( $encrypted );
+}
+add_filter( 'signup_user_meta', 'communaute_blindee_before_multisite_signup_save', 10, 1 );
 
 function communaute_blindee_not_logged_in_privacy_policy_url( $url = '' ) {
 	if ( is_user_logged_in() ) {

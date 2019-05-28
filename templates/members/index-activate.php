@@ -6,7 +6,7 @@ bp_get_template_part( 'members/communite-blindee-header' ); ?>
 
 <div id="activate">
 	<h1><a href="<?php echo esc_url( communaute_blindee()->register_header_url ); ?>" title="<?php echo esc_attr( communaute_blindee()->register_header_title ); ?>" tabindex="-1"><?php bloginfo( 'name' ); ?></a></h1>
-	<?php if ( have_posts() ): while (have_posts()) : the_post(); ?>
+	<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 
 		<?php the_content(); ?>
 
