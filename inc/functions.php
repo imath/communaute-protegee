@@ -531,6 +531,19 @@ function communaute_blindee_registration_feedback() {
 	}
 }
 
+function communaute_blindee_generat_random_string( $length = 10 ) {
+	$chars  = explode( ',', 'a,z,e,r,t,y,u,i,o,p,q,s,d,f,g,h,j,k,l,m,w,x,c,v,b,n' );
+	$lchars = count( $chars );
+	$return = '';
+
+	for ( $c = 0 ; $c < $length ; $c++ ) {
+		$random_c = $chars[ mt_rand( 0, $lchars - 1 ) ];
+        $return  .= $random_c;
+	}
+
+	return $return;
+}
+
 /**
  * @param string $message
  * @param string $key
@@ -575,53 +588,6 @@ function communaute_blindee_decrypt( $message, $key = '' ) {
 	);
 }
 
-/**
- * Encrypt Profile fieds used during the user registration.
- *
- * @since 1.0.0
- *
- * @param array $args Signup Data.
- * @return array Signup Data.
- */
-function communaute_blindee_before_signup_save( $args = array() ) {
-	if ( ! isset( $args['meta']['profile_field_ids'] ) ) {
-		return $args;
-	}
-
-	$profile_field_ids = explode( ',', $args['meta']['profile_field_ids'] );
-	$encrypted_fields  = array();
-
-	if ( bp_is_active( 'xprofile' ) ) {
-		$encrypted_fields = communaute_blindee_xprofile_get_encrypted_fields();
-	}
-
-	foreach ( $profile_field_ids as $field_id ) {
-		if ( ! in_array( (int) $field_id, $encrypted_fields, true ) ) {
-			continue;
-		}
-
-		if ( isset( $args['meta']['field_' . $field_id] ) ) {
-			$args['meta']['field_' . $field_id] = communaute_blindee_encrypt( $args['meta']['field_'  . $field_id] );
-		}
-	}
-
-	return $args;
-}
-add_filter( 'bp_after_bp_core_signups_add_args_parse_args', 'communaute_blindee_before_signup_save' );
-
-/**
- * @todo Check multisite registration.
- */
-function communaute_blindee_before_multisite_signup_save( $meta = array() ) {
-	if ( ! isset( $meta['profile_field_ids'] ) ) {
-		return $meta;
-	}
-
-	$encrypted = communaute_blindee_before_signup_save( array( 'meta' => $meta ) );
-	return reset( $encrypted );
-}
-add_filter( 'signup_user_meta', 'communaute_blindee_before_multisite_signup_save', 10, 1 );
-
 function communaute_blindee_not_logged_in_privacy_policy_url( $url = '' ) {
 	if ( is_user_logged_in() ) {
 		return $url;
@@ -630,18 +596,3 @@ function communaute_blindee_not_logged_in_privacy_policy_url( $url = '' ) {
 	return str_replace( home_url( '/' ), bp_get_signup_page(), $url );
 }
 add_filter( 'privacy_policy_url', 'communaute_blindee_not_logged_in_privacy_policy_url', 10, 1 );
-
-function communaute_blindee_decrypt_signup_objects( $return ) {
-	global $bp_members_signup_list_table;
-
-	if ( isset( $bp_members_signup_list_table->items ) && is_array( $bp_members_signup_list_table->items ) ) {
-		foreach ( $bp_members_signup_list_table->items as $i => $signup ) {
-			if ( isset( $signup->user_name ) ) {
-				$bp_members_signup_list_table->items[$i]->user_name = communaute_blindee_decrypt( $signup->user_name );
-			}
-		}
-	}
-
-	return $return;
-}
-add_filter( 'bp_members_ms_signup_row_actions', 'communaute_blindee_decrypt_signup_objects', 10, 1 );
