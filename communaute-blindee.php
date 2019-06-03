@@ -78,10 +78,11 @@ final class Communaute_Blindee {
 		$this->plugin_js     = trailingslashit( $this->plugin_url . 'js' );
 
 		/** Plugin config ********************************************/
-		$this->required_bpdb_version = 11105;
-		$this->required_rsa_version  = '7.1.0';
-		$this->rsa_options           = (array) get_option( 'rsa_options', array() );
-		$this->minified              = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$this->required_bpdb_version     = 11105;
+		$this->required_rsa_version      = '7.1.0';
+		$this->rsa_options               = (array) get_option( 'rsa_options', array() );
+		$this->minified                  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$this->encrypted_specific_fields = array();
 	}
 
 	/**
