@@ -230,14 +230,18 @@ add_action( 'xprofile_field_after_sidebarbox', 'communaute_blindee_xprofile_encr
 function communaute_blindee_get_fake_email() {
 	remove_filter( 'query', 'communaute_blindee_get_user_by_query', 10, 1 );
 
-	$prefix = 'no-reply-';
-	$suffix = '@fake.email';
-	$email  = $prefix . communaute_blindee_generate_random_string() . $suffix;
+	$prefix = 'no-reply.';
+	$suffix = strtolower( $_SERVER['SERVER_NAME'] );
+	if ( substr( $suffix, 0, 4 ) == 'www.' ) {
+		$suffix = substr( $suffix, 4 );
+	}
+
+	$email  = $prefix . communaute_blindee_generate_random_string() . '@' . $suffix;
 	$email_check = email_exists( $email );
 
 	if ( $email_check ) {
 		while ( $email_check ) {
-			$alt_email = $prefix . communaute_blindee_generate_random_string() . $suffix;
+			$alt_email = $prefix . communaute_blindee_generate_random_string() . '@' . $suffix;
 			$email_check = email_exists( $alt_email );
 		}
 		$email = $alt_email;
