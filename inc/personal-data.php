@@ -232,12 +232,12 @@ function communaute_blindee_get_fake_email() {
 
 	$prefix = 'no-reply-';
 	$suffix = '@fake.email';
-	$email  = $prefix . communaute_blindee_generat_random_string() . $suffix;
+	$email  = $prefix . communaute_blindee_generate_random_string() . $suffix;
 	$email_check = email_exists( $email );
 
 	if ( $email_check ) {
 		while ( $email_check ) {
-			$alt_email = $prefix . communaute_blindee_generat_random_string() . $suffix;
+			$alt_email = $prefix . communaute_blindee_generate_random_string() . $suffix;
 			$email_check = email_exists( $alt_email );
 		}
 		$email = $alt_email;
