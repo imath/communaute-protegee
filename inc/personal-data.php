@@ -114,24 +114,37 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 			return $db_query;
 		}
 
-		// Get the list of the WP Users fields and the xProfile data table name.
-		$fields      = communaute_blindee_get_wp_users_fields();
-		$x_datatable = bp_core_get_table_prefix() . 'bp_xprofile_data';
+		// It's a lost password request.
+		if ( did_action( 'login_form_lostpassword' ) ) {
+			$user_id = communaute_blindee_lostpassword_request();
 
-		foreach ( $field_ids as $key_field => $field ) {
-			$field_index = array_search( $key_field, $fields );
-
-			if ( false === $field_index ) {
-				continue;
+			if ( ! $user_id ) {
+				return $db_query;
 			}
 
-			// Override the user email field with a query to get the encrypted email value.
-			$fields[ $field_index ] = '( ' . $wpdb->prepare( "SELECT x.value FROM {$x_datatable} x WHERE x.user_id = {$wpdb->users}.ID AND x.field_id = %d", $field ) . ' )  as ' . $key_field;
-			$fields[] = "{$wpdb->users}.{$key_field} as " . str_replace( 'user', 'fake', $key_field );
-		}
+			$db_query = $wpdb->prepare( "SELECT * FROM {$wpdb->users} WHERE ID = %d", $user_id );
 
-		// Override the user query.
-		$db_query = str_replace( 'SELECT * FROM', 'SELECT ' . join( ', ', $fields ) . ' FROM', $db_query );
+		// It's a regular request.
+		} else {
+			// Get the list of the WP Users fields and the xProfile data table name.
+			$fields      = communaute_blindee_get_wp_users_fields();
+			$x_datatable = bp_core_get_table_prefix() . 'bp_xprofile_data';
+
+			foreach ( $field_ids as $key_field => $field ) {
+				$field_index = array_search( $key_field, $fields );
+
+				if ( false === $field_index ) {
+					continue;
+				}
+
+				// Override the user email field with a query to get the encrypted email value.
+				$fields[ $field_index ] = '( ' . $wpdb->prepare( "SELECT x.value FROM {$x_datatable} x WHERE x.user_id = {$wpdb->users}.ID AND x.field_id = %d", $field ) . ' )  as ' . $key_field;
+				$fields[] = "{$wpdb->users}.{$key_field} as " . str_replace( 'user', 'fake', $key_field );
+			}
+
+			// Override the user query.
+			$db_query = str_replace( 'SELECT * FROM', 'SELECT ' . join( ', ', $fields ) . ' FROM', $db_query );
+		}
 	}
 
 	return $db_query;
@@ -161,6 +174,26 @@ function communaute_blindee_get_user_encrypted_specific_field( $user_id = 0, $ty
 
 	// Returns the encrypted specific field.
 	return $wpdb->get_var( $wpdb->prepare( "SELECT value FROM {$x_datatable} WHERE user_id = %d AND field_id = %d", $user_id, $field_id ) );
+}
+
+function communaute_blindee_get_user_by_hashed_meta( $field_id = 0, $hashed_value = '' ) {
+	if ( ! $hashed_value || ! $field_id ) {
+		return null;
+	}
+
+	global $wpdb;
+	$x_metatable = bp_core_get_table_prefix() . 'bp_xprofile_meta';
+	$x_datatable = bp_core_get_table_prefix() . 'bp_xprofile_data';
+
+	// Try to find a match.
+	return (int) $wpdb->get_var(
+		$wpdb->prepare( "
+			SELECT d.user_id FROM {$x_metatable} m LEFT JOIN {$x_datatable} d ON( m.object_id = d.id )
+			WHERE m.object_type = 'data' AND m.meta_key = %s AND m.meta_value =%s",
+			'_communaute_blindee_hash_' . $field_id,
+			$hashed_value
+		)
+	);
 }
 
 function communaute_blindee_get_user_encrypted_email( $user_id = 0 ) {
@@ -378,7 +411,8 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 	}
 
 	$profile_field_ids = explode( ',', $args['meta']['profile_field_ids'] );
-	$encrypted_fields = communaute_blindee_get_encrypted_user_field_ids();
+	$encrypted_fields  = communaute_blindee_get_encrypted_user_field_ids();
+	$contains_hash     = array();
 
 	foreach ( $profile_field_ids as $field_id ) {
 		if ( ! in_array( (int) $field_id, $encrypted_fields, true ) ) {
@@ -405,6 +439,10 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 		// Add a new meta containing the encrypted email.
 		$args['meta']['field_' . $encrypted_login_field_id] = communaute_blindee_encrypt( $args['user_login'] );
 
+		// Add new value meta to query login hash (eg: during authentification).
+		$args['meta']['field_' . $encrypted_login_field_id . '_hash_meta'] = wp_hash( $args['user_login'] );
+		$contains_hash[] = $encrypted_login_field_id;
+
 		/**
 		 * @todo check encrypted logins are unique.
 		 */
@@ -428,6 +466,10 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 		// Add a new meta containing the encrypted email.
 		$args['meta']['field_' . $encrypted_email_field_id] = communaute_blindee_encrypt( $args['user_email'] );
 
+		// Add new value meta to query login hash (eg: during authentification).
+		$args['meta']['field_' . $encrypted_email_field_id . '_hash_meta'] = wp_hash( $args['user_email'] );
+		$contains_hash[] = $encrypted_email_field_id;
+
 		/**
 		 * @todo check encrypted emails are unique.
 		 */
@@ -438,6 +480,10 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 		} else {
 			$args['user_email'] = 'no-reply.' . $args['user_login'] . communaute_blindee_get_email_suffix();
 		}
+	}
+
+	if ( $contains_hash ) {
+		$args['meta']['contains_hash'] = join( ',', $contains_hash );
 	}
 
 	return $args;
@@ -456,6 +502,25 @@ function communaute_blindee_before_multisite_signup_save( $meta = array() ) {
 	return reset( $encrypted );
 }
 //add_filter( 'signup_user_meta', 'communaute_blindee_before_multisite_signup_save', 10, 1 );
+
+function communaute_blindee_activated_user( $user_id = 0, $key = '', $user = array() ) {
+	if ( ! isset( $user['meta']['contains_hash'] ) || ! $user_id ) {
+		errorlog( 'un probleme avec les meta: ' . $user['meta']['contains_hash'] . ' ou user_id:' . $user_id . "\n" );
+		return;
+	}
+
+	$metas = explode( ',', $user['meta']['contains_hash'] );
+	foreach ( $metas as $field_id ) {
+		if ( ! isset( $user['meta']['field_' . $field_id . '_hash_meta'] ) ) {
+			continue;
+		}
+
+		$hash          = $user['meta']['field_' . $field_id . '_hash_meta'];
+		$field_data_id = BP_XProfile_ProfileData::get_fielddataid_byid( $field_id, $user_id );
+		bp_xprofile_update_meta( $field_data_id, 'data', '_communaute_blindee_hash_' . $field_id, $hash );
+	}
+}
+add_action( 'bp_core_activated_user', 'communaute_blindee_activated_user', 10, 3 );
 
 /**
  * Is the current page a page to activate signups ?
@@ -612,3 +677,27 @@ function communaute_blindee_remove_specific_fields_from_front_loops( $args = arr
 	) );
 }
 add_filter( 'bp_after_has_profile_parse_args', 'communaute_blindee_remove_specific_fields_from_front_loops', 10, 1 );
+
+function communaute_blindee_lostpassword_request() {
+	$hash    = '';
+	$user_id = 0;
+	$request = wp_parse_args( $_POST, array(
+		'user_login' => null,
+	) );
+
+	if ( $request['user_login'] ) {
+		if ( false === strpos( $request['user_login'], '@' ) ) {
+			$field_id = communaute_blindee_xprofile_get_encrypted_login_field_id();
+			$hash = wp_hash( trim( $request['user_login'] ) );
+		} else {
+			$field_id = communaute_blindee_xprofile_get_encrypted_email_field_id();
+			$hash = wp_hash( trim( wp_unslash( $request['user_login'] ) ) );
+		}
+
+		if ( $hash && isset( $field_id ) ) {
+			$user_id = communaute_blindee_get_user_by_hashed_meta( $field_id, $hash );
+		}
+	}
+
+	return $user_id;
+}
