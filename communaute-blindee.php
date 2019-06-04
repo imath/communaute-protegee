@@ -102,6 +102,10 @@ final class Communaute_Blindee {
 			require trailingslashit( $this->plugin_dir . 'inc' ) . 'admin.php';
 		}
 
+		if ( bp_is_active( 'messages' ) ) {
+			require trailingslashit( $this->plugin_dir . 'inc' ) . 'messages.php';
+		}
+
 		require trailingslashit( $this->plugin_dir . 'inc' ) . 'hooks.php';
 	}
 }

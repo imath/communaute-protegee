@@ -1,6 +1,6 @@
 <?php
 /**
- * Communauté Blindée fallback
+ * Communauté Blindée Admin functions
  */
 
 // Exit if accessed directly

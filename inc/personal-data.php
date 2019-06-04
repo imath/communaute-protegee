@@ -9,12 +9,27 @@ defined( 'ABSPATH' ) || exit;
 // Disable WP/BP Display Name synchronization.
 add_filter( 'bp_disable_profile_sync', '__return_true' );
 
+/**
+ * @todo
+ * - Email change.
+ * - /wp-content/uploads ?
+ * - BP email notifications.
+ * - Avatar ? Not sure.
+ * - Migration tool.
+ * - Roll back ? There must be one way of uncrypting all data back!
+ * - Private message & group invites.
+ * - Invitation to join the site/ a group.
+ * - **Search** ? Later :
+ *   - @see https://paragonie.com/blog/2017/05/building-searchable-encrypted-databases-with-php-and-sql
+ *   - @see https://paragonie.com/blog/2019/01/ciphersweet-searchable-encryption-doesn-t-have-be-bitter
+ */
+
 function communaute_blindee_get_encrypted_user_field_ids() {
 	global $wpdb;
 	$communaute_blindee = communaute_blindee();
 
 	if ( ! isset( $communaute_blindee->encrypted_field_ids ) ) {
-		$field_ids = $wpdb->get_col( "
+		$field_ids = (array) $wpdb->get_col( "
 			SELECT object_id FROM {$wpdb->xprofile_fieldmeta}
 			WHERE object_type = 'field' AND meta_key = '_communaute_blindee_encrypted_field' AND meta_value = 'user_field'"
 		);
@@ -350,6 +365,7 @@ function communaute_blindee_xprofile_encrypt_metabox( BP_XProfile_Field $field )
 	}
 
 	$encrypted_specifics = communaute_blindee_xprofile_get_encrypted_specific_field_ids();
+
 	$specific_labels     = array(
 		'user_login' => __( 'Encrypted login.', 'communaute-blindee' ),
 		'user_email' => __( 'Encrypted email.', 'communaute-blindee' ),
@@ -373,7 +389,7 @@ function communaute_blindee_xprofile_encrypt_metabox( BP_XProfile_Field $field )
 					</label>
 				</li>
 				<?php foreach ( $specific_labels as $key_label => $label ) :
-					if ( ! isset( $encrypted_specifics[ $key_label ] ) || $encrypted_specifics[ $key_label ] === $field->id ) : ?>
+					if ( ! isset( $encrypted_specifics[ $key_label ] ) || ! $encrypted_specifics[ $key_label ] || $encrypted_specifics[ $key_label ] === $field->id ) : ?>
 					<li>
 						<label for="<?php printf( 'communaute-blindee-encrypted-%s', esc_attr( $key_label ) ); ?>">
 							<input name="_communaute_blindee_encrypted_field" id="<?php printf( 'communaute-blindee-encrypted-%s', esc_attr( $key_label ) ); ?>" class="widefat" type="radio" value="<?php echo esc_attr( $key_label ); ?>" <?php checked( isset( $encrypted_specifics[ $key_label ] ) && $field->id === $encrypted_specifics[ $key_label ] ); ?>/>
@@ -802,3 +818,40 @@ function communaute_blindee_password_change_notification_email( $notification_da
 	return $notification_data;
 }
 add_filter( 'wp_password_change_notification_email', 'communaute_blindee_password_change_notification_email', 10, 2 );
+
+function communaute_blindee_maybe_dont_do_mentions( $do = true ) {
+    $encrypted_login = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_login' );
+
+    return ! $encrypted_login;
+}
+add_filter( 'bp_activity_do_mentions', 'communaute_blindee_maybe_dont_do_mentions', 10, 1 );
+
+function communaute_blindee_get_user_displayname( $display_name = '', $user_id = 0 ) {
+	if ( ! $user_id ) {
+		return $display_name;
+	}
+
+	$encrypted_login = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_login' );
+	if ( ! $encrypted_login ) {
+		return $display_name;
+	}
+
+	$pre_displayname = apply_filters( 'communaute_blindee_pre_get_user_displayname', null, $user_id );
+	if ( null !== $pre_displayname ) {
+		return $pre_displayname;
+	}
+
+	return xprofile_get_field_data( bp_xprofile_fullname_field_id(), $user_id );
+}
+add_filter( 'bp_core_get_user_displayname', 'communaute_blindee_get_user_displayname', 10, 2 );
+
+function communaute_blindee_maybe_no_search( $search_form = '' ) {
+	$encrypted_login = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_login' );
+
+	if ( ! $encrypted_login ) {
+		return $search_form;
+	}
+
+	return '';
+}
+add_filter( 'bp_directory_members_search_form', 'communaute_blindee_maybe_no_search', 10, 1 );
