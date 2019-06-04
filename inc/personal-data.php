@@ -93,11 +93,16 @@ function communaute_blindee_xprofile_get_encrypted_login_field_id() {
 }
 
 function communaute_blindee_get_wp_users_fields() {
-	global $wpdb;
+	$communaute_blindee = communaute_blindee();
 
-	$wp_users = $wpdb->get_results( "DESCRIBE $wpdb->users");
+	if ( ! isset( $communaute_blindee->wp_users_db_fields ) ) {
+		global $wpdb;
 
-	return wp_list_pluck( $wp_users, 'Field' );
+		$wp_users                               = $wpdb->get_results( "DESCRIBE $wpdb->users");
+		$communaute_blindee->wp_users_db_fields = wp_list_pluck( $wp_users, 'Field' );
+	}
+
+	return $communaute_blindee->wp_users_db_fields;
 }
 
 function communaute_blindee_get_user_by_query( $db_query = '' ) {
@@ -107,6 +112,7 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 	$regex = "/SELECT \* FROM $wpdb->users WHERE (ID|user_nicename|user_email|user_login) = (.*?) LIMIT 1/";
 
 	if ( preg_match( $regex, $db_query, $matches ) ) {
+		// Get the encrypted specific field IDs
 		$field_ids = communaute_blindee_xprofile_get_encrypted_specific_field_ids();
 
 		// Do not touch anything if we have no encrypted email field.
@@ -114,11 +120,55 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 			return $db_query;
 		}
 
+		// Get the list of the WP Users fields and the xProfile data table name.
+		$fields = communaute_blindee_get_wp_users_fields();
+
 		// It's a lost password request.
 		if ( did_action( 'login_form_lostpassword' ) ) {
-			$user_id = communaute_blindee_lostpassword_request();
+			if ( ! isset( $matches[1] ) || ! $matches[1] || ! isset( $matches[2] ) || ! $matches[2] ) {
+				return $db_query;
+			}
+
+			$user_id = communaute_blindee_bypass_login_request( array(
+				trim( $matches[1], '\'"' ) => trim( $matches[2], '\'"' ),
+			) );
 
 			if ( ! $user_id ) {
+				add_filter( 'retrieve_password_title', 'communaute_blindee_trace_direct_password_reset', 10, 2 );
+				return $db_query;
+			}
+
+			$lost_pass_fields = $fields;
+			$email_index      = array_search( 'user_email', $lost_pass_fields );
+			if ( false === $email_index ) {
+				return $db_query;
+			}
+
+			$encrypted_email = communaute_blindee_get_user_encrypted_email( $user_id );
+			if ( ! $encrypted_email ) {
+				return $db_query;
+			}
+
+			$lost_pass_fields[ $email_index ] = '"' . communaute_blindee_decrypt( $encrypted_email ) . '" AS user_email';
+			$query_fields                     = join( ', ', $lost_pass_fields );
+
+			$db_query = $wpdb->prepare( "SELECT {$query_fields} FROM {$wpdb->users} WHERE ID = %d", $user_id );
+
+			add_filter( 'retrieve_password_message', 'communaute_blindee_password_message', 10, 4 );
+
+		// It's a login request.
+		} elseif ( did_action( 'login_form_login' ) ) {
+			if ( ! isset( $matches[1] ) || ! $matches[1] || ! isset( $matches[2] ) || ! $matches[2] ) {
+				return $db_query;
+			}
+
+			$user_id = communaute_blindee_bypass_login_request( array(
+				trim( $matches[1], '\'"' ) => trim( $matches[2], '\'"' ),
+			) );
+
+			if ( ! $user_id ) {
+				add_action( 'wp_login', 'communaute_blindee_trace_direct_login', 10, 1 );
+
 				return $db_query;
 			}
 
@@ -126,8 +176,6 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 
 		// It's a regular request.
 		} else {
-			// Get the list of the WP Users fields and the xProfile data table name.
-			$fields      = communaute_blindee_get_wp_users_fields();
 			$x_datatable = bp_core_get_table_prefix() . 'bp_xprofile_data';
 
 			foreach ( $field_ids as $key_field => $field ) {
@@ -678,26 +726,79 @@ function communaute_blindee_remove_specific_fields_from_front_loops( $args = arr
 }
 add_filter( 'bp_after_has_profile_parse_args', 'communaute_blindee_remove_specific_fields_from_front_loops', 10, 1 );
 
-function communaute_blindee_lostpassword_request() {
-	$hash    = '';
+function communaute_blindee_bypass_login_request( $args = array() ) {
 	$user_id = 0;
-	$request = wp_parse_args( $_POST, array(
+	$request = wp_parse_args( $args, array(
 		'user_login' => null,
+		'user_email' => null,
 	) );
 
 	if ( $request['user_login'] ) {
-		if ( false === strpos( $request['user_login'], '@' ) ) {
-			$field_id = communaute_blindee_xprofile_get_encrypted_login_field_id();
-			$hash = wp_hash( trim( $request['user_login'] ) );
-		} else {
-			$field_id = communaute_blindee_xprofile_get_encrypted_email_field_id();
-			$hash = wp_hash( trim( wp_unslash( $request['user_login'] ) ) );
-		}
+		$field_id = communaute_blindee_xprofile_get_encrypted_login_field_id();
+		$hash = wp_hash( $request['user_login'] );
+	} else {
+		$field_id = communaute_blindee_xprofile_get_encrypted_email_field_id();
+		$hash = wp_hash( $request['user_email'] );
+	}
 
-		if ( $hash && isset( $field_id ) ) {
-			$user_id = communaute_blindee_get_user_by_hashed_meta( $field_id, $hash );
-		}
+	if ( $hash && isset( $field_id ) ) {
+		$user_id = communaute_blindee_get_user_by_hashed_meta( $field_id, $hash );
 	}
 
 	return $user_id;
 }
+
+function communaute_blindee_trace_direct_password_reset( $title = '', $user_login = '' ) {
+	// Prevent duplicates
+	remove_filter( 'retrieve_password_title', 'communaute_blindee_trace_direct_password_reset', 10, 2 );
+
+	// Trace this in logs (just in case)
+	error_log( sprintf( __( 'Direct successful password reset request using %1$s from %2$s', 'communaute-blindee' ), $user_login, $_SERVER['REMOTE_ADDR'] ) );
+}
+
+function communaute_blindee_password_message( $message = '', $key = '', $user_login = '', $user_data = null ) {
+	// Prevent duplicates
+	remove_filter( 'retrieve_password_message', 'communaute_blindee_password_message', 10, 4 );
+
+	$encrypted_login = communaute_blindee_get_user_encrypted_login( $user_data->ID );
+	if ( ! $encrypted_login ) {
+		return $message;
+	}
+
+	// Decrypt the login.
+	$login = communaute_blindee_decrypt( $encrypted_login );
+
+	// Use it in the user notification.
+	return str_replace( sprintf( __( 'Username: %s' ), $user_login ) . "\r\n\r\n", sprintf( __( 'Username: %s' ), $login ) . "\r\n\r\n", $message );
+}
+
+function communaute_blindee_trace_direct_login( $user_login = '' ) {
+	// Prevent duplicates
+	remove_action( 'wp_login', 'communaute_blindee_trace_direct_login', 10, 1 );
+
+	// Trace this in logs (just in case)
+	error_log( sprintf( __( 'Direct successful authentification using %1$s from %2$s', 'communaute-blindee' ), $user_login, $_SERVER['REMOTE_ADDR'] ) );
+}
+
+function communaute_blindee_password_change_notification_email( $notification_data = array(), $user = null ) {
+	if ( ! isset(  $user->ID ) ) {
+		return $notification_data;
+	}
+
+	$encrypted_login = communaute_blindee_get_user_encrypted_login( $user->ID );
+	if ( ! $encrypted_login ) {
+		return $notification_data;
+	}
+
+	// Decrypt the login.
+	$login = communaute_blindee_decrypt( $encrypted_login );
+	if ( isset( $user->fake_login ) && $user->fake_login ) {
+		$login .= sprintf( ' (%s)', $user->fake_login );
+	}
+
+	$notification_data['message'] = str_replace( sprintf( __( 'Password changed for user: %s' ), $user->user_login ) . "\r\n", sprintf( __( 'Password changed for user: %s' ), $login ) . "\r\n", $notification_data['message'] );
+
+	// Use it in the admin notification.
+	return $notification_data;
+}
+add_filter( 'wp_password_change_notification_email', 'communaute_blindee_password_change_notification_email', 10, 2 );
