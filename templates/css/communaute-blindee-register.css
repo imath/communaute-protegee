@@ -11,11 +11,16 @@
 	margin-bottom: 2em;
 }
 
+#register.completed-confirmation #signup-form {
+	text-align: center;
+	padding-bottom: 26px;
+}
+
 #register div.register-section fieldset {
 	border: none;
 }
 
-#buddypress .standard-form#signup_form div div.error,
+#buddypress .standard-form.signup-form div div.error,
 #message.bp-template-notice {
 	background: #faa;
 	color: #a00;
@@ -80,13 +85,6 @@
 	padding: 3px;
 	margin: 2px 6px 16px 0;
 }
-
-#buddypress .standard-form#signup_form div.submit {
-	clear: both;
-	float: right;
-	padding: 15px 0px 0px;
-}
-
 #buddypress .standard-form #basic-details-section,
 #buddypress .standard-form #profile-details-section,
 #buddypress .standard-form .privacy-policy-accept {
@@ -103,7 +101,7 @@
 }
 
 #buddypress .standard-form div.submit {
-	clear:both;
+	clear: both;
 	width: 100%;
 }
 
@@ -111,25 +109,8 @@
 	display:none;
 }
 
-#buddypress .standard-form .editfield.field_type_checkbox label,
-#buddypress .standard-form #blog-details-section label {
+#buddypress .standard-form .editfield.field_type_checkbox label {
 	display: block;
-}
-
-#buddypress .standard-form #blog-details-section #signup_blog_url {
-	width:auto;
-}
-
-#buddypress .standard-form #blog-details-section {
-	color: #777;
-	font-size: 14px;
-}
-
-#buddypress .standard-form #blog-details-section span.label {
-	color: #444;
-	font-size: 13px;
-	display:block;
-	margin-bottom: 1em;
 }
 
 #buddypress .standard-form .editfield.field_type_checkbox {

@@ -11,6 +11,7 @@ add_filter( 'bp_disable_profile_sync', '__return_true' );
 
 /**
  * @todo
+ * - Multisite.
  * - Email change.
  * - /wp-content/uploads ?
  * - BP email notifications.
@@ -259,6 +260,43 @@ function communaute_blindee_get_user_by_hashed_meta( $field_id = 0, $hashed_valu
 	);
 }
 
+function communaute_blindee_has_hashed_meta( $meta_key = '', $hashed_value = '', $table = 'xprofile' ) {
+	if ( ! $hashed_value || ! $meta_key ) {
+		return null;
+	}
+
+	global $wpdb;
+	$return = false;
+
+	if ( 'xprofile' === $table ) {
+		$x_metatable = bp_core_get_table_prefix() . 'bp_xprofile_meta';
+
+		// Try to find a match in xprofile meta.
+		$return = (bool) $wpdb->get_var(
+			$wpdb->prepare( "
+				SELECT id FROM {$x_metatable}
+				WHERE object_type = 'data' AND meta_key = %s AND meta_value = %s",
+				$meta_key,
+				$hashed_value
+			)
+		);
+	} elseif ( 'signup' === $table ) {
+		$signup_table = $wpdb->base_prefix . 'signups';
+		$meta_like    = '%' . bp_esc_like( ltrim( rtrim( maybe_serialize( array( $meta_key => $hashed_value ) ), '}' ),'a:1:{' ) ) . '%';
+
+		// Try to find a match in signup meta.
+		$return = (bool) $wpdb->get_var(
+			$wpdb->prepare( "
+				SELECT signup_id FROM {$signup_table}
+				WHERE meta LIKE %s",
+				$meta_like
+			)
+		);
+	}
+
+	return $return;
+}
+
 function communaute_blindee_get_user_encrypted_email( $user_id = 0 ) {
 	return communaute_blindee_get_user_encrypted_specific_field( $user_id, 'user_email' );
 }
@@ -410,6 +448,67 @@ function communaute_blindee_xprofile_encrypt_metabox( BP_XProfile_Field $field )
 	<?php
 }
 add_action( 'xprofile_field_after_sidebarbox', 'communaute_blindee_xprofile_encrypt_metabox', 10, 1 );
+
+/**
+ * Edit the validated user registration details.
+ *
+ * In case there are encrypted email/login fields, checks against some signup
+ * and xprofile meta also needs to be done to make sure both data remain unique.
+ *
+ * @since 1.0.0
+ *
+ * @param array $result {
+ *     The array of user name, email and the error messages.
+ *
+ *     @type string   $user_name     Sanitized and unique username.
+ *     @type string   $user_email    User email address.
+ *     @type WP_Error $errors        WP_Error object containing any errors found.
+ * }
+ * @return array The validated user registration details
+ */
+function communaute_blindee_validate_signup( $result = array() ) {
+	$registration_details = wp_parse_args( $result, array(
+		'user_name'     => '',
+		'orig_username' => '',
+		'user_email'    => '',
+		'errors'        => null,
+	) );
+
+	// Only process if there are no errors yet.
+	if ( is_wp_error( $registration_details['errors'] ) && $registration_details['errors']->has_errors() ) {
+		return $result;
+	}
+
+	$encrypted_specific_fields = communaute_blindee_xprofile_get_encrypted_specific_field_ids();
+	if ( ! $encrypted_specific_fields ) {
+		return $result;
+	}
+
+	$errors = new WP_Error;
+
+	foreach ( $encrypted_specific_fields as $field_name => $field_id ) {
+		$error_message = __( 'Sorry, that username already exists!', 'communaute-blindee' );
+		if ( 'user_email' === $field_name ) {
+			$error_message = __( 'Sorry, that email already exists!', 'communaute-blindee' );
+		} else {
+			$field_name = 'user_name';
+		}
+
+		$hash = wp_hash( $registration_details[ $field_name ] );
+
+		// Is this email already in an xprofile meta?
+		if ( communaute_blindee_has_hashed_meta( '_communaute_blindee_hash_' . $field_id, $hash ) || communaute_blindee_has_hashed_meta( 'field_' . $field_id . '_hash_meta', $hash, 'signup' ) ) {
+			$errors->add( $field_name, $error_message );
+		}
+	}
+
+	if ( $errors->has_errors() ) {
+		$result['errors'] = $errors;
+	}
+
+	return $result;
+}
+add_filter( 'wpmu_validate_user_signup', 'communaute_blindee_validate_signup', 10, 1 );
 
 function communaute_blindee_get_email_suffix() {
 	$suffix = strtolower( $_SERVER['SERVER_NAME'] );

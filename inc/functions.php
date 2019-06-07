@@ -476,7 +476,11 @@ function communaute_blindee_get_feedback( $code = '' ) {
 		),
 		'privacy-policy-not-sent' => array(
 			'type'    => 'error',
-			'message' => __( 'Sorry, there was a problem sending the privacy policy. Pleas try again later.', 'communaute-blindee' ),
+			'message' => __( 'Sorry, there was a problem sending the privacy policy. Please try again later.', 'communaute-blindee' ),
+		),
+		'signup_errors' => array(
+			'type'    => 'error',
+			'message' => __( 'There was a problem sending your registration request. Please review the problematic fields.', 'communaute-blindee' ),
 		),
 	);
 
@@ -492,31 +496,40 @@ function communaute_blindee_get_feedback( $code = '' ) {
 }
 
 function communaute_blindee_registration_feedback() {
-	$qv = wp_parse_args( $_GET, array(
-		'_communaute_blindee_status' => false,
-	) );
-
-	if ( ! $qv['_communaute_blindee_status'] ) {
-		return;
-	}
-
-	if ( ! is_array( $qv['_communaute_blindee_status'] ) ) {
-		$qv['_communaute_blindee_status'] = (array) $qv['_communaute_blindee_status'];
-	}
-
+	$bp     = buddypress();
 	$errors = array();
 	$infos  = array();
 
-	foreach ( $qv['_communaute_blindee_status'] as $feedback_key ) {
-		$feedback = communaute_blindee_get_feedback( $feedback_key );
-		if ( ! isset( $feedback['message'] ) ) {
-			continue;
+	if ( ! $_GET && isset( $bp->signup->errors ) && $bp->signup->errors ) {
+		$feedback = communaute_blindee_get_feedback( 'signup_errors' );
+
+		if ( isset( $feedback['message'] ) ) {
+			$errors[] = $feedback['message'];
+		}
+	} else {
+		$qv = wp_parse_args( $_GET, array(
+			'_communaute_blindee_status' => false,
+		) );
+
+		if ( ! $qv['_communaute_blindee_status'] ) {
+			return;
 		}
 
-		if ( 'error' === $feedback['type'] ) {
-			$errors[] = $feedback['message'];
-		} else {
-			$infos[] = $feedback['message'];
+		if ( ! is_array( $qv['_communaute_blindee_status'] ) ) {
+			$qv['_communaute_blindee_status'] = (array) $qv['_communaute_blindee_status'];
+		}
+
+		foreach ( $qv['_communaute_blindee_status'] as $feedback_key ) {
+			$feedback = communaute_blindee_get_feedback( $feedback_key );
+			if ( ! isset( $feedback['message'] ) ) {
+				continue;
+			}
+
+			if ( 'error' === $feedback['type'] ) {
+				$errors[] = $feedback['message'];
+			} else {
+				$infos[] = $feedback['message'];
+			}
 		}
 	}
 
