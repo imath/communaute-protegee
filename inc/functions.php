@@ -629,3 +629,7 @@ function communaute_blindee_not_logged_in_privacy_policy_url( $url = '' ) {
 	return str_replace( home_url( '/' ), bp_get_signup_page(), $url );
 }
 add_filter( 'privacy_policy_url', 'communaute_blindee_not_logged_in_privacy_policy_url', 10, 1 );
+
+function communaute_blindee_return_true() {
+	return true;
+}

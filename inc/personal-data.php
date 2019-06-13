@@ -11,7 +11,7 @@ add_filter( 'bp_disable_profile_sync', '__return_true' );
 
 /**
  * @todo
- * - Email change.
+ * - Email change:  check illegal domains as WordPress don't.
  * - /wp-content/uploads ?
  * - BP email notifications.
  * - Avatar ? Not sure.
@@ -122,6 +122,11 @@ function communaute_blindee_get_wp_users_fields() {
 
 function communaute_blindee_get_user_by_query( $db_query = '' ) {
 	global $wpdb;
+
+	$skip = apply_filters( 'communaute_blindee_skip_get_user_by_query', false );
+	if ( $skip ) {
+		return $db_query;
+	}
 
 	// This is used by WordPress to get a user see WP_User->get_data_by().
 	$regex = "/SELECT \* FROM $wpdb->users WHERE (ID|user_nicename|user_email|user_login) = (.*?) LIMIT 1/";
