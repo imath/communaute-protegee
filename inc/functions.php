@@ -49,8 +49,8 @@ function communaute_blindee_dependency_check() {
 function communaute_blindee_required_setup() {
 	$setup_ok = ! bp_get_signup_allowed();
 
-	if ( ! $setup_ok && ! is_multisite() && defined( 'BP_SIGNUPS_SKIP_USER_CREATION' ) && BP_SIGNUPS_SKIP_USER_CREATION ) {
-		$setup_ok = true;
+	if ( ! $setup_ok ) {
+		$setup_ok = is_multisite() ? true : defined( 'BP_SIGNUPS_SKIP_USER_CREATION' ) && BP_SIGNUPS_SKIP_USER_CREATION;
 	}
 
 	return $setup_ok;
