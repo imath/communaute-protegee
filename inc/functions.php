@@ -544,6 +544,26 @@ function communaute_blindee_registration_feedback() {
 	}
 }
 
+function communaute_blindee_activation_feedback() {
+	$bp = buddypress();
+
+	if ( ! bp_account_was_activated() && ! $bp->template_message ) {
+		return;
+	}
+
+	if ( ! bp_account_was_activated() ) {
+		printf( '<div id="login_error">%1$s</div>%2$s', esc_html( $bp->template_message ), "\n" );
+
+	} else {
+		$message = __( 'Your account was activated successfully! You can now log in with the username and password you provided when you signed up.', 'communaute-blindee' );
+		if ( isset( $_GET['e'] ) ) {
+			$message = __( 'Your account was activated successfully! Your account details have been sent to you in a separate email.', 'communaute-blindee' );
+		}
+
+		printf( '<p class="message">%1$s</p>%2$s', esc_html( $message ), "\n" );
+	}
+}
+
 function communaute_blindee_generate_random_string( $length = 10 ) {
 	$chars  = explode( ',', 'a,z,e,r,t,y,u,i,o,p,q,s,d,f,g,h,j,k,l,m,w,x,c,v,b,n' );
 	$lchars = count( $chars );

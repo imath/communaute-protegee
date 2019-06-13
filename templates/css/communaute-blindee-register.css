@@ -11,6 +11,10 @@
 	margin-bottom: 2em;
 }
 
+#activate #template-notices {
+	margin: 0 auto;
+}
+
 #register.completed-confirmation #signup-form {
 	text-align: center;
 	padding-bottom: 26px;
