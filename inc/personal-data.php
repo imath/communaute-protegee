@@ -11,7 +11,6 @@ add_filter( 'bp_disable_profile_sync', '__return_true' );
 
 /**
  * @todo
- * - Multisite.
  * - Email change.
  * - /wp-content/uploads ?
  * - BP email notifications.
@@ -653,22 +652,63 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 }
 add_filter( 'bp_after_bp_core_signups_add_args_parse_args', 'communaute_blindee_before_signup_save' );
 
-/**
- * @todo Multisite registration.
- */
-function communaute_blindee_before_multisite_signup_save( $meta = array() ) {
+function communaute_blindee_ms_signup_update( $user_login = '', $user_email = '', $key = '', $meta = array() ){
 	if ( ! isset( $meta['profile_field_ids'] ) ) {
-		return $meta;
+		return false;
 	}
 
-	$encrypted = communaute_blindee_before_signup_save( array( 'meta' => $meta ) );
-	return reset( $encrypted );
+	$encrypted_specific_fields = communaute_blindee_xprofile_get_encrypted_specific_field_ids();
+	if ( ! $encrypted_specific_fields ) {
+		return false;
+	}
+
+	$user_data = communaute_blindee_before_signup_save( array(
+		'user_login' => $user_login,
+		'user_email' => $user_email,
+		'meta'       => $meta,
+	) );
+
+	global $wpdb;
+
+	$updated = $wpdb->update(
+		// Signups table.
+		$wpdb->signups,
+		array(
+			'user_login' => $user_data['user_login'],
+			'user_email' => $user_data['user_email'],
+			'meta'       => serialize( $user_data['meta'] ),
+		),
+		array(
+			'activation_key' => $key,
+		),
+		// Data sanitization format.
+		array(
+			'%s',
+			'%s',
+			'%s',
+		),
+		// WHERE sanitization format.
+		array(
+			'%s',
+		)
+	);
+
+	if ( ! $updated ) {
+		errorlog( 'User Registration: problem encrypting some data for the signup key: ' . $key );
+	}
+
+	return true;
 }
-//add_filter( 'signup_user_meta', 'communaute_blindee_before_multisite_signup_save', 10, 1 );
+add_action( 'after_signup_user', 'communaute_blindee_ms_signup_update', 1, 4 );
+
+function communaute_blindee_ms_signup_site_update( $domain = '', $path = '', $title = '', $user_login = '', $user_email = '', $key = '', $meta = array() ) {
+	return communaute_blindee_ms_signup_update( $user_login, $user_email, $key, $meta );
+}
+add_action( 'after_signup_site', 'communaute_blindee_ms_signup_site_update', 1, 7 );
 
 function communaute_blindee_activated_user( $user_id = 0, $key = '', $user = array() ) {
 	if ( ! isset( $user['meta']['contains_hash'] ) || ! $user_id ) {
-		errorlog( 'un probleme avec les meta: ' . $user['meta']['contains_hash'] . ' ou user_id:' . $user_id . "\n" );
+		errorlog( 'User Activation: problem with meta: ' . $user['meta']['contains_hash'] . ' or user_id:' . $user_id );
 		return;
 	}
 
