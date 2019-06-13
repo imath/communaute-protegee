@@ -3,7 +3,7 @@
   "bugs": {
     "url": "https://github.com/imath/communaute-blindee/issues"
   },
-  "description": "Restrict the access to your BuddyPress community",
+  "description": "Restricted Site Access companion to secure your BuddyPress powered community site",
   "devDependencies": {
     "grunt": "^1.0.4",
     "grunt-check-dependencies": "^1.0.0",

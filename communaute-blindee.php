@@ -1,6 +1,6 @@
 <?php
 /**
- * Restricted Site Access companion to polish BuddyPress integration.
+ * Restricted Site Access companion to secure your BuddyPress powered community site.
  *
  * @package   Communaute Blindee
  * @author    imath
