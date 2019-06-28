@@ -183,3 +183,63 @@ function communaute_blindee_user_admin_edit( $user_id ) {
 
 	add_filter( 'communaute_blindee_skip_get_user_by_query', 'communaute_blindee_return_true' );
 }
+
+function communaute_blindee_replace_admin_profile() {
+	if ( ! bp_is_active( 'xprofile' ) ) {
+		return;
+	}
+
+	if ( current_user_can( 'edit_users' ) ) {
+		add_action( 'load-profile.php',   'communaute_blindee_admin_load_user_edit_screen' );
+		add_action( 'load-user-edit.php', 'communaute_blindee_admin_load_user_edit_screen' );
+		return;
+	}
+
+	remove_submenu_page( 'profile.php', 'profile.php' );
+
+	$screen = add_submenu_page(
+		'profile.php',
+		__( 'Edit Profile',  'buddypress' ),
+		__( 'Edit Profile',  'buddypress' ),
+		'exist',
+		'bp-profile-edit',
+		array( buddypress()->members->admin, 'user_admin' )
+	);
+
+	remove_action( 'show_user_profile', array( buddypress()->members->admin, 'profile_nav' ), 99, 1 );
+	add_action( 'bp_admin_enqueue_scripts', 'communaute_blindee_admin_profile_script', 11 );
+	add_action( 'load-profile.php',   'communaute_blindee_admin_maybe_redirect_user', 1 );
+}
+add_action( 'admin_menu',         'communaute_blindee_replace_admin_profile', 1 );
+add_action( 'user_admin_menu',    'communaute_blindee_replace_admin_profile', 1 );
+add_action( 'netwrok_admin_menu', 'communaute_blindee_replace_admin_profile', 1 );
+
+function communaute_blindee_admin_profile_script() {
+	wp_add_inline_script( 'bp-members-js', '
+		( function( $ ) {
+			$( \'#profile-nav\' ).remove();
+		} )( jQuery )
+	' );
+}
+
+function communaute_blindee_admin_load_user_edit_screen() {
+	wp_add_inline_script( 'user-profile', '
+		( function( $ ) {
+			$( \'input, textarea\' ).each( function( i, element ) {
+				var disable = [\'textarea\', \'text\', \'url\', \'email\'];
+				if ( -1 !== disable.indexOf( $( element ).prop( \'type\' ) ) ) {
+					$( element ).prop( \'readonly\', true );
+				}
+			} );
+		} )( jQuery )
+	' );
+}
+
+function communaute_blindee_admin_maybe_redirect_user() {
+	if ( current_user_can( 'edit_users' ) ) {
+		return;
+	}
+
+	wp_safe_redirect( add_query_arg( 'page', 'bp-profile-edit', bp_get_admin_url( 'admin.php' ) ) );
+	exit();
+}
