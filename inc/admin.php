@@ -243,3 +243,62 @@ function communaute_blindee_admin_maybe_redirect_user() {
 	wp_safe_redirect( add_query_arg( 'page', 'bp-profile-edit', bp_get_admin_url( 'admin.php' ) ) );
 	exit();
 }
+
+function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) {
+	$field_ids = end( $args );
+
+	foreach ( $field_ids as $key_field => $field_id ) :
+		$field = xprofile_get_field( $field_id, $user->ID );
+		if ( ! $field->data ) {
+			continue;
+		}
+
+		$readonly = '';
+
+		if ( $field_id === communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_login' ) ) {
+			$readonly = ' readonly="readonly"';
+		}
+	?>
+		<div class="bp-profile-field">
+			<fieldset>
+				<legend id="encrypted-field-legend-<?php echo esc_attr( $key_field ); ?>">
+					<?php echo esc_html( $field->name ); ?>
+					<?php if ( $field->is_required ) : ?>
+						<span class="bp-required-field-label"><?php esc_html_e( '(required)', 'communaute-blindee' ); ?></span>
+					<?php endif ;?>
+				</legend>
+				<input id="encrypted-field-<?php echo absint( $field_id ); ?>" name="_communaute_blindee[<?php echo absint( $field_id ); ?>]" type="text" value="<?php echo esc_html( communaute_blindee_decrypt( $field->data->value ) ); ?>" aria-required="true" required="" aria-labelledby="encrypted-field-legend-<?php echo esc_attr( $key_field ); ?>" aria-describedby="encrypted-field-description-<?php echo esc_attr( $key_field ); ?>" style="width: 50%;"<?php echo $readonly; ?>>
+
+				<?php if ( isset( $field->description ) && $field->description ) :?>
+					<p class="description" id="encrypted-field-description-<?php echo esc_attr( $key_field ); ?>"><?php echo esc_html( $field->description ); ?></p>
+				<?php endif ; ?>
+			</fieldset>
+		</div>
+	<?php endforeach;
+}
+
+function communaute_blindee_admin_register_user_metaboxes( $self = false, $user_id = 0 ) {
+	if ( ! bp_is_active( 'xprofile') ) {
+		return;
+	}
+
+	if ( bp_is_user_spammer( $user_id ) && ! current_user_can( 'edit_users' ) ) {
+		return;
+	}
+
+	$encrypted_fields = (array) communaute_blindee_xprofile_get_encrypted_specific_field_ids();
+	if ( ! $encrypted_fields ) {
+		return;
+	}
+
+	add_meta_box(
+		'communaute_blindee_user_data',
+		_x( 'Login informations', 'xprofile user-admin edit screen', 'communaute_blindee' ),
+		'communaute_blindee_user_data_metabox',
+		get_current_screen()->id,
+		'normal',
+		'high',
+		$encrypted_fields
+	);
+}
+add_action( 'bp_members_admin_user_metaboxes', 'communaute_blindee_admin_register_user_metaboxes', 5, 2 );
