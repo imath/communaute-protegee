@@ -324,6 +324,13 @@ function communaute_blindee_get_emails() {
 			'post_content' => __( "{{{communaute_blindee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{ommunaute_blindee.url}}}\">{{communaute_blindee.title}}</a>.", 'communaute-blindee' ),
 			'post_excerpt' => __( "{{{communaute_blindee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: \n\n{{{ommunaute_blindee.url}}}.", 'communaute-blindee' ),
 		),
+		'communaute-blindee-user-registered' => array(
+			'description' => __( 'A user registered to the site', 'communaute-blindee' ),
+			'term_id'     => 0,
+			'post_title'   => __( '[{{{site.name}}}] New User Registration', 'communaute-blindee' ),
+			'post_content' => __( "New user registration on your site {{{site.name}}}:\n\n<ul><li>Username: {{{communaute_blindee.username}}}</li><li>Email: {{{communaute_blindee.user_email}}}</li></ul>", 'communaute-blindee' ),
+			'post_excerpt' => __( "New user registration on your site {{{site.name}}}:\n\n- Username: {{{communaute_blindee.username}}}\n- Email: {{{communaute_blindee.user_email}}}", 'communaute-blindee' ),
+		),
 	) );
 }
 
@@ -632,4 +639,17 @@ add_filter( 'privacy_policy_url', 'communaute_blindee_not_logged_in_privacy_poli
 
 function communaute_blindee_return_true() {
 	return true;
+}
+
+function communaute_blindee_user_registered_notification( $user_data = array() ) {
+	if ( ! $user_data['user_login'] || ! $user_data['user_email'] ) {
+		return;
+	}
+
+	bp_send_email( 'communaute-blindee-user-registered', get_option( 'admin_email' ), array(
+		'tokens' => array(
+			'communaute_blindee.username'   => $user_data['user_login'],
+			'communaute_blindee.user_email' => $user_data['user_email'],
+		),
+	) );
 }

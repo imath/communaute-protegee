@@ -123,8 +123,8 @@ function communaute_blindee_user_admin_screens() {
 		add_filter( 'communaute_blindee_skip_get_user_by_query', 'communaute_blindee_return_true' );
 	}
 }
-add_action( 'load-profile.php', 'communaute_blindee_user_admin_screens' );
-add_action( 'load-user-edit.php', 'communaute_blindee_user_admin_screens' );
+//add_action( 'load-profile.php', 'communaute_blindee_user_admin_screens' );
+//add_action( 'load-user-edit.php', 'communaute_blindee_user_admin_screens' );
 
 function communaute_blindee_user_admin_profile( $user = null ) {
 	if ( ! isset( $user->fake_email ) ) {
@@ -171,7 +171,7 @@ function communaute_blindee_profile_admin_edit( $user_id = 0 ) {
 		add_action( 'personal_options_update','communaute_blindee_user_admin_edit', 12, 1 );
 	}
 }
-add_action( 'personal_options_update', 'communaute_blindee_profile_admin_edit', 8, 1 );
+//add_action( 'personal_options_update', 'communaute_blindee_profile_admin_edit', 8, 1 );
 
 function communaute_blindee_user_admin_edit( $user_id ) {
 	$cb = communaute_blindee();

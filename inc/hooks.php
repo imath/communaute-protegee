@@ -31,6 +31,9 @@ function communaute_blindee_hooks() {
 
 			// Add a security check when a user registers
 			add_action( 'bp_signup_validate', 'communaute_blindee_validate_js_email' );
+
+			// Neutralize the BuddyPress admin notification about newly regitered users to use a custom one.
+			add_filter( 'bp_core_send_user_registration_admin_notification', '__return_false' );
 		}
 
 		if ( communaute_blindee_get_site_icon() || ( bp_get_signup_allowed() && communaute_blindee_rsa_approach_for_signups() ) ) {

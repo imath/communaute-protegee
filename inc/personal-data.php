@@ -195,7 +195,7 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 			$db_query = $wpdb->prepare( "SELECT * FROM {$wpdb->users} WHERE ID = %d", $user_id );
 
 		// It's a regular request.
-		} else {
+		} /*else {
 			$x_datatable = bp_core_get_table_prefix() . 'bp_xprofile_data';
 
 			foreach ( $field_ids as $key_field => $field ) {
@@ -212,7 +212,7 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 
 			// Override the user query.
 			$db_query = str_replace( 'SELECT * FROM', 'SELECT ' . join( ', ', $fields ) . ' FROM', $db_query );
-		}
+		}*/
 	}
 
 	return $db_query;
@@ -363,13 +363,13 @@ function communaute_blindee_set_current_user() {
 	global $current_user;
 	$current_user->data = communaute_blindee_get_userdata( $current_user->data );
 }
-add_action( 'set_current_user', 'communaute_blindee_set_current_user' );
+//add_action( 'set_current_user', 'communaute_blindee_set_current_user' );
 
 function communaute_blindee_set_personal_options( $profileuser ) {
 	global $profileuser;
 	$profileuser->data = communaute_blindee_get_userdata( $profileuser->data );
 }
-add_action( 'personal_options', 'communaute_blindee_set_personal_options', 10, 1 );
+//add_action( 'personal_options', 'communaute_blindee_set_personal_options', 10, 1 );
 
 function communaute_blindee_xprofile_encrypt_update_meta( BP_XProfile_Field $field ) {
 	$encrypted_field = bp_xprofile_get_meta( $field->id, 'field', '_communaute_blindee_encrypted_field' );
@@ -518,6 +518,11 @@ function communaute_blindee_get_email_suffix() {
 	$suffix = strtolower( $_SERVER['SERVER_NAME'] );
 	if ( substr( $suffix, 0, 4 ) == 'www.' ) {
 		$suffix = substr( $suffix, 4 );
+	}
+
+	// Make sure localhost has an extension.
+	if ( 'localhost' === $suffix ) {
+		$suffix .= '.mail';
 	}
 
 	return '@' . $suffix;
@@ -726,6 +731,31 @@ function communaute_blindee_activated_user( $user_id = 0, $key = '', $user = arr
 		$hash          = $user['meta']['field_' . $field_id . '_hash_meta'];
 		$field_data_id = BP_XProfile_ProfileData::get_fielddataid_byid( $field_id, $user_id );
 		bp_xprofile_update_meta( $field_data_id, 'data', '_communaute_blindee_hash_' . $field_id, $hash );
+	}
+
+	if ( $user_id ) {
+		$user_data = array();
+
+		$encrypted_login_field_id = communaute_blindee_xprofile_get_encrypted_login_field_id();
+		if ( $encrypted_login_field_id && isset( $user['meta']['field_' . $encrypted_login_field_id] ) ) {
+			$user_data['user_login'] = communaute_blindee_decrypt( $user['meta']['field_' . $encrypted_login_field_id] );
+		}
+
+		$encrypted_email_field_id = communaute_blindee_xprofile_get_encrypted_email_field_id();
+		if ( $encrypted_email_field_id && isset( $user['meta']['field_' . $encrypted_email_field_id] ) ) {
+			$user_data['user_email'] = communaute_blindee_decrypt( $user['meta']['field_' . $encrypted_email_field_id] );
+		}
+
+		$filter = array_filter( $user_data );
+		if ( ! $filter || count( $filter ) < 2 ) {
+			$user_data = wp_parse_args( $user_data, array_intersect_key(
+				(array) get_user_by( 'id', $user_id ),
+				array( 'user_login' => true, 'user_email' => true )
+			) );
+		}
+
+		// Inform the admin a new user just registered.
+		communaute_blindee_user_registered_notification( $user_data );
 	}
 }
 add_action( 'bp_core_activated_user', 'communaute_blindee_activated_user', 10, 3 );
