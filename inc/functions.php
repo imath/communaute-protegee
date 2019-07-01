@@ -321,7 +321,7 @@ function communaute_blindee_get_emails() {
 			'description' => __( 'A user requested to receive the privacy policy', 'communaute-blindee' ),
 			'term_id'     => 0,
 			'post_title'   => __( '[{{{site.name}}}] here is our privacy policy', 'communaute-blindee' ),
-			'post_content' => __( "{{{communaute_blindee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{ommunaute_blindee.url}}}\">{{communaute_blindee.title}}</a>.", 'communaute-blindee' ),
+			'post_content' => __( "{{{communaute_blindee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{communaute_blindee.url}}}\">{{communaute_blindee.title}}</a>.", 'communaute-blindee' ),
 			'post_excerpt' => __( "{{{communaute_blindee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: \n\n{{{ommunaute_blindee.url}}}.", 'communaute-blindee' ),
 		),
 		'communaute-blindee-user-registered' => array(
@@ -330,6 +330,15 @@ function communaute_blindee_get_emails() {
 			'post_title'   => __( '[{{{site.name}}}] New User Registration', 'communaute-blindee' ),
 			'post_content' => __( "New user registration on your site {{{site.name}}}:\n\n<ul><li>Username: {{{communaute_blindee.username}}}</li><li>Email: {{{communaute_blindee.user_email}}}</li></ul>", 'communaute-blindee' ),
 			'post_excerpt' => __( "New user registration on your site {{{site.name}}}:\n\n- Username: {{{communaute_blindee.username}}}\n- Email: {{{communaute_blindee.user_email}}}", 'communaute-blindee' ),
+		),
+		'communaute-blindee-user-changed-email' => array(
+			'description' => __( 'A user made a request to change their Email', 'communaute-blindee' ),
+			'term_id'     => 0,
+			'post_title'   => __( '[{{{site.name}}}] Email Change Request', 'communaute-blindee' ),
+			'post_content' => __( "You recently requested to have the email address on your account changed.\n\nIf this is correct, please click on <a href=\"{{{communaute_blindee.validate_link}}}\">this link</a> to change it.\n\nYou can safely ignore and delete this email if you do not want to
+			take this action.", 'communaute-blindee' ),
+			'post_excerpt' => __( "New user registration on your site {{{site.name}}}:\n\nIf this is correct, please click on the following link to change it:\n{{{communaute_blindee.validate_link}}}\n\nYou can safely ignore and delete this email if you do not want to
+			take this action.", 'communaute-blindee' ),
 		),
 	) );
 }

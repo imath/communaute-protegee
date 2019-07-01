@@ -126,16 +126,6 @@ function communaute_blindee_user_admin_screens() {
 //add_action( 'load-profile.php', 'communaute_blindee_user_admin_screens' );
 //add_action( 'load-user-edit.php', 'communaute_blindee_user_admin_screens' );
 
-function communaute_blindee_user_admin_profile( $user = null ) {
-	if ( ! isset( $user->fake_email ) ) {
-		return;
-	}
-
-	printf( '<input type="hidden" value="%s" name="fake_email" />', esc_attr( $user->fake_email ) );
-}
-add_action( 'edit_user_profile', 'communaute_blindee_user_admin_profile', 10, 1 );
-add_action( 'show_user_profile', 'communaute_blindee_user_admin_profile', 10, 1 );
-
 function communaute_blindee_profile_admin_edit( $user_id = 0 ) {
 	if ( ! bp_is_active( 'xprofile' ) || ! $user_id ) {
 		return;
@@ -236,13 +226,86 @@ function communaute_blindee_admin_load_user_edit_screen() {
 }
 
 function communaute_blindee_admin_maybe_redirect_user() {
-	if ( current_user_can( 'edit_users' ) ) {
+	if ( current_user_can( 'edit_users' ) || ! is_user_logged_in() ) {
 		return;
 	}
 
-	wp_safe_redirect( add_query_arg( 'page', 'bp-profile-edit', bp_get_admin_url( 'admin.php' ) ) );
+	$query_args    = array( 'page' => 'bp-profile-edit' );
+	$additional_qa = wp_parse_args( wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_QUERY ), array() );
+
+	if ( $additional_qa ) {
+		$query_args = array_merge( $query_args, $additional_qa );
+	}
+
+	wp_safe_redirect( add_query_arg( $query_args, bp_get_admin_url( 'admin.php' ) ) );
 	exit();
 }
+
+function communaute_blindee_user_admin_load( $user_id = 0, $posted_field_ids = array(), $errors = false ) {
+	if ( true === $errors || ! isset( $_POST['_communaute_blindee'] ) ) {
+		return;
+	}
+
+	$email_field = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' );
+	if ( ! $email_field ) {
+		return;
+	}
+
+	$bp       = buddypress();
+	$is_self  = (int) get_current_user_id() === (int) $user_id;
+
+	if ( ! $is_self && ! current_user_can( 'edit_users' ) ) {
+		return;
+	}
+
+	$redirect = '';
+	if ( isset( $bp->members->admin->redirect ) ) {
+		$redirect = $bp->members->admin->redirect;
+	} else {
+		$redirect = add_query_arg( 'page', 'bp-profile-edit', bp_get_admin_url( 'admin.php' ) );
+	}
+
+	$redirect_error = add_query_arg( 'error', '3', $redirect );
+
+	if ( ! isset( $_POST['_communaute_blindee'][ $email_field ] ) || ! $_POST['_communaute_blindee'][ $email_field ] ) {
+		bp_core_redirect( $redirect_error );
+	}
+
+	$email = is_email( $_POST['_communaute_blindee'][ $email_field ] );
+	if ( ! $email || true !== bp_core_validate_email_address( $email ) ) {
+		bp_core_redirect( $redirect_error );
+	}
+
+	$current_email = communaute_blindee_decrypt( xprofile_get_field_data( $email_field, $user_id ) );
+	if ( $email === $current_email ) {
+		return;
+	}
+
+	$hash = wp_hash( $email );
+	if ( communaute_blindee_has_hashed_meta( '_communaute_blindee_hash_' . $email_field, $hash ) || communaute_blindee_has_hashed_meta( 'field_' . $email_field . '_hash_meta', $hash, 'signup' ) ) {
+		bp_core_redirect( $redirect_error );
+	}
+
+	$encrypted_email = communaute_blindee_encrypt( $email );
+	if ( ! current_user_can( 'edit_users' ) ) {
+		$hash           = md5( $email . time() . wp_rand() );
+		$new_user_email = array(
+			'hash'  => $hash,
+			'email' => $encrypted_email,
+		);
+
+		update_user_meta( $user_id, '_communaute_blindee_new_safe_email', $new_user_email );
+
+		bp_send_email( 'communaute-blindee-user-changed-email', $current_email, array(
+			'tokens' => array(
+				'communaute_blindee.validate_link' => esc_url( admin_url( 'profile.php?newsafeemail=' . $hash ) ),
+			),
+		) );
+	} else {
+		xprofile_set_field_data( $email_field, $user_id, $encrypted_email );
+	}
+}
+add_action( 'xprofile_updated_profile', 'communaute_blindee_user_admin_load', 10, 3 );
 
 function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) {
 	$field_ids = end( $args );
@@ -254,9 +317,23 @@ function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) 
 		}
 
 		$readonly = '';
-
 		if ( $field_id === communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_login' ) ) {
 			$readonly = ' readonly="readonly"';
+		}
+
+		$dismiss_email_change_link = '';
+		if ( (int) get_current_user_id() === (int) $user->ID && $field_id === communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' ) ) {
+			$new_email = get_user_meta( $user->ID, '_communaute_blindee_new_safe_email', true );
+			if ( $new_email ) {
+				$dismiss_email_change_link = sprintf( '<p class="description">%1$s<a href="%2$s">%3$s</a></p>',
+					sprintf(
+						esc_html__( 'There is a pending change of your email to %s.', 'communaute-blindee' ),
+						'<code>' . esc_html( communaute_blindee_decrypt( $new_email['email'] ) ) . '</code>'
+					),
+					esc_url( wp_nonce_url( self_admin_url( 'profile.php?dismiss=' . $user->ID . '_new_safe_email' ), 'dismiss-' . $user->ID . '_new_safe_email' ) ),
+					esc_html__( 'Cancel', 'communaute-blindee' )
+				);
+			}
 		}
 	?>
 		<div class="bp-profile-field">
@@ -269,9 +346,15 @@ function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) 
 				</legend>
 				<input id="encrypted-field-<?php echo absint( $field_id ); ?>" name="_communaute_blindee[<?php echo absint( $field_id ); ?>]" type="text" value="<?php echo esc_html( communaute_blindee_decrypt( $field->data->value ) ); ?>" aria-required="true" required="" aria-labelledby="encrypted-field-legend-<?php echo esc_attr( $key_field ); ?>" aria-describedby="encrypted-field-description-<?php echo esc_attr( $key_field ); ?>" style="width: 50%;"<?php echo $readonly; ?>>
 
-				<?php if ( isset( $field->description ) && $field->description ) :?>
+				<?php if ( isset( $field->description ) && $field->description ) : ?>
 					<p class="description" id="encrypted-field-description-<?php echo esc_attr( $key_field ); ?>"><?php echo esc_html( $field->description ); ?></p>
 				<?php endif ; ?>
+
+				<?php if ( $dismiss_email_change_link ) :
+
+					echo $dismiss_email_change_link;
+
+				endif ; ?>
 			</fieldset>
 		</div>
 	<?php endforeach;

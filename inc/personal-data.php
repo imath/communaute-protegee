@@ -359,12 +359,18 @@ function communaute_blindee_get_userdata( $userdata = null ) {
 }
 add_filter( 'bp_core_get_core_userdata', 'communaute_blindee_get_userdata', 1, 1 );
 
+/**
+ * @todo remove this function ?
+ */
 function communaute_blindee_set_current_user() {
 	global $current_user;
 	$current_user->data = communaute_blindee_get_userdata( $current_user->data );
 }
 //add_action( 'set_current_user', 'communaute_blindee_set_current_user' );
 
+/**
+ * @todo remove this function ?
+ */
 function communaute_blindee_set_personal_options( $profileuser ) {
 	global $profileuser;
 	$profileuser->data = communaute_blindee_get_userdata( $profileuser->data );
