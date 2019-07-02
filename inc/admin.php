@@ -241,7 +241,7 @@ function communaute_blindee_admin_maybe_redirect_user() {
 	exit();
 }
 
-function communaute_blindee_user_admin_load( $user_id = 0, $posted_field_ids = array(), $errors = false ) {
+function communaute_blindee_admin_xprofile_load( $user_id = 0, $posted_field_ids = array(), $errors = false ) {
 	if ( true === $errors || ! isset( $_POST['_communaute_blindee'] ) ) {
 		return;
 	}
@@ -303,9 +303,31 @@ function communaute_blindee_user_admin_load( $user_id = 0, $posted_field_ids = a
 		) );
 	} else {
 		xprofile_set_field_data( $email_field, $user_id, $encrypted_email );
+
+		// Update the hash.
+		$field_data_id = BP_XProfile_ProfileData::get_fielddataid_byid( $email_field, $user_id );
+		bp_xprofile_update_meta( $field_data_id, 'data', '_communaute_blindee_hash_' . $email_field, wp_hash( $email ) );
 	}
 }
-add_action( 'xprofile_updated_profile', 'communaute_blindee_user_admin_load', 10, 3 );
+add_action( 'xprofile_updated_profile', 'communaute_blindee_admin_xprofile_load', 10, 3 );
+
+function communaute_blindee_admin_profile_load() {
+	$user_id = get_current_user_id();
+
+	if ( isset( $_GET['dismiss'] ) && $user_id . '_new_safe_email' === $_GET['dismiss'] ) {
+		check_admin_referer( 'dismiss-' . $user_id . '_new_safe_email' );
+
+		delete_user_meta( $user_id, '_communaute_blindee_new_safe_email' );
+		wp_redirect( add_query_arg(
+			array(
+				'page'    => 'bp-profile-edit',
+				'updated' => 'true'
+			),
+			bp_get_admin_url( 'admin.php' )
+		) );
+	}
+}
+add_action( 'bp_members_admin_load', 'communaute_blindee_admin_profile_load' );
 
 function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) {
 	$field_ids = end( $args );
@@ -325,12 +347,20 @@ function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) 
 		if ( (int) get_current_user_id() === (int) $user->ID && $field_id === communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' ) ) {
 			$new_email = get_user_meta( $user->ID, '_communaute_blindee_new_safe_email', true );
 			if ( $new_email ) {
+				$dismiss_url = add_query_arg(
+					array(
+						'page'    => 'bp-profile-edit',
+						'dismiss' => $user->ID . '_new_safe_email',
+					),
+					bp_get_admin_url( 'admin.php' )
+				);
+
 				$dismiss_email_change_link = sprintf( '<p class="description">%1$s<a href="%2$s">%3$s</a></p>',
 					sprintf(
 						esc_html__( 'There is a pending change of your email to %s.', 'communaute-blindee' ),
 						'<code>' . esc_html( communaute_blindee_decrypt( $new_email['email'] ) ) . '</code>'
 					),
-					esc_url( wp_nonce_url( self_admin_url( 'profile.php?dismiss=' . $user->ID . '_new_safe_email' ), 'dismiss-' . $user->ID . '_new_safe_email' ) ),
+					esc_url( wp_nonce_url( $dismiss_url, 'dismiss-' . $user->ID . '_new_safe_email' ) ),
 					esc_html__( 'Cancel', 'communaute-blindee' )
 				);
 			}
