@@ -11,7 +11,6 @@ add_filter( 'bp_disable_profile_sync', '__return_true' );
 
 /**
  * @todo
- * - Email change:  check illegal domains as WordPress don't.
  * - /wp-content/uploads ?
  * - BP email notifications.
  * - Avatar ? Not sure.

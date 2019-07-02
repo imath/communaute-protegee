@@ -203,18 +203,25 @@ function communaute_blindee_enqueue_scripts() {
  * @return string|void The Plugin template directory if needed.
  */
 function communaute_blindee_templates_dir() {
-	if ( ! bp_is_register_page() && ! bp_is_activation_page() ) {
-		return;
-	}
+	if ( ! is_admin() ) {
+		if ( ! bp_is_register_page() && ! bp_is_activation_page() ) {
+			return;
+		}
 
-	// Restrict Site Access is not using the login screen
-	if ( ! communaute_blindee_rsa_approach_for_signups() ) {
-		return;
-	}
+		// Restrict Site Access is not using the login screen
+		if ( ! communaute_blindee_rsa_approach_for_signups() ) {
+			return;
+		}
 
-	// If an IP is allowed it will get the regular BuddyPress Register/Activate templates
-	if ( communaute_blindee_current_ip_has_access() ) {
-		return;
+		// If an IP is allowed it will get the regular BuddyPress Register/Activate templates
+		if ( communaute_blindee_current_ip_has_access() ) {
+			return;
+		}
+	} else {
+		global $pagenow;
+		if ( 'admin.php' !== $pagenow || ! ( isset( $_GET['page'] ) && 'bp-profile-edit' === $_GET['page'] ) )  {
+			return;
+		}
 	}
 
 	// Use the plugin's templates
@@ -648,6 +655,10 @@ add_filter( 'privacy_policy_url', 'communaute_blindee_not_logged_in_privacy_poli
 
 function communaute_blindee_return_true() {
 	return true;
+}
+
+function communaute_blindee_return_false() {
+	return false;
 }
 
 function communaute_blindee_user_registered_notification( $user_data = array() ) {

@@ -210,6 +210,29 @@ function communaute_blindee_admin_profile_script() {
 			$( \'#profile-nav\' ).remove();
 		} )( jQuery )
 	' );
+
+	if ( current_user_can( 'edit_users' ) ) {
+		return;
+	}
+
+	// Edit the Save button ID. Needed for the password control.
+	wp_add_inline_script( 'user-profile', '
+		( function( $ ) {
+			$( \'#save\' ).prop( \'id\', \'wp-submit\' );
+		} )( jQuery )
+	', 'before' );
+
+	// Improve the layout of the password control.
+	wp_add_inline_style( 'bp-members-css', '
+		#pass-strength-result,
+		.pw-weak {
+			margin-left: 195px;
+		}
+
+		#pass-strength-result {
+			width: 158px;
+		}
+	' );
 }
 
 function communaute_blindee_admin_load_user_edit_screen() {
@@ -242,12 +265,9 @@ function communaute_blindee_admin_maybe_redirect_user() {
 }
 
 function communaute_blindee_admin_xprofile_load( $user_id = 0, $posted_field_ids = array(), $errors = false ) {
-	if ( true === $errors || ! isset( $_POST['_communaute_blindee'] ) ) {
-		return;
-	}
+	$is_password_change = isset( $_POST['pass1'] ) && $_POST['pass1'];
 
-	$email_field = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' );
-	if ( ! $email_field ) {
+	if ( true === $errors || ! isset( $_POST['_communaute_blindee'] ) || ! $is_password_change ) {
 		return;
 	}
 
@@ -266,6 +286,52 @@ function communaute_blindee_admin_xprofile_load( $user_id = 0, $posted_field_ids
 	}
 
 	$redirect_error = add_query_arg( 'error', '3', $redirect );
+
+	if ( $is_password_change ) {
+		$pass1 = '';
+		$pass2 = '';
+		if ( isset( $_POST['pass1'] ) ) {
+			$pass1 = $_POST['pass1'];
+		}
+		if ( isset( $_POST['pass2'] ) ) {
+			$pass2 = $_POST['pass2'];
+		}
+
+		$user = get_user_by( 'id', $user_id );
+
+		/**
+		 * Fires before the password and confirm password fields are checked for congruity.
+		 *
+		 * @since WordPress 1.5.1
+		 *
+		 * @param string $user_login The username.
+		 * @param string $pass1     The password (passed by reference).
+		 * @param string $pass2     The confirmed password (passed by reference).
+		 */
+		do_action_ref_array( 'check_passwords', array( $user->user_login, &$pass1, &$pass2 ) );
+
+		if ( ! $pass1 || false !== strpos( wp_unslash( $pass1 ), '\\' ) || $pass1 !== $pass2 ) {
+			bp_core_redirect( $redirect_error );
+		}
+
+		$user->user_pass = $pass1;
+
+		add_filter( 'send_password_change_email', 'communaute_blindee_return_false' );
+		$user_id = wp_update_user( $user );
+		remove_filter( 'send_password_change_email', 'communaute_blindee_return_false' );
+
+		if ( is_wp_error( $user_id ) ) {
+			bp_core_redirect( $redirect_error );
+		} else {
+			// @todo there should be an email sent to the user to inform him about
+			// this change.
+		}
+	}
+
+	$email_field = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' );
+	if ( ! $email_field ) {
+		return;
+	}
 
 	if ( ! isset( $_POST['_communaute_blindee'][ $email_field ] ) || ! $_POST['_communaute_blindee'][ $email_field ] ) {
 		bp_core_redirect( $redirect_error );
@@ -369,6 +435,8 @@ function communaute_blindee_admin_profile_load() {
 			delete_user_meta( $user_id, '_communaute_blindee_new_safe_email' );
 			bp_core_redirect( add_query_arg( 'updated', 1, $redirect ) );
 		}
+	} else {
+		add_action( 'bp_members_admin_enqueue_scripts', 'communaute_blindee_register_scripts' );
 	}
 }
 add_action( 'bp_members_admin_load', 'communaute_blindee_admin_profile_load' );
@@ -431,7 +499,22 @@ function communaute_blindee_user_data_metabox( WP_User $user, $args = array() ) 
 				endif ; ?>
 			</fieldset>
 		</div>
-	<?php endforeach;
+	<?php endforeach; ?>
+
+	<?php if ( count( $field_ids ) >= 1 && ! current_user_can( 'edit_users' ) ) :
+		wp_enqueue_script( 'communaute-blindee-register' ); ?>
+
+		<div class="bp-profile-field">
+			<fieldset>
+				<legend id="user-password">
+					<?php esc_html_e( 'Password', 'communaute-blindee' ); ?>
+				</legend>
+
+				<?php bp_get_template_part( 'members/register-password' ); ?>
+			</fieldset>
+		</div>
+
+	<?php endif;
 }
 
 function communaute_blindee_admin_register_user_metaboxes( $self = false, $user_id = 0 ) {
