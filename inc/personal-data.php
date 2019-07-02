@@ -264,7 +264,7 @@ function communaute_blindee_get_user_by_hashed_meta( $field_id = 0, $hashed_valu
 	);
 }
 
-function communaute_blindee_has_hashed_meta( $meta_key = '', $hashed_value = '', $table = 'xprofile' ) {
+function communaute_blindee_has_hashed_meta( $meta_key = '', $hashed_value = '', $table = 'xprofile', $row = false ) {
 	if ( ! $hashed_value || ! $meta_key ) {
 		return null;
 	}
@@ -289,13 +289,23 @@ function communaute_blindee_has_hashed_meta( $meta_key = '', $hashed_value = '',
 		$meta_like    = '%' . bp_esc_like( ltrim( rtrim( maybe_serialize( array( $meta_key => $hashed_value ) ), '}' ),'a:1:{' ) ) . '%';
 
 		// Try to find a match in signup meta.
-		$return = (bool) $wpdb->get_var(
-			$wpdb->prepare( "
-				SELECT signup_id FROM {$signup_table}
-				WHERE meta LIKE %s",
-				$meta_like
-			)
-		);
+		if ( $row ) {
+			$return = $wpdb->get_row(
+				$wpdb->prepare( "
+					SELECT * FROM {$signup_table}
+					WHERE meta LIKE %s",
+					$meta_like
+				)
+			);
+		} else {
+			$return = (bool) $wpdb->get_var(
+				$wpdb->prepare( "
+					SELECT signup_id FROM {$signup_table}
+					WHERE meta LIKE %s",
+					$meta_like
+				)
+			);
+		}
 	}
 
 	return $return;

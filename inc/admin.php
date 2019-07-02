@@ -302,11 +302,12 @@ function communaute_blindee_admin_xprofile_load( $user_id = 0, $posted_field_ids
 			),
 		) );
 	} else {
-		xprofile_set_field_data( $email_field, $user_id, $encrypted_email );
-
-		// Update the hash.
-		$field_data_id = BP_XProfile_ProfileData::get_fielddataid_byid( $email_field, $user_id );
-		bp_xprofile_update_meta( $field_data_id, 'data', '_communaute_blindee_hash_' . $email_field, wp_hash( $email ) );
+		/**
+		 *  @todo use the specific function to be sure everything is updated:
+		 *        - xProfile field.
+		 *        - xProfile field data meta.
+		 *        - Signup's meta email hash.
+		 */
 	}
 }
 add_action( 'xprofile_updated_profile', 'communaute_blindee_admin_xprofile_load', 10, 3 );
@@ -318,13 +319,56 @@ function communaute_blindee_admin_profile_load() {
 		check_admin_referer( 'dismiss-' . $user_id . '_new_safe_email' );
 
 		delete_user_meta( $user_id, '_communaute_blindee_new_safe_email' );
-		wp_redirect( add_query_arg(
+		bp_core_redirect( add_query_arg(
 			array(
 				'page'    => 'bp-profile-edit',
-				'updated' => 'true'
+				'updated' => 1
 			),
 			bp_get_admin_url( 'admin.php' )
 		) );
+	} elseif ( isset( $_GET['newsafeemail'] ) ) {
+		$has_requested_change = get_user_meta( $user_id , '_communaute_blindee_new_safe_email', true );
+
+		/**
+		 * @todo create a specific function that could also be used for users who are able to
+		 *       edit other users and that could be used on front-end.
+		 */
+		if ( $has_requested_change && isset( $has_requested_change['hash'] ) && hash_equals( $has_requested_change['hash'], $_GET['newsafeemail'] ) ) {
+			$redirect = add_query_arg(
+				array(
+					'page'    => 'bp-profile-edit',
+				),
+				bp_get_admin_url( 'admin.php' )
+			);
+
+			$email_field = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' );
+			if ( ! $email_field ) {
+				bp_core_redirect( add_query_arg( 'error', 1, $redirect ) );
+			}
+
+			$current_email = xprofile_get_field_data( $email_field, $user_id );
+			xprofile_set_field_data( $email_field, $user_id, $has_requested_change['email'] );
+
+			// Update the hashes.
+			$email         = communaute_blindee_decrypt( $has_requested_change['email'] );
+			$hashed_email  = wp_hash( $email );
+			$field_data_id = BP_XProfile_ProfileData::get_fielddataid_byid( $email_field, $user_id );
+			bp_xprofile_update_meta( $field_data_id, 'data', '_communaute_blindee_hash_' . $email_field, wp_hash( $email ) );
+
+			// Do not forget the signups table.
+			$current_email = communaute_blindee_decrypt( $current_email );
+			$signup = communaute_blindee_has_hashed_meta( 'field_' . $email_field . '_hash_meta', wp_hash( $current_email ), 'signup', true );
+			if ( $signup ) {
+				$meta = (array) maybe_unserialize( $signup->meta );
+				$meta['field_' . $email_field . '_hash_meta'] = $hashed_email;
+
+				BP_Signup::update( array( 'signup_id' => $signup->signup_id, 'meta' => $meta ) );
+			}
+
+			// Delete the user meta & Redirect with a successful feedback.
+			delete_user_meta( $user_id, '_communaute_blindee_new_safe_email' );
+			bp_core_redirect( add_query_arg( 'updated', 1, $redirect ) );
+		}
 	}
 }
 add_action( 'bp_members_admin_load', 'communaute_blindee_admin_profile_load' );
