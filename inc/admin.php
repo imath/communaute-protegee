@@ -362,7 +362,7 @@ function communaute_blindee_admin_xprofile_load( $user_id = 0, $posted_field_ids
 
 		update_user_meta( $user_id, '_communaute_blindee_new_safe_email', $new_user_email );
 
-		bp_send_email( 'communaute-blindee-user-changed-email', $current_email, array(
+		bp_send_email( 'communaute-blindee-user-changed-email', $user_id, array(
 			'tokens' => array(
 				'communaute_blindee.validate_link' => esc_url( admin_url( 'profile.php?newsafeemail=' . $hash ) ),
 			),

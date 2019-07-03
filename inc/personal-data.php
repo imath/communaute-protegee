@@ -218,6 +218,31 @@ function communaute_blindee_get_user_by_query( $db_query = '' ) {
 }
 add_filter( 'query', 'communaute_blindee_get_user_by_query', 10, 1 );
 
+function communaute_blindee_reset_bp_email_to( $to = array() ) {
+	$email_field_id = communaute_blindee_xprofile_get_encrypted_specific_field_id( 'user_email' );
+
+	if ( ! $email_field_id ) {
+		return $to;
+	}
+
+	foreach ( $to as $key => $recipient ) {
+		$user = $recipient->get_user();
+
+		$encrypted_email = communaute_blindee_get_user_encrypted_email( $user->ID );
+		if ( $encrypted_email ) {
+			$user->user_email = communaute_blindee_decrypt( $encrypted_email );
+		}
+
+		$to[ $key ] = new BP_Email_Recipient( $user );
+
+		// Reset the encrypted email.
+		$encrypted_email = '';
+	}
+
+	return $to;
+}
+add_filter( 'bp_email_set_to', 'communaute_blindee_reset_bp_email_to' );
+
 function communaute_blindee_get_user_encrypted_specific_field( $user_id = 0, $type = '' ) {
 	if ( ! $user_id || ! $type ) {
 		return null;
