@@ -323,8 +323,21 @@ function communaute_blindee_admin_xprofile_load( $user_id = 0, $posted_field_ids
 		if ( is_wp_error( $user_id ) ) {
 			bp_core_redirect( $redirect_error );
 		} else {
-			// @todo there should be an email sent to the user to inform him about
-			// this change.
+			$encrypted_email = communaute_blindee_get_user_encrypted_email( $user->ID );
+			if ( $encrypted_email ) {
+				$user->user_email = communaute_blindee_decrypt( $encrypted_email );
+			}
+
+			remove_filter( 'bp_email_set_to', 'communaute_blindee_reset_bp_email_to' );
+
+			bp_send_email( 'communautee-blindee-user-pass-reset', $user, array(
+				'tokens' => array(
+					'communaute_blindee.admin_email' => get_option( 'admin_email' ),
+					'communaute_blindee.user_email'  => $user->user_email,
+				),
+			) );
+
+			add_filter( 'bp_email_set_to', 'communaute_blindee_reset_bp_email_to' );
 		}
 	}
 

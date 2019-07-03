@@ -987,7 +987,7 @@ function communaute_blindee_trace_direct_password_reset( $title = '', $user_logi
 }
 
 function communaute_blindee_password_message( $message = '', $key = '', $user_login = '', $user_data = null ) {
-	// Prevent duplicates
+	// Prevent duplicates.
 	remove_filter( 'retrieve_password_message', 'communaute_blindee_password_message', 10, 4 );
 
 	$encrypted_login = communaute_blindee_get_user_encrypted_login( $user_data->ID );
@@ -998,8 +998,15 @@ function communaute_blindee_password_message( $message = '', $key = '', $user_lo
 	// Decrypt the login.
 	$login = communaute_blindee_decrypt( $encrypted_login );
 
-	// Use it in the user notification.
-	return str_replace( sprintf( __( 'Username: %s' ), $user_login ) . "\r\n\r\n", sprintf( __( 'Username: %s' ), $login ) . "\r\n\r\n", $message );
+	bp_send_email( 'communautee-blindee-user-reset-pass', $user_data, array(
+		'tokens' => array(
+			'communaute_blindee.username'      => $login,
+			'communaute_blindee.password_link' => network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ),
+		),
+	) );
+
+	// Do not send the WordPress regular mail.
+	return '';
 }
 
 function communaute_blindee_trace_direct_login( $user_login = '' ) {

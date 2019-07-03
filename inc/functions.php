@@ -347,6 +347,20 @@ function communaute_blindee_get_emails() {
 			'post_excerpt' => __( "New user registration on your site {{{site.name}}}:\n\nIf this is correct, please click on the following link to change it:\n{{{communaute_blindee.validate_link}}}\n\nYou can safely ignore and delete this email if you do not want to
 			take this action.", 'communaute-blindee' ),
 		),
+		'communautee-blindee-user-reset-pass' => array(
+			'description' => __( 'A user reset their password', 'communaute-blindee' ),
+			'term_id'     => 0,
+			'post_title'  => __( '[{{{site.name}}}] Password Reset', 'communaute-blindee' ),
+			'post_content' => __( "Someone has requested a password reset for the following account:\n\n<ul><li>Site Name: {{{site.name}}}</li><li>Username: {{{communaute_blindee.username}}}</li></ul>\n\nIf this was a mistake, just ignore this email and nothing will happen.\n\nTo reset your password, visit <a href=\"{{{communaute_blindee.password_link}}}\">this address</a>.", 'communaute-blindee' ),
+			'post_excerpt' => __( "Someone has requested a password reset for the following account:\n\n- Site Name: {{{site.name}}}\n- Username: {{{communaute_blindee.username}}}\n\nIf this was a mistake, just ignore this email and nothing will happen.\n\nTo reset your password, visit the following address:\n\n{{{communaute_blindee.password_link}}}", 'communaute-blindee' ),
+		),
+		'communautee-blindee-user-pass-reset' => array(
+			'description' => __( 'Password reset confirmation', 'communaute-blindee' ),
+			'term_id'     => 0,
+			'post_title'  => __( '[{{{site.name}}}] Password Changed', 'communaute-blindee' ),
+			'post_content' => __( "This notice confirms that your password was changed on {{{site.name}}}.\n\nIf you did not change your password, please contact the <a href=\"mailto:{{{communaute_blindee.admin_email}}}\">Site Administrator</a>.\n\nThis email has been sent to {{{communaute_blindee.user_email}}}.", 'communaute-blindee' ),
+			'post_excerpt' => __( "This notice confirms that your password was changed on {{{site.name}}}.\n\nIf you did not change your password, please contact the Site Administrator at:\n\n{{{communaute_blindee.admin_email}}}\n\nThis email has been sent to {{{communaute_blindee.user_email}}}", 'communaute-blindee' ),
+		),
 	) );
 }
 
