@@ -11,8 +11,8 @@ add_filter( 'bp_disable_profile_sync', '__return_true' );
 
 /**
  * @todo
+ * - Multisite registration -> unhook `add_action( 'bp_actions', 'bp_members_action_activate_account' )` and redo?
  * - /wp-content/uploads ?
- * - BP email notifications.
  * - Avatar ? Not sure.
  * - Migration tool.
  * - Roll back ? There must be one way of uncrypting all data back!
@@ -654,10 +654,6 @@ function communaute_blindee_before_signup_save( $args = array() ) {
 		// Add new value meta to query login hash (eg: during authentification).
 		$args['meta']['field_' . $encrypted_login_field_id . '_hash_meta'] = wp_hash( $args['user_login'] );
 		$contains_hash[] = $encrypted_login_field_id;
-
-		/**
-		 * @todo check encrypted logins are unique.
-		 */
 
 		// Replace the login with a randomized one.
 		$args['user_login']= communaute_blindee_get_fake_login();
