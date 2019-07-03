@@ -744,7 +744,7 @@ function communaute_blindee_ms_signup_update( $user_login = '', $user_email = ''
 	);
 
 	if ( ! $updated ) {
-		errorlog( 'User Registration: problem encrypting some data for the signup key: ' . $key );
+		error_log( 'User Registration: problem encrypting some data for the signup key: ' . $key );
 	}
 
 	return true;
@@ -758,7 +758,7 @@ add_action( 'after_signup_site', 'communaute_blindee_ms_signup_site_update', 1, 
 
 function communaute_blindee_activated_user( $user_id = 0, $key = '', $user = array() ) {
 	if ( ! isset( $user['meta']['contains_hash'] ) || ! $user_id ) {
-		errorlog( 'User Activation: problem with meta: ' . $user['meta']['contains_hash'] . ' or user_id:' . $user_id );
+		error_log( 'User Activation: problem with meta: ' . $user['meta']['contains_hash'] . ' or user_id:' . $user_id );
 		return;
 	}
 
