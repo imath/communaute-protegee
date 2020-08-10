@@ -2,11 +2,11 @@
 # This file is distributed under the same license as the BP Restricted Community package.
 msgid ""
 msgstr ""
-"Project-Id-Version: BP Restricted Community 1.0.0-alpha\n"
+"Project-Id-Version: BP Restricted Community 1.0.0-beta\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/bp-restricted-community/issues\n"
-"POT-Creation-Date: 2015-12-03 18:13:32+00:00\n"
-"PO-Revision-Date: 2015-12-03 19:14+0100\n"
-"Last-Translator: imath <mathchristo@yahoo.fr>\n"
+"POT-Creation-Date: 2019-05-16 01:35:35+00:00\n"
+"PO-Revision-Date: 2019-05-16 03:36+0100\n"
+"Last-Translator: imath <contact@imathi.eu>\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -15,26 +15,26 @@ msgstr ""
 "X-Generator: Poedit 1.7.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: bp-restricted-community.php:311
+#: bp-restricted-community.php:307
 msgid "Limited Email Registrations"
 msgstr "Inscription limitée aux emails contenant les domaines"
 
-#: bp-restricted-community.php:345
+#: bp-restricted-community.php:341
 msgid "If you want to limit site registrations to certain domains. One domain per line."
 msgstr ""
 "Si vous souhaitez que les seules personnes autorisées à s&#39;inscrire soient celles "
 "disposant d’une adresse de messagerie liée à certains noms de domaines. Un domaine par "
 "ligne."
 
-#: bp-restricted-community.php:432
+#: bp-restricted-community.php:428
 msgid "We were not able to validate your email, please try again."
 msgstr "Nous n&#39;avons pas été en mesure de valider votre email, merci de réessayer."
 
-#: bp-restricted-community.php:511
+#: bp-restricted-community.php:591
 msgid "%s requires at least version %s of BuddyPress."
 msgstr "BP Restricted Community requiert à minima la version %s de BuddyPress"
 
-#: bp-restricted-community.php:515
+#: bp-restricted-community.php:595
 msgid "%s needs the <a href=\"%s\">Restricted Site Access</a> plugin to be active."
 msgstr ""
 "%s a besoin que le plugin <a href=\"%s\">Restricted Site Access</a> soit activé sur "
@@ -55,6 +55,46 @@ msgstr "https://wordpress.org/"
 #: templates/members/bp-restricted-community-header.php:45
 msgid "Powered by WordPress"
 msgstr "Powered by WordPress"
+
+#: templates/members/register-password.php:20
+msgid "Strength indicator"
+msgstr "Indicateur de robustesse"
+
+#: templates/members/register-password.php:25
+msgid "Confirm use of weak password"
+msgstr "Confirmer l’utilisation du mot de passe faible"
+
+#: templates/members/register-password.php:31
+msgid "Confirm new password"
+msgstr "Confirmer le nouveau mot de passe"
+
+#: templates/members/single/settings/general-password.php:14
+msgid "Generate Password"
+msgstr "Générer un mot de passe"
+
+#: templates/members/single/settings/general-password.php:21
+msgid "Hide password"
+msgstr "Cacher le mot de passe"
+
+#: templates/members/single/settings/general-password.php:23
+msgid "Hide"
+msgstr "Cacher"
+
+#: templates/members/single/settings/general-password.php:25
+msgid "Cancel password change"
+msgstr "Annuler la modification du mot de passe"
+
+#: templates/members/single/settings/general-password.php:26
+msgid "Cancel"
+msgstr "Annuler"
+
+#: templates/members/single/settings/general-password.php:33
+msgid "Repeat Your New Password"
+msgstr "Répéter votre nouveau mot de passe"
+
+#: templates/members/single/settings/general-password.php:40
+msgid "Confirm use of potentially weak password"
+msgstr "Confirmation de l’utilisation de mot de passe potentiellement faible."
 
 #. Plugin Name of the plugin/theme
 msgid "BP Restricted Community"

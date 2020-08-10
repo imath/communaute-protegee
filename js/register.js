@@ -1,8 +1,14 @@
+/* global bpRestrictCommunity */
 ( function( $ ) {
 	// Register form
 	if ( typeof bpRestrictCommunity !== 'undefined' ) {
 		// Make the BP Button like a WP one
-		$( '#register #signup_submit' ).addClass( 'button button-primary button-large' );
+		$( '#register #signup_submit' ).addClass( 'button button-primary button-large' ).prop( 'id', 'wp-submit' );
+
+		$( '#signup_password' ).first().remove();
+		$( '#pass-strength-result' ).first().remove();
+		$( 'label[for="signup_password_confirm"]' ).remove();
+		$( '#signup_password_confirm' ).first().remove();
 
 		// Remove Field visibility
 		$( '.field-visibility-settings-notoggle, .field-visibility-settings-toggle, .field-visibility-settings' ).remove();
@@ -25,7 +31,7 @@
 			} else {
 				$( '#blog-details' ).hide();
 			}
-		} )
+		} );
 
 	// Register completed step or Activate form
 	} else {

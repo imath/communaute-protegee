@@ -11,7 +11,7 @@
  * Plugin Name:       BP Restricted Community
  * Plugin URI:        https://github.com/imath/bp-restricted-community
  * Description:       Restrict the access to your BuddyPress community
- * Version:           1.0.0-alpha
+ * Version:           1.0.0-beta
  * Author:            imath
  * Author URI:        https://github.com/imath
  * Text Domain:       bp-restricted-community
@@ -39,7 +39,7 @@ class BP_Restricted_Community {
 	/**
 	 * BuddyPress db version
 	 */
-	public static $bp_db_version_required = 10071;
+	public static $bp_db_version_required = 11105;
 
 	/**
 	 * Initialize the plugin
@@ -71,7 +71,7 @@ class BP_Restricted_Community {
 	 */
 	private function setup_globals() {
 		/** Plugin globals ********************************************/
-		$this->version       = '1.0.0-alpha';
+		$this->version       = '1.0.0-beta';
 		$this->domain        = 'bp-restricted-community';
 		$this->name          = 'BP Restricted Community';
 		$this->file          = __FILE__;
@@ -170,6 +170,7 @@ class BP_Restricted_Community {
 			if ( true === (bool) $this->use_site_icon || ( $this->signup_allowed &&  ( empty( $this->rsa_options['approach'] ) || 1 === $this->rsa_options['approach'] ) ) ) {
 				add_action( 'login_init',                   array( $this, 'enqueue_scripts' ) );
 				add_action( 'bp_restricted_community_init', array( $this, 'enqueue_scripts' ) );
+				add_action( 'bp_enqueue_scripts',           array( $this, 'enqueue_scripts' ), 40 );
 			}
 
 		// There's something wrong, inform the Administrator
@@ -204,14 +205,9 @@ class BP_Restricted_Community {
 	public function register_scripts() {
 		$scripts = apply_filters( 'bp_restricted_community_register_scripts', array(
 			array(
-				'handle' => 'bp-restricted-community-password-verify',
-				'file'   => bp_get_theme_compat_url() . "js/password-verify{$this->minified}.js",
-				'deps'   => array( 'password-strength-meter' ),
-			),
-			array(
 				'handle' => 'bp-restricted-community-register',
 				'file'   => $this->plugin_js . "register{$this->minified}.js",
-				'deps'   => array( 'jquery', 'bp-restricted-community-password-verify' ),
+				'deps'   => array( 'jquery', 'user-profile' ),
 			),
 		) );
 
@@ -282,7 +278,7 @@ class BP_Restricted_Community {
 	 * @since 1.0.0
 	 */
 	public function template_dir() {
-		if ( ! bp_is_register_page() && ! bp_is_activation_page() ) {
+		if ( ! bp_is_register_page() && ! bp_is_activation_page() && ! bp_is_active( 'settings' ) && ! bp_is_user_settings_general() ) {
 			return;
 		}
 
@@ -493,10 +489,94 @@ if ( 'undefined' !== jQuery ) {
 			if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
 				add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
 				wp_localize_script( 'bp-restricted-community-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
+
+				// Replace BuddyPress's way of setting the password by the WordPress's one.
+				add_action( 'bp_account_details_fields', array( $this, 'register_with_wp_pwd_control' ) );
 			}
 
 			do_action( 'bp_restricted_community_enqueue_scripts' );
+
+		} elseif ( bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
+			wp_dequeue_script( 'bp-legacy-password-verify-password-verify' );
+			wp_enqueue_script( 'user-profile' );
+
+			// Remove BuddyPress Password fields.
+			wp_add_inline_script( 'user-profile', '
+				( function() {
+					document.querySelector( \'#settings-form\' ).setAttribute( \'id\', \'your-profile\' );
+					document.querySelector( \'#pass1\' ).remove();
+					document.querySelector( \'label[for="pass1"] span\' ).remove();
+					document.querySelector( \'#pass-strength-result\' ).remove();
+					document.querySelector( \'#pass2\' ).remove();
+					document.querySelector( \'label[for="pass2"]\' ).remove();
+				} )();
+			' );
+
+			wp_add_inline_style( 'bp-parent-css', '
+				body.settings #buddypress .wp-pwd button {
+					padding: 6px;
+					margin-top: 0;
+					margin-bottom: 3px;
+					vertical-align: middle;
+				}
+				body.buddypress.settings #pass1,
+				body.buddypress.settings #pass1-text,
+				#buddypress #pass-strength-result {
+					width: 16em;
+				}
+
+				body.buddypress.settings #pass1-text,
+				body.buddypress.settings .pw-weak,
+				body.buddypress.settings #pass-strength-result {
+					display: none;
+				}
+
+				body.buddypress.settings .show-password #pass1-text {
+					display: inline-block;
+				}
+
+				body.buddypress.settings .show-password #pass1 {
+					display: none;
+				}
+
+				body.buddypress.settings #your-profile #submit:disabled {
+					color: #767676;
+					opacity: 0.4;
+				}
+
+				body.buddypress.settings.js .wp-pwd,
+				body.buddypress.settings.js .user-pass2-wrap {
+					display: none;
+				}
+
+				body.buddypress.settings.no-js .wp-generate-pw,
+				body.buddypress.settings.no-js .wp-cancel-pw,
+				body.buddypress.settings.no-js .wp-hide-pw {
+					display: none;
+				}
+			', 'after' );
+
+			// Replace BuddyPress's way of setting the password by the WordPress's one.
+			add_action( 'bp_core_general_settings_before_submit', array( $this, 'update_with_wp_pwd_control' ) );
 		}
+	}
+
+	/**
+	 * Use the WordPress control to set the password during registration.
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_with_wp_pwd_control() {
+		bp_get_template_part( 'members/register-password' );
+	}
+
+	/**
+	 * Use the WordPress control to update the password from the user's profile.
+	 *
+	 * @since 1.0.0
+	 */
+	public function update_with_wp_pwd_control() {
+		bp_get_template_part( 'members/single/settings/general-password' );
 	}
 
 	/**

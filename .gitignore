@@ -1,0 +1,13 @@
+*DS_*
+
+phpunit.xml
+
+pids
+logs
+
+node_modules
+npm-debug.log
+
+dist
+.cache
+bp-restricted-community.zip
