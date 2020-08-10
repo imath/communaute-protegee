@@ -3,21 +3,23 @@
 	// Register form
 	if ( typeof bpRestrictCommunity !== 'undefined' ) {
 		// Make the BP Button like a WP one
-		$( '#register #signup_submit' ).addClass( 'button button-primary button-large' ).prop( 'id', 'wp-submit' );
+		$( '#register [name="signup_submit"]' ).addClass( 'button button-primary button-large' ).prop( 'id', 'wp-submit' );
 
-		$( '#signup_password' ).first().remove();
-		$( '#pass-strength-result' ).first().remove();
-		$( 'label[for="signup_password_confirm"]' ).remove();
-		$( '#signup_password_confirm' ).first().remove();
+		if ( ! $('#buddypress').hasClass( 'buddypress-wrap' ) ) {
+			$( '#signup_password' ).first().remove();
+			$( '#pass-strength-result' ).first().remove();
+			$( 'label[for="signup_password_confirm"]' ).remove();
+			$( '#signup_password_confirm' ).first().remove();
+		}
 
 		// Remove Field visibility
 		$( '.field-visibility-settings-notoggle, .field-visibility-settings-toggle, .field-visibility-settings' ).remove();
 
 		// Add an hidden field
-		$( '#signup_form' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', bpRestrictCommunity.field_key ) );
+		$( 'form[name="signup_form"]' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', bpRestrictCommunity.field_key ) );
 
 		// This will be checked on the server side to try to prevent spam registrations
-		$( '#signup_form' ).on( 'submit', function( event ) {
+		$( 'form[name="signup_form"]' ).on( 'submit', function( event ) {
 			$( event.currentTarget ).find( 'input[name="' + bpRestrictCommunity.field_key + '"]' ).val( $( 'input[name="signup_email"]' ).val() );
 		} );
 
@@ -34,6 +36,8 @@
 		} );
 
 	// Register completed step or Activate form
+	} else if ( $( '#register' ).hasClass( 'completed-confirmation' ) ) {
+		$( 'aside.bp-feedback' ).appendTo( 'form[name="signup_form"] .layout-wrap' );
 	} else {
 		if ( $( '#activate-page' ).length && $( '#activation-form' ).length ) {
 			$( '#activate input[type="submit"]' ).addClass( 'button button-primary button-large' );

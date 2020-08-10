@@ -7,6 +7,10 @@
 
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
+
+if ( 'nouveau' === bp_get_theme_package_id() ) {
+	return;
+}
 ?>
 
 <div class="user-pass1-wrap">

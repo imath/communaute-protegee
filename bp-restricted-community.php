@@ -496,7 +496,7 @@ if ( 'undefined' !== jQuery ) {
 
 			do_action( 'bp_restricted_community_enqueue_scripts' );
 
-		} elseif ( bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
+		} elseif ( 'legacy' === bp_get_theme_package_id() && bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
 			wp_dequeue_script( 'bp-legacy-password-verify-password-verify' );
 			wp_enqueue_script( 'user-profile' );
 

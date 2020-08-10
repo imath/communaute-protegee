@@ -11,6 +11,10 @@
 	margin-bottom: 2em;
 }
 
+#activate aside.bp-feedback p {
+    margin-bottom: 0;
+}
+
 #buddypress .standard-form#signup_form div div.error,
 #message.bp-template-notice {
 	background: #faa;
@@ -77,7 +81,16 @@
 	margin: 2px 6px 16px 0;
 }
 
-#buddypress .standard-form#signup_form div.submit {
+#register input[type="email"] {
+	line-height: 1.33333333; /* 32px */
+	border-width: 0.0625rem;
+	padding: 0.1875rem 0.3125rem; /* 3px 5px */
+	margin: 0 6px 16px 0;
+	min-height: 40px;
+	max-height: none;
+}
+
+#buddypress form[name="signup_form"].standard-form div.submit {
 	clear: both;
 	float: right;
 	padding: 15px 0px 0px;
@@ -125,4 +138,15 @@
 #buddypress .standard-form .editfield.field_type_checkbox {
 	padding: 3px;
 	margin: 2px 6px 16px 0;
+}
+
+.login #buddypress fieldset {
+    border: none;
+}
+
+.login #buddypress fieldset legend {
+    font-size: 14px;
+    line-height: 1.5;
+    display: inline-block;
+    margin-bottom: 3px;
 }
