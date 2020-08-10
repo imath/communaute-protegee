@@ -152,7 +152,7 @@ class BP_Restricted_Community {
 				// Add Registration restrictions by email domain for non ms configs
 				if ( ! is_multisite() ) {
 					add_filter( 'bp_admin_init',         array( $this, 'email_restrictions_setting_field' )        );
-					add_filter( 'whitelist_options',     array( $this, 'email_restrictions_add_option'    ), 10, 1 );
+					add_filter( 'allowed_options',       array( $this, 'email_restrictions_add_option'    ), 10, 1 );
 					add_action( 'admin_enqueue_scripts', array( $this, 'move_restriction_settings'        ), 10, 1 );
 				}
 
@@ -312,19 +312,19 @@ class BP_Restricted_Community {
 	}
 
 	/**
-	 * Whitelist the limited_email_domains for non ms configs
+	 * Allow the limited_email_domains for non ms configs
 	 *
 	 * @since 1.0.0
 	 */
-	public function email_restrictions_add_option( $whitelist_options = array() ) {
-		if ( isset( $whitelist_options['general'] ) ) {
-			$whitelist_options['general'] = array_merge(
-				$whitelist_options['general'],
+	public function email_restrictions_add_option( $allowed_options = array() ) {
+		if ( isset( $allowed_options['general'] ) ) {
+			$allowed_options['general'] = array_merge(
+				$allowed_options['general'],
 				array( 'limited_email_domains' )
 			);
 		}
 
-		return $whitelist_options;
+		return $allowed_options;
 	}
 
 	/**
