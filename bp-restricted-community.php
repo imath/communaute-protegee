@@ -39,7 +39,7 @@ class BP_Restricted_Community {
 	/**
 	 * BuddyPress db version
 	 */
-	public static $bp_db_version_required = 11105;
+	public static $bp_db_version_required = 12385;
 
 	/**
 	 * Initialize the plugin
@@ -87,6 +87,7 @@ class BP_Restricted_Community {
 		$this->rsa_options    = (array) get_option( 'rsa_options', array() );
 		$this->signup_allowed = bp_get_signup_allowed();
 		$this->use_site_icon  = $this->get_site_icon();
+		$this->is_legacy      = 'legacy' === bp_get_theme_package_id();
 	}
 
 	/**
@@ -109,7 +110,14 @@ class BP_Restricted_Community {
 	 * @since 1.0.0
 	 */
 	public function dependency_check() {
-		return class_exists( 'Restricted_Site_Access' );
+		$dependency = class_exists( 'Restricted_Site_Access' );
+
+		// Make sure Restricted Site Access version is 7.1.0 at least.
+		if ( $dependency && defined( 'RSA_VERSION' ) ) {
+			return version_compare( RSA_VERSION, '7.1.0', '>=' );
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -161,10 +169,6 @@ class BP_Restricted_Community {
 
 				// Add a security check when a user registers
 				add_action( 'bp_signup_validate', array( $this, 'validate_js_email' ) );
-
-			// If signup is disable simply fix Restricted Site Access for BuddyPress specific case (if needed: Approach #4)
-			} else {
-				add_action( 'restrict_site_access_handling', array( $this, 'fix_restricted_site_access_for_buddypress' ), 10, 1 );
 			}
 
 			if ( true === (bool) $this->use_site_icon || ( $this->signup_allowed &&  ( empty( $this->rsa_options['approach'] ) || 1 === $this->rsa_options['approach'] ) ) ) {
@@ -222,7 +226,7 @@ class BP_Restricted_Community {
 	 * @since 1.0.0
 	 */
 	public function register_template_dir() {
-		// After Theme, but before BP Legacy
+		// After Theme, but before active Template Pack
 		bp_register_template_stack( array( $this, 'template_dir' ),  13 );
 	}
 
@@ -235,34 +239,11 @@ class BP_Restricted_Community {
 		$retval = false;
 
 		if ( ! empty( $this->rsa_options['allowed'] ) ) {
-			$remote_ip = $_SERVER['REMOTE_ADDR'];  //save the remote ip
-			if ( strpos( $remote_ip, '.' ) ) {
-				$remote_ip = str_replace( '::ffff:', '', $remote_ip ); //handle dual-stack addresses
-			}
-			$remote_ip = inet_pton( $remote_ip );
+			$remote_ip = Restricted_Site_Access::get_client_ip_address();
 
-			// iterate through the allow list
-			foreach( $this->rsa_options['allowed'] as $line ) {
-				list( $ip, $mask ) = explode( '/', $line . '/128' );
-
-				$mask = str_repeat( 'f', $mask >> 2 );
-
-				switch( $mask % 4 ) {
-					case 1:
-						$mask .= '8';
-						break;
-					case 2:
-						$mask .= 'c';
-						break;
-					case 3:
-						$mask .= 'e';
-						break;
-				}
-
-				$mask = pack( 'H*', $mask );
-
-				// check if the masked versions match
-				if ( ( inet_pton( $ip ) & $mask ) == ( $remote_ip & $mask ) ) {
+			// iterate through the allowed list.
+			foreach ( $this->rsa_options['allowed'] as $line ) {
+				if ( self::ip_in_range( $remote_ip, $line ) ) {
 					$retval = true;
 					break;
 				}
@@ -364,26 +345,6 @@ if ( 'undefined' !== jQuery ) {
 	}
 
 	/**
-	 * Hook the Restrict Site Access approach #4 to make sure BuddyPress pages
-	 * are not shown in this case
-	 *
-	 * @since 1.0.0
-	 */
-	public function fix_restricted_site_access_for_buddypress( $approach ) {
-		if ( empty( $approach ) || 4 !== $approach || ! is_buddypress() ) {
-			return;
-		}
-
-		$redirect = false;
-
-		if ( ! empty( $this->rsa_options['page'] ) ) {
-			$redirect = get_permalink( $this->rsa_options['page'] );
-		}
-
-		bp_core_redirect( $redirect );
-	}
-
-	/**
 	 * Filter the Restrict Site Access main function and adapt it for our BuddyPress needs
 	 *
 	 * @since 1.0.0
@@ -399,13 +360,8 @@ if ( 'undefined' !== jQuery ) {
 			return true;
 		}
 
-		// BuddyPress is resetting the post query, so redirecting is better than editing the query vars like it's
-		// done at line 171 of restricted_site_access.php. This is only needed when the option is set to a site's page.
-		if ( ! empty( $this->rsa_options['approach'] ) && 4 === $this->rsa_options['approach'] && is_buddypress() ) {
-			$this->fix_restricted_site_access_for_buddypress( $this->rsa_options['approach'] );
-
 		// Login screen is the target of this plugin, allow BuddyPress registration and activation
-		} elseif ( bp_is_register_page() || bp_is_activation_page() ) {
+		if ( bp_is_register_page() || bp_is_activation_page() ) {
 			$is_restricted = (bool) ! ( empty( $this->rsa_options['approach'] ) || 1 === $this->rsa_options['approach'] );
 		}
 
@@ -490,13 +446,18 @@ if ( 'undefined' !== jQuery ) {
 				add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
 				wp_localize_script( 'bp-restricted-community-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
 
-				// Replace BuddyPress's way of setting the password by the WordPress's one.
-				add_action( 'bp_account_details_fields', array( $this, 'register_with_wp_pwd_control' ) );
+				/**
+				 * Replace BuddyPress's way of setting the password by the WordPress's one
+				 * for the Legacy template pack
+				 */
+				if ( $this->is_legacy ) {
+					add_action( 'bp_account_details_fields', array( $this, 'register_with_wp_pwd_control' ) );
+				}
 			}
 
 			do_action( 'bp_restricted_community_enqueue_scripts' );
 
-		} elseif ( 'legacy' === bp_get_theme_package_id() && bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
+		} elseif ( $this->is_legacy && bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
 			wp_dequeue_script( 'bp-legacy-password-verify-password-verify' );
 			wp_enqueue_script( 'user-profile' );
 
@@ -597,7 +558,7 @@ if ( 'undefined' !== jQuery ) {
 
 		if ( ! empty( $warnings ) ) :
 		?>
-		<div id="message" class="error">
+		<div id="message" class="error notice is-dismissible">
 			<?php foreach ( $warnings as $warning ) : ?>
 				<p><?php echo wp_kses_data( $warning ) ; ?>
 			<?php endforeach ; ?>

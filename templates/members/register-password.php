@@ -8,7 +8,7 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( 'nouveau' === bp_get_theme_package_id() ) {
+if ( ! bp_restricted_community()->is_legacy ) {
 	return;
 }
 ?>
