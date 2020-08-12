@@ -22,7 +22,7 @@ add_filter( 'show_admin_bar', '__return_false' );
 <!--<![endif]-->
 <head>
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
-<title><?php bloginfo('name'); ?> &rsaquo; <?php bp_is_register_page() ? esc_html_e( 'Register', 'bp-restricted-community' ) : esc_html_e( 'Activate', 'bp-restricted-community' ); ?></title>
+<title><?php bloginfo('name'); ?> &rsaquo; <?php bp_is_register_page() ? esc_html_e( 'Register', 'communaute-protegee' ) : esc_html_e( 'Activate', 'communaute-protegee' ); ?></title>
 
 <?php
 wp_admin_css( 'login', true );
@@ -41,8 +41,8 @@ if ( is_multisite() ) {
 	$register_header_url   = network_home_url();
 	$register_header_title = get_current_site()->site_name;
 } else {
-	$register_header_url   = __( 'https://wordpress.org/', 'bp-restricted-community' );
-	$register_header_title = __( 'Powered by WordPress', 'bp-restricted-community' );
+	$register_header_url   = __( 'https://wordpress.org/', 'communaute-protegee' );
+	$register_header_title = __( 'Powered by WordPress', 'communaute-protegee' );
 }
 
 /**

@@ -337,7 +337,7 @@ function communaute_protegee_js_validate_email() {
 	);
 
 	if ( ! $fields[ $field_key ] || ! $fields['signup_email'] || $fields[ $field_key ] !== $fields['signup_email'] ) {
-		$errors->add( 'signup_email', __( 'We were not able to validate your email, please try again.', 'bp-restricted-community' ) );
+		$errors->add( 'signup_email', __( 'We were not able to validate your email, please try again.', 'communaute-protegee' ) );
 		$bp->signup->errors['signup_email'] = $errors->errors['signup_email'][0];
 	}
 }

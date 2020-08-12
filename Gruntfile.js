@@ -16,7 +16,7 @@ module.exports = function( grunt ) {
 		checktextdomain: {
 			options: {
 				correct_domain: false,
-				text_domain: ['bp-restricted-community'],
+				text_domain: ['communaute-protegee'],
 				keywords: [
 					'__:1,2d',
 					'_e:1,2d',

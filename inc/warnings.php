@@ -18,11 +18,15 @@ function communaute_protegee_setup_warnings() {
 	$cp = communaute_protegee();
 
 	if( ! $cp->version_check() ) {
-		$warnings[] = sprintf( __( '%s requires at least version %s of BuddyPress.', 'bp-restricted-community' ), $cp->name, '2.4.0' );
+		$warnings[] = sprintf( __( '%s requires at least version 6.2.0 of BuddyPress.', 'communaute-protegee' ), $cp->name );
 	}
 
 	if ( ! $cp->dependency_check() ) {
-		$warnings[] = sprintf( __( '%s needs the <a href="%s">Restricted Site Access</a> plugin to be active.', 'bp-restricted-community' ), $cp->name, 'https://wordpress.org/plugins/restricted-site-access/' );
+		$warnings[] = sprintf(
+			__( '%s needs the <a href="%s">Restricted Site Access</a> plugin (version >= 7.1.0) to be active.', 'communaute-protegee' ),
+			$cp->name,
+			esc_url( 'https://wordpress.org/plugins/restricted-site-access/' )
+		);
 	}
 
 	if ( ! empty( $warnings ) ) :

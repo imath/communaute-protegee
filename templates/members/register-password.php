@@ -21,18 +21,18 @@ if ( ! communaute_protegee()->is_legacy ) {
 				<span class="dashicons dashicons-hidden" aria-hidden="true"></span>
 			</button>
 		</div>
-		<div id="pass-strength-result" class="hide-if-no-js" aria-live="polite"><?php esc_html_e( 'Strength indicator', 'bp-restricted-community' ); ?></div>
+		<div id="pass-strength-result" class="hide-if-no-js" aria-live="polite"><?php esc_html_e( 'Strength indicator', 'communaute-protegee' ); ?></div>
 	</div>
 	<div class="pw-weak">
 		<label>
 			<input type="checkbox" name="pw_weak" class="pw-checkbox" />
-			<?php esc_html_e( 'Confirm use of weak password', 'bp-restricted-community' ); ?>
+			<?php esc_html_e( 'Confirm use of weak password', 'communaute-protegee' ); ?>
 		</label>
 	</div>
 </div>
 
 <p class="user-pass2-wrap">
-	<label for="pass2"><?php esc_html_e( 'Confirm new password', 'bp-restricted-community' ); ?></label><br />
+	<label for="pass2"><?php esc_html_e( 'Confirm new password', 'communaute-protegee' ); ?></label><br />
 	<input type="password" name="signup_password_confirm" id="pass2" class="input" size="20" value="" autocomplete="off" />
 </p>
 

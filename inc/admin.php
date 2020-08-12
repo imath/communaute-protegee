@@ -22,7 +22,7 @@ function communaute_protegee_restrictions_setting_field_callback() {
 	?>
 	<textarea name="limited_email_domains" id="limited_email_domains" aria-describedby="limited-email-domains-desc" cols="45" rows="5"><?php echo esc_textarea( $limited_email_domains == '' ? '' : implode( "\n", (array) $limited_email_domains ) ); ?></textarea>
 	<p class="description" id="limited-email-domains-desc">
-		<?php esc_html_e( 'If you want to limit site registrations to certain domains. One domain per line.', 'bp-restricted-community' ) ?>
+		<?php esc_html_e( 'If you want to limit site registrations to certain domains. One domain per line.', 'communaute-protegee' ) ?>
 	</p>
 	<?php
 }
@@ -35,7 +35,7 @@ function communaute_protegee_restrictions_setting_field_callback() {
 function communaute_protegee_restrictions_setting_field() {
 	add_settings_field(
 		'limited_email_domains',
-		__( 'Limited Email Registrations', 'bp-restricted-community' ),
+		__( 'Limited Email Registrations', 'communaute-protegee' ),
 		'communaute_protegee_restrictions_setting_field_callback',
 		'general',
 		'default'
