@@ -52,7 +52,7 @@ if ( is_multisite() ) {
  *
  * @param string $register_header_url Login header logo URL.
  */
-bp_restricted_community()->register_header_url = apply_filters( 'login_headerurl', $register_header_url );
+communaute_protegee()->register_header_url = apply_filters( 'login_headerurl', $register_header_url );
 
 /**
  * Filter the title attribute of the header logo above login form.
@@ -61,7 +61,7 @@ bp_restricted_community()->register_header_url = apply_filters( 'login_headerurl
  *
  * @param string $register_header_title Login header logo title attribute.
  */
-bp_restricted_community()->register_header_title = apply_filters( 'login_headertitle', $register_header_title );
+communaute_protegee()->register_header_title = apply_filters( 'login_headertitle', $register_header_title );
 ?>
 </head>
 	<body class="login wp-core-ui">

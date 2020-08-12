@@ -8,7 +8,7 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-if ( ! bp_restricted_community()->is_legacy ) {
+if ( ! communaute_protegee()->is_legacy ) {
 	return;
 }
 ?>
