@@ -32,7 +32,7 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 		}
 
 		// Allow Register & Activate page to be displayed.
-		add_filter( 'restricted_site_access_is_restricted', 'communaute_protegee_allow_bp_registration', 10, 1 );
+		add_filter( 'restricted_site_access_is_restricted', 'communaute_protegee_allow_bp_registration', 10, 2 );
 
 		// Add a security check when a user registers.
 		add_action( 'bp_signup_validate', 'communaute_protegee_js_validate_email' );

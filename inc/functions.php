@@ -292,9 +292,10 @@ function communaute_protegee_enqueue_scripts() {
  * @since 1.0.0
  *
  * @param boolean $is_restricted True if the access is restricted. False otherwise.
+ * @param WP      $wo The main query objetct.
  * @param boolean True if the access is restricted. False otherwise.
  */
-function communaute_protegee_allow_bp_registration( $is_restricted = false ) {
+function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp ) {
 	// Not restricted, do nothing.
 	if ( ! $is_restricted ) {
 		return $is_restricted;
@@ -311,6 +312,15 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false ) {
 	// Login screen is the target of this plugin, allow BuddyPress registration and activation.
 	if ( bp_is_register_page() || bp_is_activation_page() ) {
 		$is_restricted = (bool) ! ( empty( $cp->rsa_options['approach'] ) || 1 === $cp->rsa_options['approach'] );
+	}
+
+	// Redirect users requesting the privacy page to the form to receive it by email.
+	if ( bp_signup_requires_privacy_policy_acceptance() && isset( $wp->query_vars['pagename'] ) ) {
+		$url = trailingslashit( home_url( $wp->query_vars['pagename'] ) );
+
+		if ( $url === get_privacy_policy_url() ) {
+			bp_core_redirect( trailingslashit( bp_get_signup_page() . $wp->query_vars['pagename'] ) );
+		}
 	}
 
 	return $is_restricted;
@@ -341,3 +351,28 @@ function communaute_protegee_js_validate_email() {
 		$bp->signup->errors['signup_email'] = $errors->errors['signup_email'][0];
 	}
 }
+
+function communaute_protegee_privacy_step() {
+	if ( ! bp_is_current_component( 'register' ) || ! bp_current_action() ) {
+		return;
+	}
+
+	$page           = get_page_by_path( bp_current_action() );
+	$policy_page_id = (int) get_option( 'wp_page_for_privacy_policy' );
+
+	if ( ! is_a( $page, 'WP_Post' ) || $policy_page_id !== (int) $page->ID ) {
+		bp_core_redirect( wp_login_url() );
+	}
+
+	$bp = buddypress();
+	if ( ! isset( $bp->signup ) ) {
+		$bp->signup = (object) array( 'step' => null );
+	}
+
+	$bp->signup->step = 'privacy-policy';
+
+	do_action( 'communaute_protegee_privacy_step', $page );
+
+	bp_core_load_template( apply_filters( 'bp_core_template_register', array( 'register', 'registration/register' ) ) );
+}
+add_action( 'bp_screens', 'communaute_protegee_privacy_step' );
