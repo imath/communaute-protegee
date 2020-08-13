@@ -19,10 +19,10 @@ function communaute_protegee_register_scripts() {
 	// Get the Plugin's main instance.
 	$cp = communaute_protegee();
 
-	$scripts = apply_filters( 'bp_restricted_community_register_scripts',
+	$scripts = apply_filters( 'communaute_protegee_register_scripts',
 		array(
 			array(
-				'handle' => 'bp-restricted-community-register',
+				'handle' => 'communaute-protegee-register',
 				'file'   => $cp->plugin_js . "register{$cp->minified}.js",
 				'deps'   => array( 'jquery', 'user-profile' ),
 			),
@@ -43,7 +43,7 @@ function communaute_protegee_register_scripts() {
  * Locate the stylesheet to use for our custom templates
  *
  * You can override the one used by the plugin by putting yours
- * inside yourtheme/css/bp-restricted-community-register.min.css
+ * inside yourtheme/css/communaute-protegee-register.min.css
  *
  * @since 1.0.0
  *
@@ -73,7 +73,7 @@ function communaute_protegee_locate_stylesheet( $stylesheet_name = '' ) {
 	 * @param string $stylesheet_uri The stylesheet URI.
 	 * @param string $stylesheet_name The stylesheet name.
 	 */
-	return apply_filters( 'bp_restricted_community_locate_stylesheet', $stylesheet_uri, $stylesheet_name );
+	return apply_filters( 'communaute_protegee_locate_stylesheet', $stylesheet_uri, $stylesheet_name );
 }
 
 /**
@@ -140,7 +140,7 @@ function communaute_protegee_template_dir() {
 	 *
 	 * @param string $template_dir The template location directory to use.
 	 */
-	return apply_filters( 'bp_restricted_community_templates_dir', $template_dir );
+	return apply_filters( 'communaute_protegee_templates_dir', $template_dir );
 }
 
 /**
@@ -198,17 +198,17 @@ function communaute_protegee_enqueue_scripts() {
 
 		// Enqueue style
 		wp_enqueue_style(
-			'bp-restricted-community-register-style',
-			communaute_protegee_locate_stylesheet( 'bp-restricted-community-register' ),
+			'communaute-protegee-register-style',
+			communaute_protegee_locate_stylesheet( 'communaute-protegee-register' ),
 			array( 'login' ),
 			$cp->version
 		);
-		wp_enqueue_script( 'bp-restricted-community-register' );
+		wp_enqueue_script( 'communaute-protegee-register' );
 
 		// The register form need some specific stuff
 		if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
 			add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
-			wp_localize_script( 'bp-restricted-community-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
+			wp_localize_script( 'communaute-protegee-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
 
 			/**
 			 * Replace BuddyPress's way of setting the password by the WordPress's one
@@ -219,7 +219,7 @@ function communaute_protegee_enqueue_scripts() {
 			}
 		}
 
-		do_action( 'bp_restricted_community_enqueue_scripts' );
+		do_action( 'communaute_protegee_enqueue_scripts' );
 
 	} elseif ( $cp->is_legacy && bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
 		wp_dequeue_script( 'bp-legacy-password-verify-password-verify' );

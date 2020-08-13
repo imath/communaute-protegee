@@ -44,12 +44,12 @@ module.exports = function( grunt ) {
 				options: {
 					domainPath: '/languages',
 					exclude: ['/node_modules'],
-					mainFile: 'bp-restricted-community.php',
-					potFilename: 'bp-restricted-community.pot',
+					mainFile: 'class-communaute-protegee.php',
+					potFilename: 'communaute-protegee.pot',
 					processPot: function( pot ) {
 						pot.headers['last-translator']      = 'imath <contact@imathi.eu>';
 						pot.headers['language-team']        = 'FRENCH <contact@imathi.eu>';
-						pot.headers['report-msgid-bugs-to'] = 'https://github.com/imath/bp-restricted-community/issues';
+						pot.headers['report-msgid-bugs-to'] = 'https://github.com/imath/communaute-protegee/issues';
 						return pot;
 					},
 					type: 'wp-plugin'

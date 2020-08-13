@@ -12,13 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function communaute_protegee_setup_hooks( $cp = null ) {
+	add_action( 'wp_head', 'wp_no_robots', 1 );
+	add_action( 'communaute_protegee_head', 'wp_no_robots', 1 );
+
 	// Adds a new size to site icon.
 	add_filter( 'site_icon_image_sizes', 'communaute_protegee_login_screen_add_icon_size', 10, 1 );
 
 	// Loads CSS & JavaScripts into Plugin templates.
-	add_action( 'bp_restricted_community_init', 'communaute_protegee_register_scripts', 1 );
-	add_action( 'bp_restricted_community_footer', 'wp_print_footer_scripts', 20 );
-	add_action( 'bp_restricted_community_head', 'wp_print_styles', 20 );
+	add_action( 'communaute_protegee_init', 'communaute_protegee_register_scripts', 1 );
+	add_action( 'communaute_protegee_footer', 'wp_print_footer_scripts', 20 );
+	add_action( 'communaute_protegee_head', 'wp_print_styles', 20 );
 
 	if ( isset( $cp->signup_allowed ) && $cp->signup_allowed ) {
 		// Register the template directory.
@@ -40,7 +43,7 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 
 	if ( true === (bool) $cp->use_site_icon || ( $cp->signup_allowed && ( empty( $cp->rsa_options['approach'] ) || 1 === $cp->rsa_options['approach'] ) ) ) {
 		add_action( 'login_init', 'communaute_protegee_enqueue_scripts' );
-		add_action( 'bp_restricted_community_init', 'communaute_protegee_enqueue_scripts' );
+		add_action( 'communaute_protegee_init', 'communaute_protegee_enqueue_scripts' );
 		add_action( 'bp_enqueue_scripts', 'communaute_protegee_enqueue_scripts', 40 );
 	}
 }

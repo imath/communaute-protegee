@@ -3,12 +3,12 @@
  * Template to simulate the WordPress login/register screen headers
  */
 nocache_headers();
-header('Content-Type: '.get_bloginfo('html_type').'; charset='.get_bloginfo('charset'));
+header( 'Content-Type: '. get_bloginfo('html_type') .'; charset=' . get_bloginfo( 'charset' ) );
 
 /**
  * Fires when the register & activate pages are initialized.
  */
-do_action( 'bp_restricted_community_init' );
+do_action( 'communaute_protegee_init' );
 
 // Do not display admin bar
 add_filter( 'show_admin_bar', '__return_false' );
@@ -21,8 +21,8 @@ add_filter( 'show_admin_bar', '__return_false' );
 	<html xmlns="http://www.w3.org/1999/xhtml" <?php language_attributes(); ?>>
 <!--<![endif]-->
 <head>
-<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>" />
-<title><?php bloginfo('name'); ?> &rsaquo; <?php bp_is_register_page() ? esc_html_e( 'Register', 'communaute-protegee' ) : esc_html_e( 'Activate', 'communaute-protegee' ); ?></title>
+<meta http-equiv="Content-Type" content="<?php bloginfo( 'html_type' ); ?>; charset=<?php bloginfo( 'charset' ); ?>" />
+<title><?php bloginfo( 'name' ); ?> &rsaquo; <?php bp_is_register_page() ? esc_html_e( 'Register', 'communaute-protegee' ) : esc_html_e( 'Activate', 'communaute-protegee' ); ?></title>
 
 <?php
 wp_admin_css( 'login', true );
@@ -35,7 +35,7 @@ do_action( 'login_head' );
 /**
  * Use this to run custom actions on BuddyPress register/activate pages
  */
-do_action( 'bp_restricted_community_head' );
+do_action( 'communaute_protegee_head' );
 
 if ( is_multisite() ) {
 	$register_header_url   = network_home_url();

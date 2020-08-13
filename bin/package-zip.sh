@@ -50,15 +50,15 @@ status "Generating release..."
 grunt release
 
 # Remove any existing zip file
-rm -f bp-restricted-community.zip
+rm -f communaute-protegee.zip
 
 # Generate the plugin zip file
 status "Creating archive..."
-zip -r bp-restricted-community.zip \
+zip -r communaute-protegee.zip \
     js \
     languages \
     templates \
-    bp-restricted-community.php \
+    communaute-protegee.php \
     README.md
 
 status "Done."

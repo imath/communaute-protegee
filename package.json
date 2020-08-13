@@ -1,7 +1,7 @@
 {
   "author": "imath",
   "bugs": {
-    "url": "https://github.com/imath/bp-restricted-community/issues"
+    "url": "https://github.com/imath/communaute-protegee/issues"
   },
   "description": "Restrict the access to your BuddyPress community",
   "devDependencies": {
@@ -30,12 +30,12 @@
     "buddypress",
     "private"
   ],
-  "homepage": "https://imathi.eu/tag/bp-restricted-community",
+  "homepage": "https://imathi.eu/tag/communaute-protegee",
   "license": "GPL-2.0+",
-  "name": "bp-restricted-community",
+  "name": "communaute-protegee",
   "repository": {
     "type": "git",
-    "url": "https://github.com/imath/bp-restricted-community.git"
+    "url": "https://github.com/imath/communaute-protegee.git"
   },
   "version": "1.0.0-beta"
 }

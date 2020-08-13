@@ -4,7 +4,7 @@
  *
  * Use this to run custom actions on BuddyPress register/activate pages
  */
-do_action( 'bp_restricted_community_footer' ); ?>
+do_action( 'communaute_protegee_footer' ); ?>
 
 	</body>
 </html>
