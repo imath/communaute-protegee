@@ -1,9 +1,9 @@
 <?php
 /**
- * Hooks.
+ * Warnings.
  *
  * @package   communaute-protegee
- * @subpackage \inc\hooks
+ * @subpackage \inc\warnings
  */
 
 // Exit if accessed directly.
@@ -17,11 +17,11 @@ function communaute_protegee_setup_warnings() {
 	// Get the Plugin's main instance.
 	$cp = communaute_protegee();
 
-	if( ! $cp->version_check() ) {
+	if( ! communaute_protegee_bp_version_check() ) {
 		$warnings[] = sprintf( __( '%s requires at least version 6.2.0 of BuddyPress.', 'communaute-protegee' ), $cp->name );
 	}
 
-	if ( ! $cp->dependency_check() ) {
+	if ( ! communaute_protegee_rsa_version_check() ) {
 		$warnings[] = sprintf(
 			__( '%s needs the <a href="%s">Restricted Site Access</a> plugin (version >= 7.1.0) to be active.', 'communaute-protegee' ),
 			$cp->name,

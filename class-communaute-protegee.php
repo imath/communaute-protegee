@@ -38,11 +38,6 @@ final class Communaute_Protegee {
 	protected static $instance = null;
 
 	/**
-	 * BuddyPress db version
-	 */
-	public static $bp_db_version_required = 12385;
-
-	/**
 	 * Initialize the plugin
 	 */
 	private function __construct() {
@@ -72,9 +67,10 @@ final class Communaute_Protegee {
 	private function inc() {
 		$inc_path = plugin_dir_path( __FILE__ ) . 'inc/';
 
+		require $inc_path . 'dependency.php';
 		require $inc_path . 'globals.php';
 
-		if ( $this->version_check() && $this->dependency_check() ) {
+		if ( communaute_protegee_bp_version_check() && communaute_protegee_rsa_version_check() ) {
 			require $inc_path . 'functions.php';
 
 			if ( is_admin() ) {
@@ -85,36 +81,6 @@ final class Communaute_Protegee {
 
 		} elseif ( is_admin() ) {
 			require $inc_path . 'warnings.php';
-		}
-	}
-
-	/**
-	 * Checks BuddyPress version
-	 *
-	 * @since 1.0.0
-	 */
-	public function version_check() {
-		// taking no risk
-		if ( ! function_exists( 'bp_get_db_version' ) ) {
-			return false;
-		}
-
-		return self::$bp_db_version_required <= bp_get_db_version();
-	}
-
-	/**
-	 * Check if the Restricted Site Access plugin is activated
-	 *
-	 * @since 1.0.0
-	 */
-	public function dependency_check() {
-		$dependency = class_exists( 'Restricted_Site_Access' );
-
-		// Make sure Restricted Site Access version is 7.1.0 at least.
-		if ( $dependency && defined( 'RSA_VERSION' ) ) {
-			return version_compare( RSA_VERSION, '7.1.0', '>=' );
-		} else {
-			return false;
 		}
 	}
 }
