@@ -18,6 +18,14 @@
 		// Add an hidden field
 		$( 'form[name="signup_form"]' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', bpRestrictCommunity.field_key ) );
 
+		// Move the Privacy policy control into the last registration section.
+		$( 'form[name="signup_form"]' ).find( '.register-section' ).last().append( $( '.privacy-policy-accept' ) );
+
+		// Make sure the description of the form is the form tag.
+		if ( $( '#register-page aside.bp-feedback' ).length && $( 'form[name="signup_form"] .layout-wrap' ).length ) {
+			$( 'form[name="signup_form"] .layout-wrap' ).prepend( $( '#register-page aside.bp-feedback' ) );
+		}
+
 		// This will be checked on the server side to try to prevent spam registrations
 		$( 'form[name="signup_form"]' ).on( 'submit', function( event ) {
 			$( event.currentTarget ).find( 'input[name="' + bpRestrictCommunity.field_key + '"]' ).val( $( 'input[name="signup_email"]' ).val() );

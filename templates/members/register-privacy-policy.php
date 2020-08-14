@@ -37,7 +37,7 @@ if ( 'privacy-policy' === bp_get_current_signup_step() ) : ?>
 		 *
 		 * @since 1.1.0
 		 */
-		do_action( 'bp_signup_signup_privacy_policy_errors' ); ?>
+		do_action( 'bp_signup_privacy_policy_errors' ); ?>
 
 		<label for="signup-privacy-policy-accept">
 			<input type="hidden" name="signup-privacy-policy-check" value="1" />
