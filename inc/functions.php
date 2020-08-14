@@ -376,3 +376,11 @@ function communaute_protegee_privacy_step() {
 	bp_core_load_template( apply_filters( 'bp_core_template_register', array( 'register', 'registration/register' ) ) );
 }
 add_action( 'bp_screens', 'communaute_protegee_privacy_step' );
+
+function communaute_protegee_privacy_policy_signup_step() {
+	if ( ! bp_signup_requires_privacy_policy_acceptance() ) {
+		return;
+	}
+
+	bp_get_template_part( 'members/register-privacy-policy' );
+}

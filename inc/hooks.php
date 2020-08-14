@@ -46,5 +46,8 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 		add_action( 'communaute_protegee_init', 'communaute_protegee_enqueue_scripts' );
 		add_action( 'bp_enqueue_scripts', 'communaute_protegee_enqueue_scripts', 40 );
 	}
+
+	add_action( 'bp_before_registration_submit_buttons', 'communaute_protegee_privacy_policy_signup_step' );
+	add_action( 'bp_custom_signup_steps', 'communaute_protegee_privacy_policy_signup_step' );
 }
 add_action( 'communaute_protegee_setup_globals', 'communaute_protegee_setup_hooks', 10, 1 );
