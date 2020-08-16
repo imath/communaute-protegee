@@ -25,6 +25,20 @@ add_filter( 'show_admin_bar', '__return_false' );
 <title><?php bloginfo( 'name' ); ?> &rsaquo; <?php bp_is_register_page() ? esc_html_e( 'Register', 'communaute-protegee' ) : esc_html_e( 'Activate', 'communaute-protegee' ); ?></title>
 
 <?php
+// Ensure we're using an absolute URL.
+$current_url  = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+$filtered_url = remove_query_arg( array( '_communaute_protegee_status', '_communaute_protegee_nonce' ), $current_url );
+
+// Remove some query args from the URL
+?>
+<link id="communaute-protegee-canonical" rel="canonical" href="<?php echo esc_url( $filtered_url ); ?>" />
+<script>
+	if ( window.history.replaceState ) {
+		window.history.replaceState( null, null, document.getElementById( 'communaute-protegee-canonical' ).href + window.location.hash );
+	}
+</script>
+<?php
+// Load the CSS.
 wp_admin_css( 'login', true );
 
 /**

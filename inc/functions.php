@@ -384,3 +384,148 @@ function communaute_protegee_privacy_policy_signup_step() {
 
 	bp_get_template_part( 'members/register-privacy-policy' );
 }
+
+function communaute_protegee_get_feedback( $code = '' ) {
+	$feedbacks = array(
+		'missing_email'           => array(
+			'type'    => 'error',
+			'message' => __( 'Your email address is required so that we can send you the privacy policy.', 'communaute-protegee' ),
+		),
+		'unmatching_email'        => array(
+			'type'    => 'error',
+			'message' => __( 'The sanity check failed. Are you a human?', 'communaute-protegee' ),
+		),
+		'invalid'                 => array(
+			'type'    => 'error',
+			'message' => __( 'Please check your email address.', 'communaute-protegee' ),
+		),
+		'domain_banned'           => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, that email address is not allowed!', 'communaute-protegee' ),
+		),
+		'domain_not_allowed'      => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, that email address is not allowed!', 'communaute-protegee' ),
+		),
+		'in_use'                  => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, that email address is already used!', 'communaute-protegee' ),
+		),
+		'privacy-policy-sent'     => array(
+			'type'    => 'info',
+			'message' => __( 'The privacy policy was successfully sent!', 'communaute-protegee' ),
+		),
+		'privacy-policy-not-sent' => array(
+			'type'    => 'error',
+			'message' => __( 'Sorry, there was a problem sending the privacy policy. Pleas try again later.', 'communaute-protegee' ),
+		),
+	);
+
+	if ( $code ) {
+		if ( ! isset( $feedbacks[ $code ] ) )  {
+			return '';
+		}
+
+		return $feedbacks[ $code ];
+	}
+
+	return $feedbacks;
+}
+
+function communaute_protegee_privacy_policy_feedback() {
+	$bp = buddypress();
+
+	if ( ( ! isset( $bp->signup->step ) && 'privacy-policy' !== $bp->signup->step ) || ! $_GET ) {
+		return;
+	}
+
+	$qv = array_map(
+		'wp_unslash',
+		wp_parse_args(
+			$_GET,
+			array(
+				'_communaute_protegee_status' => '',
+			)
+		)
+	);
+
+	if ( ! $qv['_communaute_protegee_status'] ) {
+		return;
+	}
+
+	$qv['_communaute_protegee_status'] = wp_parse_slug_list( $qv['_communaute_protegee_status'] );
+
+	$errors = array();
+	$infos  = array();
+
+	if ( array_intersect( $qv['_communaute_protegee_status'], array( 'domain_banned', 'domain_not_allowed' ) ) ) {
+		$unset = array_search( 'domain_banned', $qv['_communaute_protegee_status'], true );
+
+		if ( false !== $unset ) {
+			unset( $unset );
+		}
+	}
+
+	foreach ( $qv['_communaute_protegee_status'] as $feedback_key ) {
+		$feedback = communaute_protegee_get_feedback( $feedback_key );
+		if ( ! isset( $feedback['message'] ) ) {
+			continue;
+		}
+
+		if ( 'error' === $feedback['type'] ) {
+			$errors[] = $feedback['message'];
+		} else {
+			$infos[] = $feedback['message'];
+		}
+	}
+
+	if ( $errors ) {
+		printf( '<div id="login_error">%1$s</div>%2$s', join( "<br/>", array_map( 'esc_html', $errors ) ), "\n" );
+	}
+
+	if ( $infos ) {
+		foreach ( $infos as $info ) {
+			printf( '<p class="message">%1$s</p>%2$s', esc_html( $info ), "\n" );
+		}
+	}
+}
+
+function communaute_protegee_mail_privacy_policy() {
+	if ( ! isset( $_POST['_communaute_protegee_nonce'] ) ) {
+		return;
+	}
+
+	// Check the nonce.
+	check_admin_referer( 'send-privacy-policy', '_communaute_protegee_nonce' );
+
+	// Set the redirect url.
+	$redirect = remove_query_arg( array( '_communaute_protegee_status', '_communaute_protegee_nonce' ), wp_get_referer() );
+
+	// Field to prevent spam.
+	$field_key  = wp_hash( date( 'YMDH' ) );
+
+	if ( ! isset( $_POST['privacy_policy_email'] ) || ! $_POST['privacy_policy_email'] || ! isset( $_POST[ $field_key ] ) ) {
+		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'missing_email', $redirect ) );
+	}
+
+
+	$email      = wp_unslash( $_POST['privacy_policy_email'] );
+	$emailcheck = wp_unslash( $_POST[ $field_key ] );
+
+	if ( $emailcheck !== $email ) {
+		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'unmatching_email', $redirect ) );
+	}
+
+	// Validate the email
+	$is_valid = bp_core_validate_email_address( $email );
+
+	if ( true !== $is_valid ) {
+		$status = (array) $is_valid;
+		bp_core_redirect( add_query_arg( '_communaute_protegee_status', array_keys( $status ), $redirect ) );
+	}
+
+	$register_url = bp_get_signup_page();
+
+	// @todo: send the email!
+	bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-sent', $register_url ) );
+}

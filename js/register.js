@@ -12,6 +12,8 @@
 			$( '#signup_password_confirm' ).first().remove();
 		}
 
+		$( 'form[name="signup_form"] #template-notices' ).remove();
+
 		// Remove Field visibility
 		$( '.field-visibility-settings-notoggle, .field-visibility-settings-toggle, .field-visibility-settings' ).remove();
 
@@ -28,7 +30,15 @@
 
 		// This will be checked on the server side to try to prevent spam registrations
 		$( 'form[name="signup_form"]' ).on( 'submit', function( event ) {
-			$( event.currentTarget ).find( 'input[name="' + bpRestrictCommunity.field_key + '"]' ).val( $( 'input[name="signup_email"]' ).val() );
+			var signupEmail = '';
+
+			if ( $( 'input[name="signup_email"]' ).length ) {
+				signupEmail = $( 'input[name="signup_email"]' ).val();
+			} else if ( $( 'input[name="privacy_policy_email"]' ).length ) {
+				signupEmail = $( 'input[name="privacy_policy_email"]' ).val();
+			}
+
+			$( event.currentTarget ).find( 'input[name="' + bpRestrictCommunity.field_key + '"]' ).val( signupEmail );
 		} );
 
 		if ( $( '#blog-details' ).length && true !== $( '#signup_with_blog' ).prop( 'checked' ) ) {

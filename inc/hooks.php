@@ -47,7 +47,12 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 		add_action( 'bp_enqueue_scripts', 'communaute_protegee_enqueue_scripts', 40 );
 	}
 
+	// Handle the output of the Privacy policy checkbox for legacy Template pack.
 	add_action( 'bp_before_registration_submit_buttons', 'communaute_protegee_privacy_policy_signup_step' );
 	add_action( 'bp_custom_signup_steps', 'communaute_protegee_privacy_policy_signup_step' );
+
+	// Handle requests to receive the privacy policy by email.
+	add_action( 'communaute_protegee_privacy_step', 'communaute_protegee_mail_privacy_policy' );
+	add_action( 'template_notices', 'communaute_protegee_privacy_policy_feedback', 0 );
 }
 add_action( 'communaute_protegee_setup_globals', 'communaute_protegee_setup_hooks', 10, 1 );

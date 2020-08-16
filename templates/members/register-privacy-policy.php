@@ -20,11 +20,11 @@ if ( 'privacy-policy' === bp_get_current_signup_step() ) : ?>
 		</p>
 
 		<label for="privacy-policy-email"><?php _e( 'Email Address', 'communaute-protegee' ); ?> <?php _e( '(required)', 'communaute-protegee' ); ?></label>
-		<input type="email" name="privacy_policy_email" id="privacy-policy-email" <?php bp_form_field_attributes( 'email', array( 'aria-required' => 'true' ) ); ?>/>
+		<input type="email" name="privacy_policy_email" id="privacy-policy-email" <?php bp_form_field_attributes( 'email', array( 'aria-required' => 'true' ) ); ?> required />
 	</div>
 
 	<p class="submit">
-		<?php wp_nonce_field( 'send-privacy-policy', '_communaute_protegee_status' ); ?>
+		<?php wp_nonce_field( 'send-privacy-policy', '_communaute_protegee_nonce' ); ?>
 		<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="<?php esc_attr_e( 'Receive our Privacy policy by email', 'communaute-protegee' ); ?>">
 	</p>
 
