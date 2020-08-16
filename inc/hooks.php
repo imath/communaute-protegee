@@ -11,6 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Hooks at key places/time once the plugin globals are set.
+ *
+ * @since 1.0.0
+ *
+ * @param Communaute_Protegee $cp The main instance of the plugin.
+ */
 function communaute_protegee_setup_hooks( $cp = null ) {
 	add_action( 'wp_head', 'wp_no_robots', 1 );
 	add_action( 'communaute_protegee_head', 'wp_no_robots', 1 );

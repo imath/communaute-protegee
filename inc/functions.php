@@ -11,14 +11,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Adds a new size to the Site's icon.
+ *
+ * @since 1.0.0
+ *
+ * @param array $icon_sizes The existing icon sizes.
+ * @return array The same icon sizes and the plugin's custom one.
+ */
 function communaute_protegee_login_screen_add_icon_size( $icon_sizes = array() ) {
 	return array_merge( $icon_sizes, array( 84 ) );
 }
 
+/**
+ * Registers the plugin JavaScript assets.
+ *
+ * @since 1.0.0
+ */
 function communaute_protegee_register_scripts() {
 	// Get the Plugin's main instance.
 	$cp = communaute_protegee();
 
+	/**
+	 * Use this filter to edit the plugin's JavaScript assets.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $value Associative array containing the script's handle,
+	 *                     file and dependencies.
+	 */
 	$scripts = apply_filters( 'communaute_protegee_register_scripts',
 		array(
 			array(
@@ -171,6 +192,11 @@ function communaute_protegee_edit_pwd_control_template() {
 	bp_get_template_part( 'members/single/settings/general-password' );
 }
 
+/**
+ * Enqueues plugin's JavaScript and CSS assets.
+ *
+ * @since 1.0.0
+ */
 function communaute_protegee_enqueue_scripts() {
 	$style = '';
 
@@ -219,6 +245,11 @@ function communaute_protegee_enqueue_scripts() {
 			}
 		}
 
+		/**
+		 * Hook here to add custom code once plugin's assets are enqueued.
+		 *
+		 * @since 1.0.0
+		 */
 		do_action( 'communaute_protegee_enqueue_scripts' );
 
 	} elseif ( $cp->is_legacy && bp_is_active( 'settings' ) && bp_is_user_settings_general() ) {
@@ -352,6 +383,11 @@ function communaute_protegee_js_validate_email() {
 	}
 }
 
+/**
+ * Sets and loads the registration's privacy screen.
+ *
+ * @since 1.0.0
+ */
 function communaute_protegee_privacy_step() {
 	if ( ! bp_is_current_component( 'register' ) || ! bp_current_action() ) {
 		return;
@@ -371,12 +407,24 @@ function communaute_protegee_privacy_step() {
 
 	$bp->signup->step = 'privacy-policy';
 
+	/**
+	 * Hook here to run custom code before the privacy policy template is loaded.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Post $page The privacy page's object.
+	 */
 	do_action( 'communaute_protegee_privacy_step', $page );
 
 	bp_core_load_template( apply_filters( 'bp_core_template_register', array( 'register', 'registration/register' ) ) );
 }
 add_action( 'bp_screens', 'communaute_protegee_privacy_step' );
 
+/**
+ * Loads a template part when registration needs privacy policy acceptance.
+ *
+ * @since 1.0.0
+ */
 function communaute_protegee_privacy_policy_signup_step() {
 	if ( ! bp_signup_requires_privacy_policy_acceptance() ) {
 		return;
@@ -385,6 +433,15 @@ function communaute_protegee_privacy_policy_signup_step() {
 	bp_get_template_part( 'members/register-privacy-policy' );
 }
 
+/**
+ * Returns the Feedback's type and message according to its code.
+ * Returns all feedbacks if no code is provided.
+ *
+ * @since 1.0.0
+ *
+ * @param string $code The feedback's code. Optional.
+ * @return array The feedback's type and message, or all feedback ones.
+ */
 function communaute_protegee_get_feedback( $code = '' ) {
 	$feedbacks = array(
 		'missing_email'           => array(
@@ -432,6 +489,11 @@ function communaute_protegee_get_feedback( $code = '' ) {
 	return $feedbacks;
 }
 
+/**
+ * Displays user feedback for the privacy policy step if needed.
+ *
+ * @since 1.0.0
+ */
 function communaute_protegee_privacy_policy_feedback() {
 	$bp = buddypress();
 
@@ -490,6 +552,11 @@ function communaute_protegee_privacy_policy_feedback() {
 	}
 }
 
+/**
+ * Sends an email containing the privacy policy to the user.
+ *
+ * @since 1.0.0
+ */
 function communaute_protegee_mail_privacy_policy() {
 	if ( ! isset( $_POST['_communaute_protegee_nonce'] ) ) {
 		return;

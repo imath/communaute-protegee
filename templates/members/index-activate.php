@@ -1,7 +1,18 @@
 <?php
 /**
- * Register template
+ * Template used to output the activate registration step markup.
+ *
+ * @package   communaute-protegee
+ * @subpackage \templates\members\index-activate
+ *
+ * @since 1.0.0
  */
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 bp_get_template_part( 'members/communaute-protegee-header' ); ?>
 
 <div id="activate">

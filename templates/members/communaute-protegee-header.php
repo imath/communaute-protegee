@@ -1,7 +1,18 @@
 <?php
 /**
- * Template to simulate the WordPress login/register screen headers
+ * Template to simulate the WordPress login/register screen headers.
+ *
+ * @package   communaute-protegee
+ * @subpackage \templates\members\communaute-protegee-header
+ *
+ * @since 1.0.0
  */
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 nocache_headers();
 header( 'Content-Type: '. get_bloginfo('html_type') .'; charset=' . get_bloginfo( 'charset' ) );
 

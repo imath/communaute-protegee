@@ -1,12 +1,17 @@
 <?php
 /**
- * Template part to use the WordPress way of updating a user's password.
+ * Template part to use the WordPress way of editing a user's password.
+ *
+ * @package   communaute-protegee
+ * @subpackage \templates\members\register-password
  *
  * @since 1.0.0
  */
 
 // Exit if accessed directly
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! communaute_protegee()->is_legacy ) {
 	return;

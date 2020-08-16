@@ -2,11 +2,16 @@
 /**
  * Template part to use the WordPress way of updating a user's password.
  *
+ * @package   communaute-protegee
+ * @subpackage \templates\members\single\settings\general-password
+ *
  * @since 1.0.0
  */
 
 // Exit if accessed directly
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 ?>
 
 <div class="user-pass1-wrap">

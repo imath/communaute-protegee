@@ -1,6 +1,9 @@
 <?php
 /**
- * Template part to use the WordPress way of updating a user's password.
+ * Template part to output privacy policy markup.
+ *
+ * @package   communaute-protegee
+ * @subpackage \templates\members\register-privacy-policy
  *
  * @since 1.0.0
  */

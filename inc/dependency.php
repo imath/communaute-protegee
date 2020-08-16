@@ -11,6 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Checks if the installed BuddyPress has the required DB version.
+ *
+ * @since 1.0.0
+ *
+ * @return boolean True if the BuddyPress DB version matches requirement. False otherwise.
+ */
 function communaute_protegee_bp_version_check() {
 	$bp_db_version_required = 12385;
 
@@ -21,6 +28,13 @@ function communaute_protegee_bp_version_check() {
 	return $bp_db_version_required <= bp_get_db_version();
 }
 
+/**
+ * Checks if the installed Restricted Site Access plugin has the required version.
+ *
+ * @since 1.0.0
+ *
+ * @return boolean True if the Restricted Site Access version matches requirement. False otherwise.
+ */
 function communaute_protegee_rsa_version_check() {
 	$rsa_dependency = class_exists( 'Restricted_Site_Access' );
 

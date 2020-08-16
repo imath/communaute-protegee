@@ -1,6 +1,11 @@
 <?php
 /**
- * Register template
+ * Template for the register page.
+ *
+ * @package   communaute-protegee
+ * @subpackage \templates\members\index-register
+ *
+ * @since 1.0.0
  */
 bp_get_template_part( 'members/communaute-protegee-header' ); ?>
 
