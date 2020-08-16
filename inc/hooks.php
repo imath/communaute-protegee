@@ -59,7 +59,11 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 	add_action( 'bp_custom_signup_steps', 'communaute_protegee_privacy_policy_signup_step' );
 
 	// Handle requests to receive the privacy policy by email.
-	add_action( 'communaute_protegee_privacy_step', 'communaute_protegee_mail_privacy_policy' );
+	add_action( 'communaute_protegee_privacy_step', 'communaute_protegee_mail_privacy_policy', 10, 1 );
 	add_action( 'template_notices', 'communaute_protegee_privacy_policy_feedback', 0 );
+
+	// Admin hooks.
+	add_action( 'bp_admin_init', 'communaute_protegee_update', 20 );
+	add_action( 'bp_core_install_emails', 'communaute_protegee_install_emails' );
 }
 add_action( 'communaute_protegee_setup_globals', 'communaute_protegee_setup_hooks', 10, 1 );

@@ -83,3 +83,83 @@ jQuery( '#users_can_register' ).closest( 'tr' ).after( jQuery( '#limited_email_d
 		$wp_scripts->add_data( 'common', 'data', $data );
 	}
 }
+
+/**
+ * Install/Reinstall email templates
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_install_emails() {
+	$switched = false;
+
+	// Switch to the root blog, where the email posts live.
+	if ( ! bp_is_root_blog() ) {
+		switch_to_blog( bp_get_root_blog_id() );
+		$switched = true;
+	}
+
+	// Get Emails
+	$email_types = communaute_protegee_get_emails();
+
+	// Set email types
+	foreach( $email_types as $email_term => $term_args ) {
+		if ( term_exists( $email_term, bp_get_email_tax_type() ) ) {
+			$email_type = get_term_by( 'slug', $email_term, bp_get_email_tax_type() );
+
+			$email_types[ $email_term ]['term_id'] = $email_type->term_id;
+		} else {
+			$term = wp_insert_term( $email_term, bp_get_email_tax_type(), array(
+				'description' => $term_args['description'],
+			) );
+
+			$email_types[ $email_term ]['term_id'] = $term['term_id'];
+		}
+
+		// Insert Email templates if needed
+		if ( ! empty( $email_types[ $email_term ]['term_id'] ) && ! is_a( bp_get_email( $email_term ), 'BP_Email' ) ) {
+			wp_insert_post( array(
+				'post_status'  => 'publish',
+				'post_type'    => bp_get_email_post_type(),
+				'post_title'   => $email_types[ $email_term ]['post_title'],
+				'post_content' => $email_types[ $email_term ]['post_content'],
+				'post_excerpt' => $email_types[ $email_term ]['post_excerpt'],
+				'tax_input'    => array(
+					bp_get_email_tax_type() => array( $email_types[ $email_term ]['term_id'] )
+				),
+			) );
+		}
+	}
+
+	if ( $switched ) {
+		restore_current_blog();
+	}
+}
+
+/**
+ * Updates the plugin when needed.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_update() {
+	if ( (int) get_current_blog_id() !== (int) bp_get_root_blog_id() ) {
+		return;
+	}
+
+	$db_version      = bp_get_option( 'communaute-protegee-version', 0 );
+	$current_version = communaute_protegee()->version;
+
+	// First install
+	if ( ! $db_version ) {
+		// Make sure to install emails only once!
+		remove_action( 'bp_core_install_emails', 'communaute_protegee_install_emails' );
+
+		// Install emails
+		communaute_protegee_install_emails();
+	}
+
+	// Update
+	if ( version_compare( $db_version, $current_version, '<' ) ) {
+		// Update the db version
+		bp_update_option( 'communaute-protegee-version', $current_version );
+	}
+}

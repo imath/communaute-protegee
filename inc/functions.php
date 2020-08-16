@@ -556,9 +556,11 @@ function communaute_protegee_privacy_policy_feedback() {
  * Sends an email containing the privacy policy to the user.
  *
  * @since 1.0.0
+ *
+ * @param WP_Post $privacy_page The Privacy page's object.
  */
-function communaute_protegee_mail_privacy_policy() {
-	if ( ! isset( $_POST['_communaute_protegee_nonce'] ) ) {
+function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
+	if ( ! isset( $_POST['_communaute_protegee_nonce'] ) || ! isset( $privacy_page->post_content ) ) {
 		return;
 	}
 
@@ -574,7 +576,6 @@ function communaute_protegee_mail_privacy_policy() {
 	if ( ! isset( $_POST['privacy_policy_email'] ) || ! $_POST['privacy_policy_email'] || ! isset( $_POST[ $field_key ] ) ) {
 		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'missing_email', $redirect ) );
 	}
-
 
 	$email      = wp_unslash( $_POST['privacy_policy_email'] );
 	$emailcheck = wp_unslash( $_POST[ $field_key ] );
@@ -593,6 +594,60 @@ function communaute_protegee_mail_privacy_policy() {
 
 	$register_url = bp_get_signup_page();
 
-	// @todo: send the email!
-	bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-sent', $register_url ) );
+	if ( bp_send_email( 'communaute-protegee-privacy-policy', $email, array(
+		'tokens' => array(
+			'communaute_protegee.privacy_policy'      => communaute_protegee_set_email_content( $privacy_page->post_content ),
+			'communaute_protegee.privacy_policy_text' => wp_kses( $privacy_page->post_content, array() ),
+			'communaute_protegee.url'                 => $register_url,
+			'communaute_protegee.title'               => __( 'the registration page', 'communaute-protegee' ),
+		),
+	) ) ) {
+		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-sent', $register_url ) );
+	} else {
+		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-not-sent', $register_url ) );
+	}
+}
+
+/**
+ * Remove Embeds from the email's content.
+ *
+ * @since 1.0.0
+ *
+ * @param string $content The email's content.
+ * @return string The email's content.
+ */
+function communaute_protegee_set_email_content( $content = '' ) {
+	// Make sure the Post won't be embed.
+	add_filter( 'pre_oembed_result', '__return_false' );
+	$content   = apply_filters( 'the_content', $content );
+	remove_filter( 'pre_oembed_result', '__return_false' );
+
+	// Make links clickable
+	return make_clickable( $content );
+}
+
+/**
+ * Get plugin's email templates.
+ *
+ * @since 1.0.0
+ *
+ * @return array An associative array containing the email type and the email template data.
+ */
+function communaute_protegee_get_emails() {
+	/**
+	 * Use this filter to customize the email templates used by the plugin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $value The list of email templates used by the plugin.
+	 */
+	return apply_filters( 'communaute_protegee_get_emails', array(
+		'communaute-protegee-privacy-policy' => array(
+			'description' => __( 'A user requested to receive the privacy policy', 'communaute-protegee' ),
+			'term_id'     => 0,
+			'post_title'   => __( '[{{{site.name}}}] here is our privacy policy', 'communaute-protegee' ),
+			'post_content' => __( "{{{communaute_protegee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>.", 'communaute-protegee' ),
+			'post_excerpt' => __( "{{communaute_protegee.privacy_policy_text}}\n\nTo join {{site.name}}, please visit: \n\n{{communaute_protegee.url}}.", 'communaute-protegee' ),
+		),
+	) );
 }
