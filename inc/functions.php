@@ -24,6 +24,47 @@ function communaute_protegee_login_screen_add_icon_size( $icon_sizes = array() )
 }
 
 /**
+ * Gets a base64 encoded image for the site icon.
+ *
+ * @since 1.0.0
+ *
+ * @return string The base64 encoded image for the site icon.
+ */
+function communaute_protegee_get_base64_site_icon() {
+	$site_icon = get_site_icon_url( 84, '', bp_get_root_blog_id() );
+
+	if ( $site_icon ) {
+		// Get the base64 site icon.
+		$base64_site_icon = bp_get_option( '_communaute_protegee_base64_site_icon', '' );
+
+		if ( ! $base64_site_icon ) {
+			$upload_data = wp_upload_dir();
+
+			$img_src = str_replace( $upload_data['baseurl'], $upload_data['basedir'], $site_icon );
+			$img_src = realpath( $img_src );
+
+			$site_icon = 'data:image/png;base64,' . base64_encode( file_get_contents( $img_src ) );
+
+			// Update the base64 site icon.
+			bp_update_option( '_communaute_protegee_base64_site_icon', $site_icon );
+		} else {
+			$site_icon = $base64_site_icon;
+		}
+	}
+
+	return $site_icon;
+}
+
+/**
+ * Deletes the base64 site icon when the regular one has been deleted.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_update_email_header_logo() {
+	bp_delete_option( '_communaute_protegee_base64_site_icon' );
+}
+
+/**
  * Registers the plugin JavaScript assets.
  *
  * @since 1.0.0
@@ -208,7 +249,7 @@ function communaute_protegee_enqueue_scripts() {
 			.login h1 a {
 				background-image: none, url(%s);
 			}
-		', $this->use_site_icon ) );
+		', esc_attr( communaute_protegee_get_base64_site_icon() ) ) );
 	}
 
 	if ( bp_is_register_page() || bp_is_activation_page() ) {
@@ -651,5 +692,104 @@ function communaute_protegee_get_emails() {
 			'post_content' => __( "{{{communaute_protegee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>.", 'communaute-protegee' ),
 			'post_excerpt' => __( "{{communaute_protegee.privacy_policy_text}}\n\nTo join {{site.name}}, please visit: \n\n{{communaute_protegee.url}}.", 'communaute-protegee' ),
 		),
+	) );
+}
+
+/**
+ * Checks whether the Admin checked the site icon for BP emails.
+ *
+ * @since 1.0.0
+ *
+ * @return boolean True if the site icon has been checked for BP Emails, false otherwise.
+ */
+function communaute_protegee_email_site_icon_is_checked() {
+	$settings = bp_email_get_appearance_settings();
+
+	if ( isset( $settings['site_icon'] ) && ! $settings['site_icon'] ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Outputs the Site icon into the BP Email template.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_email_header_logo() {
+	if ( ! communaute_protegee()->use_site_icon ) {
+		return;
+	}
+
+	$site_icon = communaute_protegee_get_base64_site_icon();
+
+	if ( $site_icon && communaute_protegee_email_site_icon_is_checked() ) {
+		?>
+			<a href="<?php echo esc_url( home_url() ); ?>">
+				<img src="<?php echo esc_attr( $site_icon ); ?>" alt="Site Icon">
+			</a>
+			<br>
+		<?php
+	}
+}
+
+/**
+ * Sanitizes the BP Email site icon setting.
+ *
+ * @since 1.0.0
+ *
+ * @param boolean $setting The value of the setting.
+ * @return boolean The sanitized value of the setting.
+ */
+function communaute_protegee_customize_email_sanitize_setting( $setting = '' ){
+	return (bool) $setting;
+}
+
+/**
+ * Adds the site icon setting to BP Emails ones.
+ *
+ * @since 1.0.0
+ *
+ * @param array $settings The BP Emails settings.
+ * @return array The BP Emails settings, including the site logo one.
+ */
+function communaute_protegee_customize_email_settings( $settings = array() ) {
+	if ( ! communaute_protegee()->use_site_icon ) {
+		return $settings;
+	}
+
+	return array_merge(
+		$settings,
+		array(
+			'bp_email_options[site_icon]' => array(
+				'capability'        => 'bp_moderate',
+				'default'           => true,
+				'sanitize_callback' => 'communaute_protegee_customize_email_sanitize_setting',
+				'transport'         => 'refresh',
+				'type'              => 'option',
+			),
+	) );
+}
+
+/**
+ * Adds a control to set whether to use the site icon in BP Emails header or not.
+ *
+ * @since 1.0.0
+ *
+ * @param WP_Customize_Manager $wp_customizer The WP Customizer manager object.
+ */
+function communaute_protegee_customize_email_control( WP_Customize_Manager $wp_customizer ) {
+	if ( ! communaute_protegee()->use_site_icon ) {
+		return;
+	}
+
+	$wp_customizer->add_control( 'bp_email_header_site_icon', array(
+		'settings' => 'bp_email_options[site_icon]',
+		'label'    => __( 'Site icon', 'communaute-protegee' ),
+		'description' => __( 'If checked, the site icon is inserted into email’s header.', 'communaute-protegee' ),
+		'section'  => 'section_bp_mailtpl_header',
+		'type'     => 'checkbox',
+		'priority' => 10
 	) );
 }

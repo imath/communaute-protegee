@@ -62,6 +62,13 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 	add_action( 'communaute_protegee_privacy_step', 'communaute_protegee_mail_privacy_policy', 10, 1 );
 	add_action( 'template_notices', 'communaute_protegee_privacy_policy_feedback', 0 );
 
+	// BP Email's site logo
+	add_action( 'bp_before_email_header', 'communaute_protegee_email_header_logo' );
+	add_filter( 'bp_email_get_customizer_settings', 'communaute_protegee_customize_email_settings', 10, 1 );
+	add_action( 'bp_email_customizer_register_sections', 'communaute_protegee_customize_email_control', 10, 1 );
+	add_action( 'delete_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
+	add_action( 'update_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
+
 	// Admin hooks.
 	add_action( 'bp_admin_init', 'communaute_protegee_update', 20 );
 	add_action( 'bp_core_install_emails', 'communaute_protegee_install_emails' );
