@@ -71,6 +71,7 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 
 	// Admin hooks.
 	add_action( 'bp_admin_init', 'communaute_protegee_update', 20 );
+	add_action( 'bp_admin_init', 'communaute_protegee_add_uploads_dir_restriction_field', 30 );
 	add_action( 'bp_core_install_emails', 'communaute_protegee_install_emails' );
 }
 add_action( 'communaute_protegee_setup_globals', 'communaute_protegee_setup_hooks', 10, 1 );

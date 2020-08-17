@@ -163,3 +163,127 @@ function communaute_protegee_update() {
 		bp_update_option( 'communaute-protegee-version', $current_version );
 	}
 }
+
+/**
+ * Gets the absolute path of the Uploads htaccess file.
+ *
+ * @since 1.0.0
+ *
+ * @return string The absolute path of the Uploads htaccess file.
+ */
+function communaute_protegee_get_uploads_htaccess_path() {
+	$data = wp_upload_dir();
+	$path = trailingslashit( $data['basedir'] );
+
+	return $path . '.htaccess';
+}
+
+/**
+ * Creates an htaccess file to restrict the access to /wp-content/uploads to logged in users.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_restrict_uploads_access_for_apache() {
+	if ( file_exists( communaute_protegee_get_uploads_htaccess_path() ) ) {
+		return;
+	}
+
+	// Include admin functions to get access to insert_with_markers().
+	require_once ABSPATH . 'wp-admin/includes/misc.php';
+
+	$home = trailingslashit( get_option( 'home' ) );
+	$base = wp_parse_url( $home, PHP_URL_PATH );
+
+	// Defining the rule: users need to be logged in to access private media.
+	$rules = array(
+		'<IfModule mod_rewrite.c>',
+		'RewriteEngine On',
+		sprintf( 'RewriteBase %s', $base ),
+		'RewriteCond %{HTTP_COOKIE} !^.*wordpress_logged_in.*$ [NC]',
+		'RewriteRule  .* wp-login.php [NC,L]',
+		'</IfModule>',
+	);
+
+	// Create the .htaccess file.
+	insert_with_markers( communaute_protegee_get_uploads_htaccess_path(), 'Communautée Protégéé', $rules );
+}
+
+/**
+ * Removes the htaccess file to free the access to /wp-content/uploads.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_free_uploads_access_for_apache() {
+	if ( ! file_exists( communaute_protegee_get_uploads_htaccess_path() ) ) {
+		return;
+	}
+
+	unlink( communaute_protegee_get_uploads_htaccess_path() );
+}
+
+/**
+ * Sanitizes the setting to restrict the `/wp-content/uploads` access.
+ *
+ * NB: the .htaccess file is managed at this step.
+ *
+ * @since 1.0.0
+ *
+ * @param boolean $value The value of the setting.
+ * @return boolean The sanitized value of the setting.
+ */
+function communaute_protegee_uploads_dir_restriction_sanitize_callback( $value = false ) {
+	$option = (bool) $value;
+
+	if ( $value ) {
+		communaute_protegee_restrict_uploads_access_for_apache();
+	} else {
+		communaute_protegee_free_uploads_access_for_apache();
+	}
+
+	return $option;
+}
+
+/**
+ * Outputs the checkbox to activate the setting to restrict the `/wp-content/uploads` access.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_uploads_dir_restriction_callback() {
+	$option = bp_get_option( 'communaute_protegee_uploads_dir_restriction', false );
+	?>
+	<input id="communaute-protegee-uploads-dir-restriction" name="communaute_protegee_uploads_dir_restriction" type="checkbox" value="1" <?php checked( $option ); ?> />
+	<label for="communaute-protegee-uploads-dir-restriction"><?php esc_html_e( 'Restrict the visibility of the uploaded media to logged in users.', 'communaute-protegee' ); ?></label>
+	<?php
+}
+
+/**
+ * Registers and add the setting to restrict the `/wp-content/uploads` access.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_add_uploads_dir_restriction_field() {
+	global $is_apache;
+
+	if ( ! bp_is_root_blog() || ! $is_apache ) {
+		return;
+	}
+
+	register_setting(
+		'media',
+		'communaute_protegee_uploads_dir_restriction',
+		array(
+			'type'              => 'boolean',
+			'sanitize_callback' => 'communaute_protegee_uploads_dir_restriction_sanitize_callback',
+			'show_in_rest'      => false,
+			'default'           => false,
+		)
+	);
+
+	add_settings_field(
+		'communaute_protegee_uploads_dir_restriction',
+		__( 'Uploads directory visibility', 'communaute-protegee' ),
+		'communaute_protegee_uploads_dir_restriction_callback',
+		'media',
+		'uploads'
+	);
+}
