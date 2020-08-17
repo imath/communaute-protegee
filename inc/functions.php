@@ -594,6 +594,20 @@ function communaute_protegee_privacy_policy_feedback() {
 }
 
 /**
+ * Removes the unsubscribe link when sending the Privacy policy.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_hide_unsubscribe_link() {
+	printf(
+		'<style type="text/css">
+			a[href="%s"] { display: none }
+		</style>',
+		esc_url( wp_login_url() )
+	);
+}
+
+/**
  * Sends an email containing the privacy policy to the user.
  *
  * @since 1.0.0
@@ -637,14 +651,22 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 	$html_content = communaute_protegee_set_email_content( $privacy_page->post_content );
 	$text_content = str_replace( "\n\n", "\n", wp_kses( $html_content, array() ) );
 
-	if ( bp_send_email( 'communaute-protegee-privacy-policy', $email, array(
-		'tokens' => array(
-			'communaute_protegee.privacy_policy'      => $html_content,
-			'communaute_protegee.privacy_policy_text' => $text_content,
-			'communaute_protegee.url'                 => $register_url,
-			'communaute_protegee.title'               => __( 'the registration page', 'communaute-protegee' ),
-		),
-	) ) ) {
+	add_action( 'bp_before_email_footer', 'communaute_protegee_hide_unsubscribe_link', 1 );
+	$sent = bp_send_email(
+		'communaute-protegee-privacy-policy',
+		$email,
+		array(
+			'tokens' => array(
+				'communaute_protegee.privacy_policy'      => $html_content,
+				'communaute_protegee.privacy_policy_text' => $text_content,
+				'communaute_protegee.url'                 => $register_url,
+				'communaute_protegee.title'               => __( 'the registration page', 'communaute-protegee' ),
+			),
+		)
+	);
+	remove_action( 'bp_before_email_footer', 'communaute_protegee_hide_unsubscribe_link', 1 );
+
+	if ( $sent ) {
 		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-sent', $register_url ) );
 	} else {
 		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-not-sent', $register_url ) );
