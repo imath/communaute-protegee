@@ -28,7 +28,7 @@ function communaute_protegee_globals() {
 	// URLs.
 	$cp->css_url = plugins_url( 'assets/css/', dirname( __FILE__ ) );
 
-	// Legacy constants
+	// Legacy constants.
 	$cp->domain        = 'communaute-protegee';
 	$cp->name          = 'Communauté Protégée';
 	$cp->basename      = plugin_basename( $cp->dir . 'class-communaute-protegee.php' );
@@ -42,7 +42,7 @@ function communaute_protegee_globals() {
 		$cp->minified = '';
 	}
 
-	/** Plugin config ********************************************/
+	// Plugin config.
 	$cp->rsa_options    = (array) get_option( 'rsa_options', array() );
 	$cp->signup_allowed = bp_get_signup_allowed();
 	$cp->use_site_icon  = apply_filters( 'communaute_protegee_use_site_icon', get_site_icon_url( 84 ) );

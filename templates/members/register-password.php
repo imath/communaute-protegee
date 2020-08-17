@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -41,4 +41,4 @@ if ( ! communaute_protegee()->is_legacy ) {
 	<input type="password" name="signup_password_confirm" id="pass2" class="input" size="20" value="" autocomplete="off" />
 </p>
 
-<p class="description indicator-hint"><?php echo wp_get_password_hint(); ?></p>
+<p class="description indicator-hint"><?php echo wp_get_password_hint(); // phpcs:ignore ?></p>

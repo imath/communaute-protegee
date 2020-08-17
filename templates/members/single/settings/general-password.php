@@ -8,10 +8,16 @@
  * @since 1.0.0
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+// Set passowrd field attributes.
+$password_field_attributes = array(
+	'data-pw'          => wp_generate_password( 24 ),
+	'aria-describedby' => 'pass-strength-result',
+);
 ?>
 
 <div class="user-pass1-wrap">
@@ -21,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="wp-pwd">
 		<span class="password-input-wrapper">
-			<input type="password" name="pass1" id="pass1" size="24" class="settings-input small password-entry" value="" <?php bp_form_field_attributes( 'password', array( 'data-pw' => wp_generate_password( 24 ), 'aria-describedby' => 'pass-strength-result' ) ); ?> />
+			<input type="password" name="pass1" id="pass1" size="24" class="settings-input small password-entry" value="" <?php bp_form_field_attributes( 'password', $password_field_attributes ); ?> />
 		</span>
 		<button type="button" class="button wp-hide-pw" data-toggle="0" aria-label="<?php esc_attr_e( 'Hide password', 'communaute-protegee' ); ?>">
 			<span class="dashicons dashicons-hidden" aria-hidden="true"></span>
@@ -42,6 +48,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="pw-weak">
 	<label>
 		<input type="checkbox" name="pw_weak" class="pw-checkbox" />
-		<span id="pw-weak-text-label"><?php _e( 'Confirm use of potentially weak password', 'communaute-protegee' ); ?></span>
+		<span id="pw-weak-text-label"><?php esc_html_e( 'Confirm use of potentially weak password', 'communaute-protegee' ); ?></span>
 	</label>
 </div>

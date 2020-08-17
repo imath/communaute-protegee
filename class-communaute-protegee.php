@@ -21,7 +21,7 @@
  * GitHub Plugin URI: https://github.com/imath/communaute-protegee
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -34,6 +34,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Communaute_Protegee {
 	/**
 	 * Instance of this class.
+	 *
+	 * @var object $instance
 	 */
 	protected static $instance = null;
 
@@ -52,7 +54,7 @@ final class Communaute_Protegee {
 	public static function start() {
 
 		// If the single instance hasn't been set, set it now.
-		if ( null == self::$instance ) {
+		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
 

@@ -24,7 +24,8 @@
     "node": "~10.13.0"
   },
   "scripts": {
-    "package-plugin": "./bin/package-zip.sh"
+		"package-plugin": "./bin/package-zip.sh",
+		"wpcs": "./vendor/bin/phpcs class-communaute-protegee.php inc/*.php templates/members/* --standard=WordPress"
   },
   "keywords": [
     "buddypress",

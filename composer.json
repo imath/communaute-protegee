@@ -1,0 +1,13 @@
+{
+	"name": "imath/communaute-protegee",
+	"description": "Restricted Site Access companion to control your BuddyPress powered community site's access.",
+	"type": "buddypress-plugin",
+	"require": {
+	  "squizlabs/php_codesniffer" : "^3.3.1"
+	},
+	"require-dev": {
+	  "dealerdirect/phpcodesniffer-composer-installer": "*",
+	  "phpcompatibility/phpcompatibility-wp" : "*",
+	  "wp-coding-standards/wpcs": "*"
+	}
+}

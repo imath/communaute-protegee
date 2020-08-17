@@ -43,7 +43,7 @@ function communaute_protegee_get_base64_site_icon() {
 			$img_src = str_replace( $upload_data['baseurl'], $upload_data['basedir'], $site_icon );
 			$img_src = realpath( $img_src );
 
-			$site_icon = 'data:image/png;base64,' . base64_encode( file_get_contents( $img_src ) );
+			$site_icon = 'data:image/png;base64,' . base64_encode( file_get_contents( $img_src ) ); // phpcs:ignore
 
 			// Update the base64 site icon.
 			bp_update_option( '_communaute_protegee_base64_site_icon', $site_icon );
@@ -81,7 +81,8 @@ function communaute_protegee_register_scripts() {
 	 * @param array $value Associative array containing the script's handle,
 	 *                     file and dependencies.
 	 */
-	$scripts = apply_filters( 'communaute_protegee_register_scripts',
+	$scripts = apply_filters(
+		'communaute_protegee_register_scripts',
 		array(
 			array(
 				'handle' => 'communaute-protegee-register',
@@ -96,7 +97,8 @@ function communaute_protegee_register_scripts() {
 			$script['handle'],
 			$script['file'],
 			$script['deps'],
-			$cp->version, true
+			$cp->version,
+			true
 		);
 	}
 }
@@ -212,7 +214,7 @@ function communaute_protegee_template_dir() {
  */
 function communaute_protegee_register_template_dir() {
 	// After the active theme, but before the active Template Pack.
-	bp_register_template_stack( 'communaute_protegee_template_dir',  13 );
+	bp_register_template_stack( 'communaute_protegee_template_dir', 13 );
 }
 
 /**
@@ -245,25 +247,29 @@ function communaute_protegee_enqueue_scripts() {
 	$cp = communaute_protegee();
 
 	if ( true === (bool) $cp->use_site_icon ) {
-		wp_add_inline_style( 'login', sprintf( '
-			.login h1 a {
-				background-image: none, url(%s);
-			}
-		', esc_attr( communaute_protegee_get_base64_site_icon() ) ) );
+		wp_add_inline_style(
+			'login',
+			sprintf(
+				'.login h1 a {
+					background-image: none, url(%s);
+				}',
+				esc_attr( communaute_protegee_get_base64_site_icon() )
+			)
+		);
 	}
 
 	if ( bp_is_register_page() || bp_is_activation_page() ) {
-		// Clean up scripts
+		// Clean up scripts.
 		foreach ( wp_scripts()->queue as $js_handle ) {
 			wp_dequeue_script( $js_handle );
 		}
 
-		// Clean up styles
+		// Clean up styles.
 		foreach ( wp_styles()->queue as $css_handle ) {
 			wp_dequeue_style( $css_handle );
 		}
 
-		// Enqueue style
+		// Enqueue style.
 		wp_enqueue_style(
 			'communaute-protegee-register-style',
 			communaute_protegee_locate_stylesheet( 'communaute-protegee-register' ),
@@ -272,10 +278,10 @@ function communaute_protegee_enqueue_scripts() {
 		);
 		wp_enqueue_script( 'communaute-protegee-register' );
 
-		// The register form need some specific stuff
+		// The register form need some specific stuff.
 		if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
 			add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
-			wp_localize_script( 'communaute-protegee-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( date( 'YMDH' ) ) ) );
+			wp_localize_script( 'communaute-protegee-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( gmdate( 'YMDH' ) ) ) );
 
 			/**
 			 * Replace BuddyPress's way of setting the password by the WordPress's one
@@ -298,19 +304,21 @@ function communaute_protegee_enqueue_scripts() {
 		wp_enqueue_script( 'user-profile' );
 
 		// Remove BuddyPress Password fields.
-		wp_add_inline_script( 'user-profile', '
-			( function() {
+		wp_add_inline_script(
+			'user-profile',
+			'( function() {
 				document.querySelector( \'#settings-form\' ).setAttribute( \'id\', \'your-profile\' );
 				document.querySelector( \'#pass1\' ).remove();
 				document.querySelector( \'label[for="pass1"] span\' ).remove();
 				document.querySelector( \'#pass-strength-result\' ).remove();
 				document.querySelector( \'#pass2\' ).remove();
 				document.querySelector( \'label[for="pass2"]\' ).remove();
-			} )();
-		' );
+			} )();'
+		);
 
-		wp_add_inline_style( 'bp-parent-css', '
-			body.settings #buddypress .wp-pwd button {
+		wp_add_inline_style(
+			'bp-parent-css',
+			'body.settings #buddypress .wp-pwd button {
 				padding: 6px;
 				margin-top: 0;
 				margin-bottom: 3px;
@@ -350,8 +358,9 @@ function communaute_protegee_enqueue_scripts() {
 			body.buddypress.settings.no-js .wp-cancel-pw,
 			body.buddypress.settings.no-js .wp-hide-pw {
 				display: none;
-			}
-		', 'after' );
+			}',
+			'after'
+		);
 
 		// Replace BuddyPress's way of setting the password by the WordPress's one.
 		add_action( 'bp_core_general_settings_before_submit', 'communaute_protegee_edit_pwd_control_template' );
@@ -364,8 +373,8 @@ function communaute_protegee_enqueue_scripts() {
  * @since 1.0.0
  *
  * @param boolean $is_restricted True if the access is restricted. False otherwise.
- * @param WP      $wo The main query objetct.
- * @param boolean True if the access is restricted. False otherwise.
+ * @param WP      $wp            The main query objetct.
+ * @return boolean True if the access is restricted. False otherwise.
  */
 function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp ) {
 	// Not restricted, do nothing.
@@ -376,7 +385,7 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp 
 	// Get the Plugin's main instance.
 	$cp = communaute_protegee();
 
-	// Bail if the current ip has access
+	// Bail if the current ip has access.
 	if ( communaute_protegee_current_ip_has_access() ) {
 		return true;
 	}
@@ -390,7 +399,7 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp 
 	if ( bp_signup_requires_privacy_policy_acceptance() && isset( $wp->query_vars['pagename'] ) ) {
 		$url = trailingslashit( home_url( $wp->query_vars['pagename'] ) );
 
-		if ( $url === get_privacy_policy_url() ) {
+		if ( get_privacy_policy_url() === $url ) {
 			bp_core_redirect( trailingslashit( bp_get_signup_page() . $wp->query_vars['pagename'] ) );
 		}
 	}
@@ -408,10 +417,10 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp 
 function communaute_protegee_js_validate_email() {
 	$bp        = buddypress();
 	$errors    = new WP_Error();
-	$field_key = wp_hash( date( 'YMDH' ) );
+	$field_key = wp_hash( gmdate( 'YMDH' ) );
 
 	$fields = wp_parse_args(
-		array_map( 'wp_unslash', $_POST ),
+		array_map( 'wp_unslash', $_POST ), // phpcs:ignore
 		array(
 			'signup_email' => '',
 			$field_key     => '',
@@ -520,7 +529,7 @@ function communaute_protegee_get_feedback( $code = '' ) {
 	);
 
 	if ( $code ) {
-		if ( ! isset( $feedbacks[ $code ] ) )  {
+		if ( ! isset( $feedbacks[ $code ] ) ) {
 			return '';
 		}
 
@@ -538,14 +547,14 @@ function communaute_protegee_get_feedback( $code = '' ) {
 function communaute_protegee_privacy_policy_feedback() {
 	$bp = buddypress();
 
-	if ( ( ! isset( $bp->signup->step ) && 'privacy-policy' !== $bp->signup->step ) || ! $_GET ) {
+	if ( ( ! isset( $bp->signup->step ) && 'privacy-policy' !== $bp->signup->step ) || ! $_GET ) { // phpcs:ignore
 		return;
 	}
 
 	$qv = array_map(
 		'wp_unslash',
 		wp_parse_args(
-			$_GET,
+			$_GET, // phpcs:ignore
 			array(
 				'_communaute_protegee_status' => '',
 			)
@@ -583,7 +592,7 @@ function communaute_protegee_privacy_policy_feedback() {
 	}
 
 	if ( $errors ) {
-		printf( '<div id="login_error">%1$s</div>%2$s', join( "<br/>", array_map( 'esc_html', $errors ) ), "\n" );
+		printf( '<div id="login_error">%1$s</div>%2$s', join( '<br/>', array_map( 'esc_html', $errors ) ), "\n" );
 	}
 
 	if ( $infos ) {
@@ -626,20 +635,20 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 	$redirect = remove_query_arg( array( '_communaute_protegee_status', '_communaute_protegee_nonce' ), wp_get_referer() );
 
 	// Field to prevent spam.
-	$field_key  = wp_hash( date( 'YMDH' ) );
+	$field_key = wp_hash( gmdate( 'YMDH' ) );
 
-	if ( ! isset( $_POST['privacy_policy_email'] ) || ! $_POST['privacy_policy_email'] || ! isset( $_POST[ $field_key ] ) ) {
+	if ( ! isset( $_POST['privacy_policy_email'] ) || ! $_POST['privacy_policy_email'] || ! isset( $_POST[ $field_key ] ) ) { // phpcs:ignore
 		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'missing_email', $redirect ) );
 	}
 
-	$email      = wp_unslash( $_POST['privacy_policy_email'] );
-	$emailcheck = wp_unslash( $_POST[ $field_key ] );
+	$email      = wp_unslash( $_POST['privacy_policy_email'] ); // phpcs:ignore
+	$emailcheck = wp_unslash( $_POST[ $field_key ] ); // phpcs:ignore
 
 	if ( $emailcheck !== $email ) {
 		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'unmatching_email', $redirect ) );
 	}
 
-	// Validate the email
+	// Validate the email.
 	$is_valid = bp_core_validate_email_address( $email );
 
 	if ( true !== $is_valid ) {
@@ -684,10 +693,10 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 function communaute_protegee_set_email_content( $content = '' ) {
 	// Make sure the Post won't be embed.
 	add_filter( 'pre_oembed_result', '__return_false' );
-	$content   = apply_filters( 'the_content', $content );
+	$content = apply_filters( 'the_content', $content );
 	remove_filter( 'pre_oembed_result', '__return_false' );
 
-	// Make links clickable
+	// Make links clickable.
 	return make_clickable( $content );
 }
 
@@ -706,15 +715,18 @@ function communaute_protegee_get_emails() {
 	 *
 	 * @param array $value The list of email templates used by the plugin.
 	 */
-	return apply_filters( 'communaute_protegee_get_emails', array(
-		'communaute-protegee-privacy-policy' => array(
-			'description' => __( 'A user requested to receive the privacy policy', 'communaute-protegee' ),
-			'term_id'     => 0,
-			'post_title'   => __( '[{{{site.name}}}] here is our privacy policy', 'communaute-protegee' ),
-			'post_content' => __( "{{{communaute_protegee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>.", 'communaute-protegee' ),
-			'post_excerpt' => __( "{{communaute_protegee.privacy_policy_text}}\n\nTo join {{site.name}}, please visit: \n\n{{communaute_protegee.url}}.", 'communaute-protegee' ),
-		),
-	) );
+	return apply_filters(
+		'communaute_protegee_get_emails',
+		array(
+			'communaute-protegee-privacy-policy' => array(
+				'description'  => __( 'A user requested to receive the privacy policy', 'communaute-protegee' ),
+				'term_id'      => 0,
+				'post_title'   => __( '[{{{site.name}}}] here is our privacy policy', 'communaute-protegee' ),
+				'post_content' => __( "{{{communaute_protegee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>.", 'communaute-protegee' ),
+				'post_excerpt' => __( "{{communaute_protegee.privacy_policy_text}}\n\nTo join {{site.name}}, please visit: \n\n{{communaute_protegee.url}}.", 'communaute-protegee' ),
+			),
+		)
+	);
 }
 
 /**
@@ -764,7 +776,7 @@ function communaute_protegee_email_header_logo() {
  * @param boolean $setting The value of the setting.
  * @return boolean The sanitized value of the setting.
  */
-function communaute_protegee_customize_email_sanitize_setting( $setting = '' ){
+function communaute_protegee_customize_email_sanitize_setting( $setting = '' ) {
 	return (bool) $setting;
 }
 
@@ -791,7 +803,8 @@ function communaute_protegee_customize_email_settings( $settings = array() ) {
 				'transport'         => 'refresh',
 				'type'              => 'option',
 			),
-	) );
+		)
+	);
 }
 
 /**
@@ -806,12 +819,15 @@ function communaute_protegee_customize_email_control( WP_Customize_Manager $wp_c
 		return;
 	}
 
-	$wp_customizer->add_control( 'bp_email_header_site_icon', array(
-		'settings' => 'bp_email_options[site_icon]',
-		'label'    => __( 'Site icon', 'communaute-protegee' ),
-		'description' => __( 'If checked, the site icon is inserted into email’s header.', 'communaute-protegee' ),
-		'section'  => 'section_bp_mailtpl_header',
-		'type'     => 'checkbox',
-		'priority' => 10
-	) );
+	$wp_customizer->add_control(
+		'bp_email_header_site_icon',
+		array(
+			'settings'    => 'bp_email_options[site_icon]',
+			'label'       => __( 'Site icon', 'communaute-protegee' ),
+			'description' => __( 'If checked, the site icon is inserted into email’s header.', 'communaute-protegee' ),
+			'section'     => 'section_bp_mailtpl_header',
+			'type'        => 'checkbox',
+			'priority'    => 10,
+		)
+	);
 }

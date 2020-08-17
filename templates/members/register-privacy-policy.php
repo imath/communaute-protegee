@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -22,7 +22,7 @@ if ( 'privacy-policy' === bp_get_current_signup_step() ) : ?>
 			<?php esc_html_e( 'Your email will not be saved on our website.', 'communaute-protegee' ); ?>
 		</p>
 
-		<label for="privacy-policy-email"><?php _e( 'Email Address', 'communaute-protegee' ); ?> <?php _e( '(required)', 'communaute-protegee' ); ?></label>
+		<label for="privacy-policy-email"><?php esc_html_e( 'Email Address', 'communaute-protegee' ); ?> <?php esc_html_e( '(required)', 'communaute-protegee' ); ?></label>
 		<input type="email" name="privacy_policy_email" id="privacy-policy-email" <?php bp_form_field_attributes( 'email', array( 'aria-required' => 'true' ) ); ?> required />
 	</div>
 
@@ -40,7 +40,8 @@ if ( 'privacy-policy' === bp_get_current_signup_step() ) : ?>
 		 *
 		 * @since 1.1.0
 		 */
-		do_action( 'bp_signup_privacy_policy_errors' ); ?>
+		do_action( 'bp_signup_privacy_policy_errors' );
+		?>
 
 		<label for="signup-privacy-policy-accept">
 			<input type="hidden" name="signup-privacy-policy-check" value="1" />
@@ -50,4 +51,4 @@ if ( 'privacy-policy' === bp_get_current_signup_step() ) : ?>
 		</label>
 	</div>
 
-<?php endif;
+<?php endif; ?>

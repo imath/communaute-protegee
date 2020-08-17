@@ -8,20 +8,20 @@
  * @since 1.0.0
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 nocache_headers();
-header( 'Content-Type: '. get_bloginfo('html_type') .'; charset=' . get_bloginfo( 'charset' ) );
+header( 'Content-Type: ' . get_bloginfo( 'html_type' ) . '; charset=' . get_bloginfo( 'charset' ) );
 
 /**
  * Fires when the register & activate pages are initialized.
  */
 do_action( 'communaute_protegee_init' );
 
-// Do not display admin bar
+// Do not display admin bar.
 add_filter( 'show_admin_bar', '__return_false' );
 ?>
 <!DOCTYPE html>
@@ -37,10 +37,10 @@ add_filter( 'show_admin_bar', '__return_false' );
 
 <?php
 // Ensure we're using an absolute URL.
-$current_url  = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+$current_url  = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ); // phpcs:ignore
 $filtered_url = remove_query_arg( array( '_communaute_protegee_status', '_communaute_protegee_nonce' ), $current_url );
 
-// Remove some query args from the URL
+// Remove some query args from the URL.
 ?>
 <link id="communaute-protegee-canonical" rel="canonical" href="<?php echo esc_url( $filtered_url ); ?>" />
 <script>
@@ -53,12 +53,12 @@ $filtered_url = remove_query_arg( array( '_communaute_protegee_status', '_commun
 wp_admin_css( 'login', true );
 
 /**
- * Get WordPress Login Head Actions
+ * Get WordPress Login Head Actions.
  */
 do_action( 'login_head' );
 
 /**
- * Use this to run custom actions on BuddyPress register/activate pages
+ * Use this to run custom actions on BuddyPress register/activate pages.
  */
 do_action( 'communaute_protegee_head' );
 

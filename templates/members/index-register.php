@@ -7,6 +7,12 @@
  *
  * @since 1.0.0
  */
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 bp_get_template_part( 'members/communaute-protegee-header' ); ?>
 
 <div id="register" class="<?php echo sanitize_html_class( bp_get_current_signup_step() ); ?>">
@@ -18,11 +24,15 @@ bp_get_template_part( 'members/communaute-protegee-header' ); ?>
 		</div>
 	<?php endif; ?>
 
-	<?php if ( have_posts() ): while (have_posts()) : the_post(); ?>
+	<?php if ( have_posts() ) : ?>
+		<?php while ( have_posts() ) : ?>
 
-		<?php the_content(); ?>
+			<?php the_post(); ?>
 
-	<?php endwhile; endif; ?>
+			<?php the_content(); ?>
+
+		<?php endwhile; ?>
+	<?php endif; ?>
 </div>
 <div class="clear"></div>
 
