@@ -56,9 +56,10 @@ rm -f communaute-protegee.zip
 status "Creating archive..."
 zip -r communaute-protegee.zip \
     js \
+	inc \
     languages \
     templates \
-    communaute-protegee.php \
+    class-communaute-protegee.php \
     README.md
 
 status "Done."
