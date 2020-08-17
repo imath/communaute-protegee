@@ -593,11 +593,13 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 	}
 
 	$register_url = bp_get_signup_page();
+	$html_content = communaute_protegee_set_email_content( $privacy_page->post_content );
+	$text_content = str_replace( "\n\n", "\n", wp_kses( $html_content, array() ) );
 
 	if ( bp_send_email( 'communaute-protegee-privacy-policy', $email, array(
 		'tokens' => array(
-			'communaute_protegee.privacy_policy'      => communaute_protegee_set_email_content( $privacy_page->post_content ),
-			'communaute_protegee.privacy_policy_text' => wp_kses( $privacy_page->post_content, array() ),
+			'communaute_protegee.privacy_policy'      => $html_content,
+			'communaute_protegee.privacy_policy_text' => $text_content,
 			'communaute_protegee.url'                 => $register_url,
 			'communaute_protegee.title'               => __( 'the registration page', 'communaute-protegee' ),
 		),
