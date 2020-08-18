@@ -428,7 +428,7 @@ function communaute_protegee_js_validate_email() {
 	);
 
 	if ( ! $fields[ $field_key ] || ! $fields['signup_email'] || $fields[ $field_key ] !== $fields['signup_email'] ) {
-		$errors->add( 'signup_email', __( 'We were not able to validate your email, please try again.', 'communaute-protegee' ) );
+		$errors->add( 'signup_email', __( 'Nous n’avons pas été en mesure de valider votre e-mail, merci de réessayer.', 'communaute-protegee' ) );
 		$bp->signup->errors['signup_email'] = $errors->errors['signup_email'][0];
 	}
 }
@@ -496,35 +496,35 @@ function communaute_protegee_get_feedback( $code = '' ) {
 	$feedbacks = array(
 		'missing_email'           => array(
 			'type'    => 'error',
-			'message' => __( 'Your email address is required so that we can send you the privacy policy.', 'communaute-protegee' ),
+			'message' => __( 'Votre adresse e-mail est requise afin que nous puissions vous envoyer la politique de confidentialité.', 'communaute-protegee' ),
 		),
 		'unmatching_email'        => array(
 			'type'    => 'error',
-			'message' => __( 'The sanity check failed. Are you a human?', 'communaute-protegee' ),
+			'message' => __( 'La vérification de sécurité a échoué. Êtes-vous un humain ?', 'communaute-protegee' ),
 		),
 		'invalid'                 => array(
 			'type'    => 'error',
-			'message' => __( 'Please check your email address.', 'communaute-protegee' ),
+			'message' => __( 'Merci de vérifier votre adresse e-mail.', 'communaute-protegee' ),
 		),
 		'domain_banned'           => array(
 			'type'    => 'error',
-			'message' => __( 'Sorry, that email address is not allowed!', 'communaute-protegee' ),
+			'message' => __( 'Désolé, cette adresse e-mail n’est pas autorisée !', 'communaute-protegee' ),
 		),
 		'domain_not_allowed'      => array(
 			'type'    => 'error',
-			'message' => __( 'Sorry, that email address is not allowed!', 'communaute-protegee' ),
+			'message' => __( 'Désolé, cette adresse e-mail n’est pas autorisée !', 'communaute-protegee' ),
 		),
 		'in_use'                  => array(
 			'type'    => 'error',
-			'message' => __( 'Sorry, that email address is already used!', 'communaute-protegee' ),
+			'message' => __( 'Désolé, cette adresse e-mail est déjà utilisée !', 'communaute-protegee' ),
 		),
 		'privacy-policy-sent'     => array(
 			'type'    => 'info',
-			'message' => __( 'The privacy policy was successfully sent!', 'communaute-protegee' ),
+			'message' => __( 'La politique de confidentialité a été envoyée avec succès !', 'communaute-protegee' ),
 		),
 		'privacy-policy-not-sent' => array(
 			'type'    => 'error',
-			'message' => __( 'Sorry, there was a problem sending the privacy policy. Pleas try again later.', 'communaute-protegee' ),
+			'message' => __( 'Désolé, un problème est survenu lors de l’envoi de la politique de confidentialité. Merci de réessayer ultérieurement.', 'communaute-protegee' ),
 		),
 	);
 
@@ -669,7 +669,7 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 				'communaute_protegee.privacy_policy'      => $html_content,
 				'communaute_protegee.privacy_policy_text' => $text_content,
 				'communaute_protegee.url'                 => $register_url,
-				'communaute_protegee.title'               => __( 'the registration page', 'communaute-protegee' ),
+				'communaute_protegee.title'               => __( 'la page d’inscription', 'communaute-protegee' ),
 			),
 		)
 	);
@@ -719,11 +719,14 @@ function communaute_protegee_get_emails() {
 		'communaute_protegee_get_emails',
 		array(
 			'communaute-protegee-privacy-policy' => array(
-				'description'  => __( 'A user requested to receive the privacy policy', 'communaute-protegee' ),
+				'description'  => __( 'Un utilisateur a demandé à recevoir la politique de confidentialité', 'communaute-protegee' ),
 				'term_id'      => 0,
-				'post_title'   => __( '[{{{site.name}}}] here is our privacy policy', 'communaute-protegee' ),
-				'post_content' => __( "{{{communaute_protegee.privacy_policy}}}\n\nTo join {{{site.name}}}, please visit: <a href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>.", 'communaute-protegee' ),
-				'post_excerpt' => __( "{{communaute_protegee.privacy_policy_text}}\n\nTo join {{site.name}}, please visit: \n\n{{communaute_protegee.url}}.", 'communaute-protegee' ),
+				/* translators: do not remove {} brackets or translate its contents. */
+				'post_title'   => __( '[{{{site.name}}}] voici notre politique de confidentialité', 'communaute-protegee' ),
+				/* translators: do not remove {} brackets or translate its contents. */
+				'post_content' => __( "{{{communaute_protegee.privacy_policy}}}\n\nPour rejoindre {{{site.name}}}, merci de consulter : <a href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>.", 'communaute-protegee' ),
+				/* translators: do not remove {} brackets or translate its contents. */
+				'post_excerpt' => __( "{{communaute_protegee.privacy_policy_text}}\n\nPour rejoindre {{site.name}}, merci de consulter :\n\n{{communaute_protegee.url}}.", 'communaute-protegee' ),
 			),
 		)
 	);
@@ -823,8 +826,8 @@ function communaute_protegee_customize_email_control( WP_Customize_Manager $wp_c
 		'bp_email_header_site_icon',
 		array(
 			'settings'    => 'bp_email_options[site_icon]',
-			'label'       => __( 'Site icon', 'communaute-protegee' ),
-			'description' => __( 'If checked, the site icon is inserted into email’s header.', 'communaute-protegee' ),
+			'label'       => __( 'Icône du site', 'communaute-protegee' ),
+			'description' => __( 'Si coché, l’icône du site est inséré dans l’entête de l’e-mail.', 'communaute-protegee' ),
 			'section'     => 'section_bp_mailtpl_header',
 			'type'        => 'checkbox',
 			'priority'    => 10,

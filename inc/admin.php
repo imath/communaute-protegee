@@ -22,7 +22,7 @@ function communaute_protegee_restrictions_setting_field_callback() {
 	?>
 	<textarea name="limited_email_domains" id="limited_email_domains" aria-describedby="limited-email-domains-desc" cols="45" rows="5"><?php echo esc_textarea( '' === $limited_email_domains ? '' : implode( "\n", (array) $limited_email_domains ) ); ?></textarea>
 	<p class="description" id="limited-email-domains-desc">
-		<?php esc_html_e( 'If you want to limit site registrations to certain domains. One domain per line.', 'communaute-protegee' ); ?>
+		<?php esc_html_e( 'Si vous souhaitez que les seules personnes autorisées à s’inscrire soient celles disposant d’une adresse e-mail liée à certains noms de domaine. Un domaine par ligne.', 'communaute-protegee' ); ?>
 	</p>
 	<?php
 }
@@ -35,7 +35,7 @@ function communaute_protegee_restrictions_setting_field_callback() {
 function communaute_protegee_restrictions_setting_field() {
 	add_settings_field(
 		'limited_email_domains',
-		__( 'Limited Email Registrations', 'communaute-protegee' ),
+		__( 'Inscription limitée aux e-mails contenant les domaines', 'communaute-protegee' ),
 		'communaute_protegee_restrictions_setting_field_callback',
 		'general',
 		'default'
@@ -258,7 +258,7 @@ function communaute_protegee_uploads_dir_restriction_callback() {
 	$option = bp_get_option( 'communaute_protegee_uploads_dir_restriction', false );
 	?>
 	<input id="communaute-protegee-uploads-dir-restriction" name="communaute_protegee_uploads_dir_restriction" type="checkbox" value="1" <?php checked( $option ); ?> />
-	<label for="communaute-protegee-uploads-dir-restriction"><?php esc_html_e( 'Restrict the visibility of the uploaded media to logged in users.', 'communaute-protegee' ); ?></label>
+	<label for="communaute-protegee-uploads-dir-restriction"><?php esc_html_e( 'Restreindre la visibilité des media téléversés aux utilisateurs connectés.', 'communaute-protegee' ); ?></label>
 	<?php
 }
 
@@ -287,7 +287,7 @@ function communaute_protegee_add_uploads_dir_restriction_field() {
 
 	add_settings_field(
 		'communaute_protegee_uploads_dir_restriction',
-		__( 'Uploads directory visibility', 'communaute-protegee' ),
+		__( 'Visibilité du répertoire des téléversements', 'communaute-protegee' ),
 		'communaute_protegee_uploads_dir_restriction_callback',
 		'media',
 		'uploads'

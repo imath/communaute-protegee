@@ -24,13 +24,13 @@ function communaute_protegee_setup_warnings() {
 
 	if ( ! communaute_protegee_bp_version_check() ) {
 		/* translators: %s is the Plugin's name */
-		$warnings[] = sprintf( __( '%s requires at least version 6.2.0 of BuddyPress.', 'communaute-protegee' ), $cp->name );
+		$warnings[] = sprintf( __( '%s requiert à minima la version 6.2.0 de BuddyPress.', 'communaute-protegee' ), $cp->name );
 	}
 
 	if ( ! communaute_protegee_rsa_version_check() ) {
 		$warnings[] = sprintf(
 			/* translators: 1 is the Plugin's name, 2 is the w.org link to the RSA plugin */
-			__( '%1$s needs the <a href="%2$ss">Restricted Site Access</a> plugin (version >= 7.1.0) to be active.', 'communaute-protegee' ),
+			__( '%1$s a besoin que l’extension <a href="%2$s">Restricted Site Access</a> (version >= 7.1.0) soit activée sur votre site WordPress.', 'communaute-protegee' ),
 			$cp->name,
 			esc_url( 'https://wordpress.org/plugins/restricted-site-access/' )
 		);

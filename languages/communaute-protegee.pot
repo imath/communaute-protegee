@@ -1,0 +1,237 @@
+# Copyright (C) 2020 imath
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Communauté Protégée 1.0.0-beta\n"
+"Report-Msgid-Bugs-To: https://github.com/imath/communaute-protegee/issues\n"
+"POT-Creation-Date: 2020-08-18 20:32:04+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2020-MO-DA HO:MI+ZONE\n"
+"Last-Translator: imath <contact@imathi.eu>\n"
+"Language-Team: FRENCH <contact@imathi.eu>\n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
+
+#: inc/admin.php:25
+msgid ""
+"Si vous souhaitez que les seules personnes autorisées à s’inscrire soient "
+"celles disposant d’une adresse e-mail liée à certains noms de domaine. Un "
+"domaine par ligne."
+msgstr ""
+
+#: inc/admin.php:38
+msgid "Inscription limitée aux e-mails contenant les domaines"
+msgstr ""
+
+#: inc/admin.php:261
+msgid "Restreindre la visibilité des media téléversés aux utilisateurs connectés."
+msgstr ""
+
+#: inc/admin.php:290
+msgid "Visibilité du répertoire des téléversements"
+msgstr ""
+
+#: inc/functions.php:431
+msgid "Nous n’avons pas été en mesure de valider votre e-mail, merci de réessayer."
+msgstr ""
+
+#: inc/functions.php:499
+msgid ""
+"Votre adresse e-mail est requise afin que nous puissions vous envoyer la "
+"politique de confidentialité."
+msgstr ""
+
+#: inc/functions.php:503
+msgid "La vérification de sécurité a échoué. Êtes-vous un humain ?"
+msgstr ""
+
+#: inc/functions.php:507
+msgid "Merci de vérifier votre adresse e-mail."
+msgstr ""
+
+#: inc/functions.php:511 inc/functions.php:515
+msgid "Désolé, cette adresse e-mail n’est pas autorisée !"
+msgstr ""
+
+#: inc/functions.php:519
+msgid "Désolé, cette adresse e-mail est déjà utilisée !"
+msgstr ""
+
+#: inc/functions.php:523
+msgid "La politique de confidentialité a été envoyée avec succès !"
+msgstr ""
+
+#: inc/functions.php:527
+msgid ""
+"Désolé, un problème est survenu lors de l’envoi de la politique de "
+"confidentialité. Merci de réessayer ultérieurement."
+msgstr ""
+
+#: inc/functions.php:672
+msgid "la page d’inscription"
+msgstr ""
+
+#: inc/functions.php:722
+msgid "Un utilisateur a demandé à recevoir la politique de confidentialité"
+msgstr ""
+
+#: inc/functions.php:725
+#. translators: do not remove {} brackets or translate its contents.
+msgid "[{{{site.name}}}] voici notre politique de confidentialité"
+msgstr ""
+
+#: inc/functions.php:727
+#. translators: do not remove {} brackets or translate its contents.
+msgid ""
+"{{{communaute_protegee.privacy_policy}}}\n"
+"\n"
+"Pour rejoindre {{{site.name}}}, merci de consulter : <a "
+"href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>."
+msgstr ""
+
+#: inc/functions.php:729
+#. translators: do not remove {} brackets or translate its contents.
+msgid ""
+"{{communaute_protegee.privacy_policy_text}}\n"
+"\n"
+"Pour rejoindre {{site.name}}, merci de consulter :\n"
+"\n"
+"{{communaute_protegee.url}}."
+msgstr ""
+
+#: inc/functions.php:829
+msgid "Icône du site"
+msgstr ""
+
+#: inc/functions.php:830
+msgid "Si coché, l’icône du site est inséré dans l’entête de l’e-mail."
+msgstr ""
+
+#: inc/warnings.php:27
+#. translators: %s is the Plugin's name
+msgid "%s requiert à minima la version 6.2.0 de BuddyPress."
+msgstr ""
+
+#: inc/warnings.php:33
+#. translators: 1 is the Plugin's name, 2 is the w.org link to the RSA plugin
+msgid ""
+"%1$s a besoin que l’extension <a href=\"%2$s\">Restricted Site Access</a> "
+"(version >= 7.1.0) soit activée sur votre site WordPress."
+msgstr ""
+
+#: templates/members/communaute-protegee-header.php:36
+msgid "Inscription"
+msgstr ""
+
+#: templates/members/communaute-protegee-header.php:36
+msgid "Activation"
+msgstr ""
+
+#: templates/members/communaute-protegee-header.php:69
+msgid "https://fr.wordpress.org/"
+msgstr ""
+
+#: templates/members/communaute-protegee-header.php:70
+msgid "Propulsé par WordPress"
+msgstr ""
+
+#: templates/members/register-password.php:29
+msgid "Indicateur de robustesse"
+msgstr ""
+
+#: templates/members/register-password.php:34
+msgid "Confirmer l’utilisation d’un mot de passe faible"
+msgstr ""
+
+#: templates/members/register-password.php:40
+msgid "Confirmer le mot de passe"
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:19
+msgid "Politique de confidentialité"
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:21
+msgid ""
+"Pour recevoir la politique de confidentialité, remplissez le champ "
+"ci-dessous avec votre adresse e-mail et cliquer sur le bouton « Recevoir "
+"notre politique de confidentialité par e-mail »."
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:22
+msgid ""
+"Votre adresse e-mail ne sera pas enregistrée dans la base de données de "
+"notre site."
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:25
+msgid "Adresse e-mail"
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:25
+msgid "(obligatoire)"
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:31
+msgid "Recevoir notre politique de confidentialité par e-mail"
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:50
+#. translators: link to Privacy Policy
+msgid "J’ai lu et j’approuve la %s de ce site."
+msgstr ""
+
+#: templates/members/register-privacy-policy.php:50
+msgid "politique de confidentialité"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:25
+msgid "Générer un mot de passe"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:32
+msgid "Cacher le mot de passe"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:34
+msgid "Cacher"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:36
+msgid "Annuler la modification du mot de passe"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:37
+msgid "Annuler"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:44
+msgid "Répétez le nouveau mot de passe"
+msgstr ""
+
+#: templates/members/single/settings/general-password.php:51
+msgid "Confirmez l’utilisation d’un mot de passe potentiellement faible."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Communauté Protégée"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/imath/communaute-protegee"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Enrichit l'extension Restricted Site Access pour protéger l'accès aux sites "
+"communautaires motorisés par BuddyPress."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "imath"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/imath"
+msgstr ""
