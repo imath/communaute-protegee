@@ -16,11 +16,20 @@
 }
 
 #buddypress .standard-form#signup_form div div.error,
+#buddypress .standard-form#signup-form .register-section .bp-feedback.error,
 #message.bp-template-notice {
 	background: #faa;
 	color: #a00;
 	margin: 0 0 10px 0;
 	padding: 6px;
+}
+
+#buddypress .standard-form#signup-form .register-section .bp-feedback.error .bp-icon {
+	display: none;
+}
+
+#register:not( .completed-confirmation ) .register-section .bp-feedback.error p {
+	margin-bottom: 0;
 }
 
 #message.bp-template-notice.updated {

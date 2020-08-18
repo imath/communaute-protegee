@@ -17,36 +17,35 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 function communaute_protegee_globals() {
+	// Get the Plugin's main instance.
 	$cp = communaute_protegee();
 
+	// Version.
 	$cp->version = '1.0.0-beta';
 
 	// Paths.
-	$cp->dir      = plugin_dir_path( dirname( __FILE__ ) );
-	$cp->inc_path = plugin_dir_path( __FILE__ );
+	$cp->dir           = plugin_dir_path( dirname( __FILE__ ) );
+	$cp->inc_path      = plugin_dir_path( __FILE__ );
+	$cp->templates_dir = $cp->dir . 'templates';
 
 	// URLs.
-	$cp->css_url = plugins_url( 'assets/css/', dirname( __FILE__ ) );
+	$cp->url    = plugins_url( '/', dirname( __FILE__ ) );
+	$cp->js_url = trailingslashit( $cp->url . 'js' );
 
-	// Legacy constants.
-	$cp->domain        = 'communaute-protegee';
-	$cp->name          = 'Communauté Protégée';
-	$cp->basename      = plugin_basename( $cp->dir . 'class-communaute-protegee.php' );
-	$cp->plugin_dir    = $cp->dir;
-	$cp->plugin_url    = plugins_url( '/', dirname( __FILE__ ) );
-	$cp->lang_dir      = trailingslashit( $cp->plugin_dir . 'languages' );
-	$cp->templates_dir = $cp->plugin_dir . 'templates';
-	$cp->plugin_js     = trailingslashit( $cp->plugin_url . 'js' );
-	$cp->minified      = '.min';
-	if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-		$cp->minified = '';
-	}
+	// Plugin's identifying constants.
+	$cp->domain   = 'communaute-protegee';
+	$cp->name     = 'Communauté Protégée';
+	$cp->basename = plugin_basename( $cp->dir . 'class-communaute-protegee.php' );
 
-	// Plugin config.
+	// Plugin's config.
 	$cp->rsa_options    = (array) get_option( 'rsa_options', array() );
 	$cp->signup_allowed = bp_get_signup_allowed();
 	$cp->use_site_icon  = apply_filters( 'communaute_protegee_use_site_icon', get_site_icon_url( 84 ) );
 	$cp->is_legacy      = 'legacy' === bp_get_theme_package_id();
+	$cp->minified       = '.min';
+	if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+		$cp->minified = '';
+	}
 
 	/**
 	 * Fires when Plugin globals are set.

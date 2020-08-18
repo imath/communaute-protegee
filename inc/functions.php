@@ -86,7 +86,7 @@ function communaute_protegee_register_scripts() {
 		array(
 			array(
 				'handle' => 'communaute-protegee-register',
-				'file'   => $cp->plugin_js . "register{$cp->minified}.js",
+				'file'   => $cp->js_url . "register{$cp->minified}.js",
 				'deps'   => array( 'jquery', 'user-profile' ),
 			),
 		)
@@ -123,8 +123,8 @@ function communaute_protegee_locate_stylesheet( $stylesheet_name = '' ) {
 
 	$stylesheet_path = bp_locate_template( 'css/' . $stylesheet_name . $cp->minified . '.css' );
 
-	if ( 0 === strpos( $stylesheet_path, $cp->plugin_dir ) ) {
-		$stylesheet_uri = str_replace( $cp->plugin_dir, $cp->plugin_url, $stylesheet_path );
+	if ( 0 === strpos( $stylesheet_path, $cp->dir ) ) {
+		$stylesheet_uri = str_replace( $cp->dir, $cp->url, $stylesheet_path );
 	} else {
 		$stylesheet_uri = str_replace( WP_CONTENT_DIR, content_url(), $stylesheet_path );
 	}
@@ -281,7 +281,7 @@ function communaute_protegee_enqueue_scripts() {
 		// The register form need some specific stuff.
 		if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
 			add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
-			wp_localize_script( 'communaute-protegee-register', 'bpRestrictCommunity', array( 'field_key' => wp_hash( gmdate( 'YMDH' ) ) ) );
+			wp_localize_script( 'communaute-protegee-register', 'communauteProtegee', array( 'field_key' => wp_hash( gmdate( 'YMDH' ) ) ) );
 
 			/**
 			 * Replace BuddyPress's way of setting the password by the WordPress's one
@@ -547,7 +547,7 @@ function communaute_protegee_get_feedback( $code = '' ) {
 function communaute_protegee_privacy_policy_feedback() {
 	$bp = buddypress();
 
-	if ( ( ! isset( $bp->signup->step ) && 'privacy-policy' !== $bp->signup->step ) || ! $_GET ) { // phpcs:ignore
+	if ( ( ! isset( $bp->signup->step ) || 'privacy-policy' !== $bp->signup->step ) && ! $_GET ) { // phpcs:ignore
 		return;
 	}
 
