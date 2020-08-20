@@ -1,5 +1,5 @@
-BP Restricted Community
-=======================
+Communauté Protégée
+===================
 
 Restricted Site Access companion to control your BuddyPress powered community site's access.
 

@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Communauté Protégée 1.0.0-beta\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/communaute-protegee/issues\n"
-"POT-Creation-Date: 2020-08-18 20:32:04+00:00\n"
-"PO-Revision-Date: 2020-08-18 22:41+0200\n"
+"POT-Creation-Date: 2020-08-20 20:23:00+00:00\n"
+"PO-Revision-Date: 2020-08-20 22:23+0200\n"
 "Last-Translator: \n"
 "Language-Team: FRENCH <contact@imathi.eu>\n"
 "Language: en_US\n"
@@ -37,60 +37,60 @@ msgstr "Restrict the visibility of the uploaded media to logged in users."
 msgid "Visibilité du répertoire des téléversements"
 msgstr "Uploads directory visibility"
 
-#: inc/functions.php:431
+#: inc/functions.php:516
 msgid ""
 "Nous n’avons pas été en mesure de valider votre e-mail, merci de réessayer."
 msgstr "We were not able to validate your email, please try again."
 
-#: inc/functions.php:499
+#: inc/functions.php:584
 msgid ""
 "Votre adresse e-mail est requise afin que nous puissions vous envoyer la "
 "politique de confidentialité."
 msgstr ""
 "Your email address is required so that we can send you the privacy policy."
 
-#: inc/functions.php:503
+#: inc/functions.php:588
 msgid "La vérification de sécurité a échoué. Êtes-vous un humain ?"
 msgstr "The sanity check failed. Are you a human?"
 
-#: inc/functions.php:507
+#: inc/functions.php:592
 msgid "Merci de vérifier votre adresse e-mail."
 msgstr "Please check your email address."
 
-#: inc/functions.php:511 inc/functions.php:515
+#: inc/functions.php:596 inc/functions.php:600
 msgid "Désolé, cette adresse e-mail n’est pas autorisée !"
 msgstr "Sorry, that email address is not allowed!"
 
-#: inc/functions.php:519
+#: inc/functions.php:604
 msgid "Désolé, cette adresse e-mail est déjà utilisée !"
 msgstr "Sorry, that email address is already used!"
 
-#: inc/functions.php:523
+#: inc/functions.php:608
 msgid "La politique de confidentialité a été envoyée avec succès !"
 msgstr "The privacy policy was successfully sent!"
 
-#: inc/functions.php:527
+#: inc/functions.php:612
 msgid ""
 "Désolé, un problème est survenu lors de l’envoi de la politique de "
 "confidentialité. Merci de réessayer ultérieurement."
 msgstr ""
 "Sorry, there was a problem sending the privacy policy. Pleas try again later."
 
-#: inc/functions.php:672
+#: inc/functions.php:757
 msgid "la page d’inscription"
 msgstr "the registration page"
 
-#: inc/functions.php:722
+#: inc/functions.php:807
 msgid "Un utilisateur a demandé à recevoir la politique de confidentialité"
 msgstr "A user requested to receive the privacy policy"
 
 #. translators: do not remove {} brackets or translate its contents.
-#: inc/functions.php:725
+#: inc/functions.php:810
 msgid "[{{{site.name}}}] voici notre politique de confidentialité"
 msgstr "[{{{site.name}}}] here is our privacy policy"
 
 #. translators: do not remove {} brackets or translate its contents.
-#: inc/functions.php:727
+#: inc/functions.php:812
 msgid ""
 "{{{communaute_protegee.privacy_policy}}}\n"
 "\n"
@@ -103,7 +103,7 @@ msgstr ""
 "url}}}\">{{communaute_protegee.title}}</a>."
 
 #. translators: do not remove {} brackets or translate its contents.
-#: inc/functions.php:729
+#: inc/functions.php:814
 msgid ""
 "{{communaute_protegee.privacy_policy_text}}\n"
 "\n"
@@ -117,11 +117,11 @@ msgstr ""
 "\n"
 "{{communaute_protegee.url}}."
 
-#: inc/functions.php:829
+#: inc/functions.php:914
 msgid "Icône du site"
 msgstr "Site icon"
 
-#: inc/functions.php:830
+#: inc/functions.php:915
 msgid "Si coché, l’icône du site est inséré dans l’entête de l’e-mail."
 msgstr "If checked, the site icon is inserted into email’s header."
 

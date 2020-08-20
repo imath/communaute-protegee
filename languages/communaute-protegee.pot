@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Communauté Protégée 1.0.0-beta\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/communaute-protegee/issues\n"
-"POT-Creation-Date: 2020-08-18 20:32:04+00:00\n"
+"POT-Creation-Date: 2020-08-20 20:23:00+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -32,56 +32,56 @@ msgstr ""
 msgid "Visibilité du répertoire des téléversements"
 msgstr ""
 
-#: inc/functions.php:431
+#: inc/functions.php:516
 msgid "Nous n’avons pas été en mesure de valider votre e-mail, merci de réessayer."
 msgstr ""
 
-#: inc/functions.php:499
+#: inc/functions.php:584
 msgid ""
 "Votre adresse e-mail est requise afin que nous puissions vous envoyer la "
 "politique de confidentialité."
 msgstr ""
 
-#: inc/functions.php:503
+#: inc/functions.php:588
 msgid "La vérification de sécurité a échoué. Êtes-vous un humain ?"
 msgstr ""
 
-#: inc/functions.php:507
+#: inc/functions.php:592
 msgid "Merci de vérifier votre adresse e-mail."
 msgstr ""
 
-#: inc/functions.php:511 inc/functions.php:515
+#: inc/functions.php:596 inc/functions.php:600
 msgid "Désolé, cette adresse e-mail n’est pas autorisée !"
 msgstr ""
 
-#: inc/functions.php:519
+#: inc/functions.php:604
 msgid "Désolé, cette adresse e-mail est déjà utilisée !"
 msgstr ""
 
-#: inc/functions.php:523
+#: inc/functions.php:608
 msgid "La politique de confidentialité a été envoyée avec succès !"
 msgstr ""
 
-#: inc/functions.php:527
+#: inc/functions.php:612
 msgid ""
 "Désolé, un problème est survenu lors de l’envoi de la politique de "
 "confidentialité. Merci de réessayer ultérieurement."
 msgstr ""
 
-#: inc/functions.php:672
+#: inc/functions.php:757
 msgid "la page d’inscription"
 msgstr ""
 
-#: inc/functions.php:722
+#: inc/functions.php:807
 msgid "Un utilisateur a demandé à recevoir la politique de confidentialité"
 msgstr ""
 
-#: inc/functions.php:725
+#: inc/functions.php:810
 #. translators: do not remove {} brackets or translate its contents.
 msgid "[{{{site.name}}}] voici notre politique de confidentialité"
 msgstr ""
 
-#: inc/functions.php:727
+#: inc/functions.php:812
 #. translators: do not remove {} brackets or translate its contents.
 msgid ""
 "{{{communaute_protegee.privacy_policy}}}\n"
@@ -90,7 +90,7 @@ msgid ""
 "href=\"{{{communaute_protegee.url}}}\">{{communaute_protegee.title}}</a>."
 msgstr ""
 
-#: inc/functions.php:729
+#: inc/functions.php:814
 #. translators: do not remove {} brackets or translate its contents.
 msgid ""
 "{{communaute_protegee.privacy_policy_text}}\n"
@@ -100,11 +100,11 @@ msgid ""
 "{{communaute_protegee.url}}."
 msgstr ""
 
-#: inc/functions.php:829
+#: inc/functions.php:914
 msgid "Icône du site"
 msgstr ""
 
-#: inc/functions.php:830
+#: inc/functions.php:915
 msgid "Si coché, l’icône du site est inséré dans l’entête de l’e-mail."
 msgstr ""
 
