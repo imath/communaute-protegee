@@ -22,8 +22,11 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 	add_action( 'wp_head', 'wp_no_robots', 1 );
 	add_action( 'communaute_protegee_head', 'wp_no_robots', 1 );
 
-	// Adds a new size to site icon.
+	// Icon hooks.
 	add_filter( 'site_icon_image_sizes', 'communaute_protegee_login_screen_add_icon_size', 10, 1 );
+	add_filter( 'site_icon_meta_tags', 'communaute_protegee_set_site_icon_meta_tags', 10, 1 );
+	add_action( 'delete_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
+	add_action( 'update_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
 
 	// Loads CSS & JavaScripts into Plugin templates.
 	add_action( 'communaute_protegee_init', 'communaute_protegee_register_scripts', 1 );
@@ -66,8 +69,6 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 	add_action( 'bp_before_email_header', 'communaute_protegee_email_header_logo' );
 	add_filter( 'bp_email_get_customizer_settings', 'communaute_protegee_customize_email_settings', 10, 1 );
 	add_action( 'bp_email_customizer_register_sections', 'communaute_protegee_customize_email_control', 10, 1 );
-	add_action( 'delete_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
-	add_action( 'update_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
 
 	// Admin hooks.
 	add_action( 'bp_admin_init', 'communaute_protegee_update', 20 );

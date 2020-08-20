@@ -24,6 +24,41 @@ function communaute_protegee_login_screen_add_icon_size( $icon_sizes = array() )
 }
 
 /**
+ * Gets the icon path using the requested size or url.
+ *
+ * @since 1.0.0
+ *
+ * @param integer $size The icon size.
+ * @param string  $url  The icon url.
+ * @return string The icon path.
+ */
+function communaute_protegee_get_icon_path( $size = 0, $url = '' ) {
+	if ( ! $size && ! $url ) {
+		return '';
+	}
+
+	if ( ! $url ) {
+		$url = get_site_icon_url( $size, '', bp_get_root_blog_id() );
+
+		if ( ! $url ) {
+			return '';
+		}
+	}
+
+	// Get WordPress uploads directory data.
+	$upload_data = wp_upload_dir();
+
+	if ( false === strpos( $url, $upload_data['baseurl'] ) ) {
+		return '';
+	}
+
+	// Set the icon path.
+	$path = str_replace( $upload_data['baseurl'], $upload_data['basedir'], $url );
+
+	return realpath( $path );
+}
+
+/**
  * Gets a base64 encoded image for the site icon.
  *
  * @since 1.0.0
@@ -38,12 +73,8 @@ function communaute_protegee_get_base64_site_icon() {
 		$base64_site_icon = bp_get_option( '_communaute_protegee_base64_site_icon', '' );
 
 		if ( ! $base64_site_icon ) {
-			$upload_data = wp_upload_dir();
-
-			$img_src = str_replace( $upload_data['baseurl'], $upload_data['basedir'], $site_icon );
-			$img_src = realpath( $img_src );
-
-			$site_icon = 'data:image/png;base64,' . base64_encode( file_get_contents( $img_src ) ); // phpcs:ignore
+			$icon_path = communaute_protegee_get_icon_path( 84, $site_icon );
+			$site_icon = 'data:image/png;base64,' . base64_encode( file_get_contents( $icon_path ) ); // phpcs:ignore
 
 			// Update the base64 site icon.
 			bp_update_option( '_communaute_protegee_base64_site_icon', $site_icon );
@@ -53,6 +84,31 @@ function communaute_protegee_get_base64_site_icon() {
 	}
 
 	return $site_icon;
+}
+
+/**
+ * Resets the icon meta tags if the uploads directory is restricted.
+ *
+ * @since 1.0.0
+ *
+ * @param array $meta_tags The WordPress default icon meta tags.
+ * @return array The icon meta tags.
+ */
+function communaute_protegee_set_site_icon_meta_tags( $meta_tags = array() ) {
+	if ( doing_action( 'login_head' ) || doing_action( 'communaute_protegee_head' ) ) {
+		// Get the Plugin's main instance.
+		$cp = communaute_protegee();
+
+		if ( true === (bool) $cp->use_site_icon && true === (bool) bp_get_option( 'communaute_protegee_uploads_dir_restriction' ) ) {
+			$icon_url  = home_url( 'communaute-privee-icon/%s/' );
+			$meta_tags = array(
+				sprintf( '<link rel="icon" href="%s" sizes="32x32" />', esc_url( sprintf( $icon_url, 32 ) ) ),
+				sprintf( '<link rel="icon" href="%s" sizes="192x192" />', esc_url( sprintf( $icon_url, 192 ) ) ),
+			);
+		}
+	}
+
+	return $meta_tags;
 }
 
 /**
@@ -401,6 +457,35 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp 
 
 		if ( get_privacy_policy_url() === $url ) {
 			bp_core_redirect( trailingslashit( bp_get_signup_page() . $wp->query_vars['pagename'] ) );
+		}
+	}
+
+	// Check if the request is about an icon.
+	if ( isset( $wp->query_vars['pagename'], $wp->query_vars['page'] ) && 'communaute-privee-icon' === $wp->query_vars['pagename'] && in_array( (int) $wp->query_vars['page'], array( 32, 192 ), true ) ) {
+		$icon_size = (int) $wp->query_vars['page'];
+		$icon_path = communaute_protegee_get_icon_path( $icon_size );
+
+		if ( ! $icon_path ) {
+			return '';
+		}
+
+		$icon_mime = wp_get_image_mime( $icon_path );
+
+		if ( in_array( $icon_mime, array( 'image/jpeg', 'image/gif', 'image/png' ), true ) ) {
+			status_header( 200 );
+			header( 'Cache-Control: cache, must-revalidate' );
+			header( 'Pragma: public' );
+			header( 'Content-Description: File Transfer' );
+			header( 'Content-Length: ' . filesize( $icon_path ) );
+			header( 'Content-Disposition: inline; filename=' . wp_basename( $icon_path ) );
+			header( 'Content-Type: ' . $icon_mime );
+
+			while ( ob_get_level() > 0 ) {
+				ob_end_flush();
+			}
+
+			readfile( $icon_path ); // phpcs:ignore
+			die();
 		}
 	}
 

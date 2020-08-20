@@ -40,7 +40,7 @@ function communaute_protegee_globals() {
 	// Plugin's config.
 	$cp->rsa_options    = (array) get_option( 'rsa_options', array() );
 	$cp->signup_allowed = bp_get_signup_allowed();
-	$cp->use_site_icon  = apply_filters( 'communaute_protegee_use_site_icon', get_site_icon_url( 84 ) );
+	$cp->use_site_icon  = apply_filters( 'communaute_protegee_use_site_icon', get_site_icon_url( 84, '', bp_get_root_blog_id() ) );
 	$cp->is_legacy      = 'legacy' === bp_get_theme_package_id();
 	$cp->minified       = '.min';
 	if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
