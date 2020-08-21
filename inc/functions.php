@@ -74,7 +74,8 @@ function communaute_protegee_get_base64_site_icon() {
 
 		if ( ! $base64_site_icon ) {
 			$icon_path = communaute_protegee_get_icon_path( 84, $site_icon );
-			$site_icon = 'data:image/png;base64,' . base64_encode( file_get_contents( $icon_path ) ); // phpcs:ignore
+			$icon_mime = wp_get_image_mime( $icon_path );
+			$site_icon = sprintf( 'data:%1$s;base64,%2$s', $icon_mime, base64_encode( file_get_contents( $icon_path ) ) ); // phpcs:ignore
 
 			// Update the base64 site icon.
 			bp_update_option( '_communaute_protegee_base64_site_icon', $site_icon );
@@ -104,6 +105,8 @@ function communaute_protegee_set_site_icon_meta_tags( $meta_tags = array() ) {
 			$meta_tags = array(
 				sprintf( '<link rel="icon" href="%s" sizes="32x32" />', esc_url( sprintf( $icon_url, 32 ) ) ),
 				sprintf( '<link rel="icon" href="%s" sizes="192x192" />', esc_url( sprintf( $icon_url, 192 ) ) ),
+				sprintf( '<link rel="apple-touch-icon" href="%s" />', esc_url( sprintf( $icon_url, 180 ) ) ),
+				sprintf( '<meta name="msapplication-TileImage" content="%s" />', esc_url( sprintf( $icon_url, 270 ) ) ),
 			);
 		}
 	}
@@ -461,7 +464,7 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp 
 	}
 
 	// Check if the request is about an icon.
-	if ( isset( $wp->query_vars['pagename'], $wp->query_vars['page'] ) && 'communaute-privee-icon' === $wp->query_vars['pagename'] && in_array( (int) $wp->query_vars['page'], array( 32, 192 ), true ) ) {
+	if ( isset( $wp->query_vars['pagename'], $wp->query_vars['page'] ) && 'communaute-privee-icon' === $wp->query_vars['pagename'] && in_array( (int) $wp->query_vars['page'], array( 32, 192, 180, 270 ), true ) ) {
 		$icon_size = (int) $wp->query_vars['page'];
 		$icon_path = communaute_protegee_get_icon_path( $icon_size );
 

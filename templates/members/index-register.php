@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 bp_get_template_part( 'members/communaute-protegee-header' ); ?>
 
 <div id="register" class="<?php echo sanitize_html_class( bp_get_current_signup_step() ); ?>">
-	<h1><a href="<?php echo esc_url( communaute_protegee()->register_header_url ); ?>" title="<?php echo esc_attr( communaute_protegee()->register_header_title ); ?>" tabindex="-1"><?php bloginfo( 'name' ); ?></a></h1>
+	<h1><a href="<?php echo esc_url( communaute_protegee()->register_header_url ); ?>" tabindex="-1"><?php echo esc_html( communaute_protegee()->register_header_text ); ?></a></h1>
 
 	<?php if ( communaute_protegee()->is_legacy ) : ?>
 		<div id="template-notices" role="alert" aria-atomic="true">

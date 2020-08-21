@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 bp_get_template_part( 'members/communaute-protegee-header' ); ?>
 
 <div id="activate">
-	<h1><a href="<?php echo esc_url( communaute_protegee()->register_header_url ); ?>" title="<?php echo esc_attr( communaute_protegee()->register_header_title ); ?>" tabindex="-1"><?php bloginfo( 'name' ); ?></a></h1>
+	<h1><a href="<?php echo esc_url( communaute_protegee()->register_header_url ); ?>" title="" tabindex="-1"><?php echo esc_html( communaute_protegee()->register_header_text ); ?></a></h1>
 	<?php if ( have_posts() ) : ?>
 		<?php while ( have_posts() ) : ?>
 

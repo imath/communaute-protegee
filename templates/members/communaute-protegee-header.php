@@ -63,11 +63,11 @@ do_action( 'login_head' );
 do_action( 'communaute_protegee_head' );
 
 if ( is_multisite() ) {
-	$register_header_url   = network_home_url();
-	$register_header_title = get_current_site()->site_name;
+	$register_header_url  = network_home_url();
+	$register_header_text = get_current_site()->site_name;
 } else {
-	$register_header_url   = __( 'https://fr.wordpress.org/', 'communaute-protegee' );
-	$register_header_title = __( 'Propulsé par WordPress', 'communaute-protegee' );
+	$register_header_url  = __( 'https://fr.wordpress.org/', 'communaute-protegee' );
+	$register_header_text = __( 'Propulsé par WordPress', 'communaute-protegee' );
 }
 
 /**
@@ -86,7 +86,7 @@ communaute_protegee()->register_header_url = apply_filters( 'login_headerurl', $
  *
  * @param string $register_header_title Login header logo title attribute.
  */
-communaute_protegee()->register_header_title = apply_filters( 'login_headertitle', $register_header_title );
+communaute_protegee()->register_header_text = apply_filters( 'login_headertext', $register_header_text );
 ?>
 </head>
 	<body class="login wp-core-ui">
