@@ -161,6 +161,9 @@ function communaute_protegee_update() {
 
 		// Install emails.
 		communaute_protegee_install_emails();
+
+		// Clean rewrite rules to update them at next front-end page load.
+		delete_option( 'rewrite_rules' );
 	}
 
 	// Update.

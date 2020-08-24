@@ -46,7 +46,7 @@ function communaute_protegee_get_icon_path( $size = 0, $url = '' ) {
 	}
 
 	// Get WordPress uploads directory data.
-	$upload_data = wp_upload_dir();
+	$upload_data = wp_get_upload_dir();
 
 	if ( false === strpos( $url, $upload_data['baseurl'] ) ) {
 		return '';
@@ -427,6 +427,84 @@ function communaute_protegee_enqueue_scripts() {
 }
 
 /**
+ * Outputs the Site icon image even when the uploads directory is protected.
+ *
+ * @since 1.0.0
+ *
+ * @param string $icon_path The path to the icon image to output.
+ */
+function communaute_protegee_output_icon( $icon_path = '' ) {
+	if ( ! $icon_path ) {
+		return;
+	}
+
+	$icon_mime = wp_get_image_mime( $icon_path );
+
+	if ( in_array( $icon_mime, array( 'image/jpeg', 'image/gif', 'image/png' ), true ) ) {
+		status_header( 200 );
+		header( 'Cache-Control: cache, must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Length: ' . filesize( $icon_path ) );
+		header( 'Content-Disposition: inline; filename=' . wp_basename( $icon_path ) );
+		header( 'Content-Type: ' . $icon_mime );
+
+		while ( ob_get_level() > 0 ) {
+			ob_end_flush();
+		}
+
+		readfile( $icon_path ); // phpcs:ignore
+		die();
+	}
+}
+
+/**
+ * Check the main WordPress query to see if we need to output the Site icon image.
+ *
+ * @since 1.0.0
+ *
+ * @param WP_Query $query The WP_Query instance
+ * @return string HTML Output.
+ */
+function communaute_protegee_query( $query = null ) {
+	// Bail if $query is not the main loop
+	if ( ! $query->is_main_query() ) {
+		return;
+	}
+
+	// Bail if filters are suppressed on this query
+	if ( true === $query->get( 'suppress_filters' ) ) {
+		return;
+	}
+
+	$icon_size = (int) $query->get( 'cp-icon-size' );
+
+	if ( ! $icon_size || ! in_array( $icon_size, array( 32, 84, 192, 180, 270 ), true ) ) {
+		return;
+	}
+
+	$icon_path = communaute_protegee_get_icon_path( $icon_size );
+
+	return communaute_protegee_output_icon( $icon_path );
+}
+
+/**
+ * Adds a new rewrite rule for the dynamic output of the Site icon.
+ *
+ * @since 1.0.0
+ */
+function communaute_protegee_rewrites() {
+	// Icon size
+	add_rewrite_tag( '%cp-icon-size%', '([^/]+)' );
+
+	add_rewrite_rule(
+		'communaute-protegee-icon/?([0-9]{1,})/?$',
+		'index.php?cp-icon-size=$matches[1]',
+		'top'
+	);
+}
+
+/**
  * Filter the Restrict Site Access main function and adapt it for our BuddyPress needs.
  *
  * @since 1.0.0
@@ -463,33 +541,16 @@ function communaute_protegee_allow_bp_registration( $is_restricted = false, $wp 
 		}
 	}
 
-	// Check if the request is about an icon.
-	if ( isset( $wp->query_vars['pagename'], $wp->query_vars['page'] ) && 'communaute-privee-icon' === $wp->query_vars['pagename'] && in_array( (int) $wp->query_vars['page'], array( 32, 192, 180, 270 ), true ) ) {
-		$icon_size = (int) $wp->query_vars['page'];
+	// Check if the request is about the site icon.
+	if ( isset( $wp->query_vars['cp-icon-size'] ) && in_array( (int) $wp->query_vars['cp-icon-size'], array( 32, 84, 192, 180, 270 ), true ) ) {
+		$icon_size = (int) $wp->query_vars['cp-icon-size'];
 		$icon_path = communaute_protegee_get_icon_path( $icon_size );
 
 		if ( ! $icon_path ) {
 			return '';
 		}
 
-		$icon_mime = wp_get_image_mime( $icon_path );
-
-		if ( in_array( $icon_mime, array( 'image/jpeg', 'image/gif', 'image/png' ), true ) ) {
-			status_header( 200 );
-			header( 'Cache-Control: cache, must-revalidate' );
-			header( 'Pragma: public' );
-			header( 'Content-Description: File Transfer' );
-			header( 'Content-Length: ' . filesize( $icon_path ) );
-			header( 'Content-Disposition: inline; filename=' . wp_basename( $icon_path ) );
-			header( 'Content-Type: ' . $icon_mime );
-
-			while ( ob_get_level() > 0 ) {
-				ob_end_flush();
-			}
-
-			readfile( $icon_path ); // phpcs:ignore
-			die();
-		}
+		return communaute_protegee_output_icon( $icon_path );
 	}
 
 	return $is_restricted;
@@ -847,7 +908,11 @@ function communaute_protegee_email_header_logo() {
 		return;
 	}
 
-	$site_icon = communaute_protegee_get_base64_site_icon();
+	if ( ! bp_get_option( 'communaute_protegee_uploads_dir_restriction' ) ) {
+		$site_icon = get_site_icon_url( 84, '', bp_get_root_blog_id() );
+	} else {
+		$site_icon = home_url( 'communaute-protegee-icon/84/' );
+	}
 
 	if ( $site_icon && communaute_protegee_email_site_icon_is_checked() ) {
 		?>

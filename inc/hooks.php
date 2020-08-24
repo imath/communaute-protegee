@@ -27,6 +27,8 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 	add_filter( 'site_icon_meta_tags', 'communaute_protegee_set_site_icon_meta_tags', 10, 1 );
 	add_action( 'delete_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
 	add_action( 'update_option_site_icon', 'communaute_protegee_update_email_header_logo', 10, 0 );
+	add_action( 'init', 'communaute_protegee_rewrites' );
+	add_action( 'parse_query', 'communaute_protegee_query', 2 );
 
 	// Loads CSS & JavaScripts into Plugin templates.
 	add_action( 'communaute_protegee_init', 'communaute_protegee_register_scripts', 1 );
