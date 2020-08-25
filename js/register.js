@@ -18,7 +18,7 @@
 		$( '.field-visibility-settings-notoggle, .field-visibility-settings-toggle, .field-visibility-settings' ).remove();
 
 		// Add an hidden field
-		$( 'form[name="signup_form"]' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', communauteProtegee.field_key ) );
+		$( 'form[name="signup_form"]' ).append( $( '<input>' ).prop( 'type', 'hidden' ).prop( 'name', communauteProtegee.settings.fieldKey ) );
 
 		// Move the Privacy policy control into the last registration section.
 		$( 'form[name="signup_form"]' ).find( '.register-section' ).last().append( $( '.privacy-policy-accept' ) );
@@ -38,7 +38,7 @@
 				signupEmail = $( 'input[name="privacy_policy_email"]' ).val();
 			}
 
-			$( event.currentTarget ).find( 'input[name="' + communauteProtegee.field_key + '"]' ).val( signupEmail );
+			$( event.currentTarget ).find( 'input[name="' + communauteProtegee.settings.fieldKey + '"]' ).val( signupEmail );
 		} );
 
 		if ( $( '#blog-details' ).length && true !== $( '#signup_with_blog' ).prop( 'checked' ) ) {

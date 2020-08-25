@@ -340,7 +340,15 @@ function communaute_protegee_enqueue_scripts() {
 		// The register form need some specific stuff.
 		if ( bp_is_register_page() && 'completed-confirmation' !== bp_get_current_signup_step() ) {
 			add_filter( 'bp_xprofile_is_richtext_enabled_for_field', '__return_false' );
-			wp_localize_script( 'communaute-protegee-register', 'communauteProtegee', array( 'field_key' => wp_hash( gmdate( 'YMDH' ) ) ) );
+			wp_localize_script(
+				'communaute-protegee-register',
+				'communauteProtegee',
+				array(
+					'settings' => array(
+						'fieldKey' => wp_hash( gmdate( 'YMDH' ) )
+					)
+				)
+			);
 
 			/**
 			 * Replace BuddyPress's way of setting the password by the WordPress's one
