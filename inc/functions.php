@@ -345,8 +345,8 @@ function communaute_protegee_enqueue_scripts() {
 				'communauteProtegee',
 				array(
 					'settings' => array(
-						'fieldKey' => wp_hash( gmdate( 'YMDH' ) )
-					)
+						'fieldKey' => wp_hash( gmdate( 'YMDH' ) ),
+					),
 				)
 			);
 
@@ -471,16 +471,16 @@ function communaute_protegee_output_icon( $icon_path = '' ) {
  *
  * @since 1.0.0
  *
- * @param WP_Query $query The WP_Query instance
+ * @param WP_Query $query The WP_Query instance.
  * @return string HTML Output.
  */
 function communaute_protegee_query( $query = null ) {
-	// Bail if $query is not the main loop
+	// Bail if $query is not the main loop.
 	if ( ! $query->is_main_query() ) {
 		return;
 	}
 
-	// Bail if filters are suppressed on this query
+	// Bail if filters are suppressed on this query.
 	if ( true === $query->get( 'suppress_filters' ) ) {
 		return;
 	}
@@ -502,7 +502,7 @@ function communaute_protegee_query( $query = null ) {
  * @since 1.0.0
  */
 function communaute_protegee_rewrites() {
-	// Icon size
+	// Icon size.
 	add_rewrite_tag( '%cp-icon-size%', '([^/]+)' );
 
 	add_rewrite_rule(
@@ -924,10 +924,9 @@ function communaute_protegee_email_header_logo() {
 
 	if ( $site_icon && communaute_protegee_email_site_icon_is_checked() ) {
 		?>
-			<a href="<?php echo esc_url( home_url() ); ?>">
-				<img src="<?php echo esc_attr( $site_icon ); ?>" alt="Site Icon">
+			<a style="border: none; text-decoration: none;display: block;" href="<?php echo esc_url( home_url() ); ?>">
+				<img src="<?php echo esc_attr( $site_icon ); ?>" alt="<?php esc_attr_e( 'Logo du site', 'communaute-protegee' ); ?>">
 			</a>
-			<br>
 		<?php
 	}
 }

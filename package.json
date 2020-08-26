@@ -27,8 +27,8 @@
   },
   "scripts": {
     "package-plugin": "./bin/package-zip.sh",
-		"wpcs": "./vendor/bin/phpcs class-communaute-protegee.php inc/*.php templates/members/* --standard=WordPress",
-		"start": "parcel watch src/js/* --out-dir js --no-source-maps",
+    "wpcs": "./vendor/bin/phpcs class-communaute-protegee.php inc/*.php templates/members/* --standard=WordPress",
+    "start": "parcel watch src/js/* --out-dir js --no-source-maps",
     "dev": "parcel build src/js/* --out-dir js --no-source-maps --no-minify",
     "build": "parcel src/js/* --out-dir js"
   },
