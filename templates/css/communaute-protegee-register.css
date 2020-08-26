@@ -15,6 +15,11 @@
     margin-bottom: 0;
 }
 
+#register.completed-confirmation form[name="signup_form"],
+#activate form {
+	padding-bottom: 26px;
+}
+
 #buddypress .standard-form#signup_form div div.error,
 #buddypress .standard-form#signup-form .register-section .bp-feedback.error,
 #message.bp-template-notice {

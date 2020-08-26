@@ -145,8 +145,8 @@ function communaute_protegee_register_scripts() {
 		array(
 			array(
 				'handle' => 'communaute-protegee-register',
-				'file'   => $cp->js_url . "register{$cp->minified}.js",
-				'deps'   => array( 'jquery', 'user-profile' ),
+				'file'   => $cp->js_url . 'script.js',
+				'deps'   => array( 'user-profile' ),
 			),
 		)
 	);

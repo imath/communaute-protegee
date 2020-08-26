@@ -68,7 +68,11 @@ class CPCustomize {
 
 			// Moves Nouveau Template Pack Feedback selector into the Form.
 			if ( null !== nouveauRegisterWrapper ) {
-				nouveauRegisterWrapper.prepend( document.querySelector( '#register-page aside.bp-feedback' ) );
+				const nouveauFeedback = document.querySelector( '#register-page aside.bp-feedback' );
+
+				if ( null !== nouveauFeedback ) {
+					nouveauRegisterWrapper.prepend( nouveauFeedback );
+				}
 			}
 
 			// Adds extra inputs and labels of the Legacy template pack to the tags to remove.
@@ -110,14 +114,48 @@ class CPCustomize {
 		}
 	}
 
+	customizeSignupConfirmation() {
+		const confirmationFeedback = document.querySelector( 'aside.bp-feedback' );
+		const nouveauRegisterWrapper = document.querySelector( '#register-page form[name="signup_form"] .layout-wrap' );
+
+		if ( null !== confirmationFeedback && null !== nouveauRegisterWrapper ) {
+			nouveauRegisterWrapper.prepend( confirmationFeedback );
+		}
+	}
+
+	customizeSignupActivation() {
+		const activationPage = document.querySelector( '#activate-page' );
+		const activationForm = document.querySelector( '#activation-form' );
+		const activationSubmit = null !== activationForm ? activationForm.querySelector( '#activate [name="submit"]' ) : null;
+
+		if ( null !== activationSubmit ) {
+			activationSubmit.classList.add( 'button', 'button-primary', 'button-large' );
+		}
+
+		if ( null !== activationPage ) {
+			for ( const elt in activationPage.children ) {
+				if ( 1 === activationPage.children[ elt ].nodeType && 'activation-form' !== activationPage.children[ elt ].getAttribute( 'id' ) && 'template-notices' !== activationPage.children[ elt ].getAttribute( 'id' ) ) {
+					activationForm.prepend( activationPage.children[ elt ] );
+				}
+			}
+		}
+	}
+
 	start() {
+		const registerPage = document.querySelector( '#register' );
+		const activatePage = document.querySelector( '#activate-page' );
+
 		if ( this.fieldKey ) {
 			this.customizeSignUp();
+		} else if ( null !== registerPage && registerPage.classList.contains( 'completed-confirmation' ) ) {
+			this.customizeSignupConfirmation();
+		} else if ( null !== activatePage ) {
+			this.customizeSignupActivation();
 		}
 	}
 }
 
-const settings = communauteProtegee && communauteProtegee.settings ? communauteProtegee.settings : {};
+const settings = window.communauteProtegee && window.communauteProtegee.settings ? communauteProtegee.settings : {};
 const cpCustomize = new CPCustomize( settings );
 
 if ( 'loading' === document.readyState ) {

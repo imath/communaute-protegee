@@ -195,7 +195,11 @@ var CPCustomize = /*#__PURE__*/function () {
 
 
         if (null !== nouveauRegisterWrapper) {
-          nouveauRegisterWrapper.prepend(document.querySelector('#register-page aside.bp-feedback'));
+          var nouveauFeedback = document.querySelector('#register-page aside.bp-feedback');
+
+          if (null !== nouveauFeedback) {
+            nouveauRegisterWrapper.prepend(nouveauFeedback);
+          }
         } // Adds extra inputs and labels of the Legacy template pack to the tags to remove.
 
 
@@ -237,10 +241,46 @@ var CPCustomize = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "customizeSignupConfirmation",
+    value: function customizeSignupConfirmation() {
+      var confirmationFeedback = document.querySelector('aside.bp-feedback');
+      var nouveauRegisterWrapper = document.querySelector('#register-page form[name="signup_form"] .layout-wrap');
+
+      if (null !== confirmationFeedback && null !== nouveauRegisterWrapper) {
+        nouveauRegisterWrapper.prepend(confirmationFeedback);
+      }
+    }
+  }, {
+    key: "customizeSignupActivation",
+    value: function customizeSignupActivation() {
+      var activationPage = document.querySelector('#activate-page');
+      var activationForm = document.querySelector('#activation-form');
+      var activationSubmit = null !== activationForm ? activationForm.querySelector('#activate [name="submit"]') : null;
+
+      if (null !== activationSubmit) {
+        activationSubmit.classList.add('button', 'button-primary', 'button-large');
+      }
+
+      if (null !== activationPage) {
+        for (var elt in activationPage.children) {
+          if (1 === activationPage.children[elt].nodeType && 'activation-form' !== activationPage.children[elt].getAttribute('id') && 'template-notices' !== activationPage.children[elt].getAttribute('id')) {
+            activationForm.prepend(activationPage.children[elt]);
+          }
+        }
+      }
+    }
+  }, {
     key: "start",
     value: function start() {
+      var registerPage = document.querySelector('#register');
+      var activatePage = document.querySelector('#activate-page');
+
       if (this.fieldKey) {
         this.customizeSignUp();
+      } else if (null !== registerPage && registerPage.classList.contains('completed-confirmation')) {
+        this.customizeSignupConfirmation();
+      } else if (null !== activatePage) {
+        this.customizeSignupActivation();
       }
     }
   }]);
@@ -248,7 +288,7 @@ var CPCustomize = /*#__PURE__*/function () {
   return CPCustomize;
 }();
 
-var settings = communauteProtegee && communauteProtegee.settings ? communauteProtegee.settings : {};
+var settings = window.communauteProtegee && window.communauteProtegee.settings ? communauteProtegee.settings : {};
 var cpCustomize = new CPCustomize(settings);
 
 if ('loading' === document.readyState) {
