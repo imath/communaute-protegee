@@ -128,8 +128,17 @@
 	display: block;
 }
 
+#buddypress .standard-form #blog-details-section label[for="signup_blog_privacy_public"],
+#buddypress .standard-form #blog-details-section label[for="signup_blog_privacy_private"] {
+	display: inline-block;
+}
+
+#buddypress .standard-form #blog-details-section label[for="signup_blog_privacy_public"] {
+	margin-right: 2em;
+}
+
 #buddypress .standard-form #blog-details-section #signup_blog_url {
-	width:auto;
+	width: auto;
 }
 
 #buddypress .standard-form #blog-details-section {
@@ -140,7 +149,7 @@
 #buddypress .standard-form #blog-details-section span.label {
 	color: #444;
 	font-size: 13px;
-	display:block;
+	display: block;
 	margin-bottom: 1em;
 }
 

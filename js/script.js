@@ -135,6 +135,7 @@ var CPCustomize = /*#__PURE__*/function () {
 
     this.fieldKey = fieldKey;
     this.tagsToRemove = ['.field-visibility-settings-notoggle', '.field-visibility-settings-toggle', '.field-visibility-settings'];
+    this.blogDetails = null;
   }
 
   _createClass(CPCustomize, [{
@@ -159,13 +160,25 @@ var CPCustomize = /*#__PURE__*/function () {
       });
     }
   }, {
+    key: "toggleBlogForm",
+    value: function toggleBlogForm(event) {
+      if (true === event.target.checked) {
+        this.blogDetails.style.display = 'block';
+      } else {
+        this.blogDetails.style.display = 'none';
+      }
+    }
+  }, {
     key: "customizeSignUp",
     value: function customizeSignUp() {
       var bpMainContainer = document.querySelector('#buddypress');
       var signupForm = document.querySelector('form[name="signup_form"]');
       var signupSubmit = null !== signupForm ? signupForm.querySelector('[name="signup_submit"]') : null;
       var extraTplNotices = null !== signupForm ? signupForm.querySelector('#template-notices') : null;
-      var privacyPolicy = null !== signupForm ? signupForm.querySelector('.privacy-policy-accept') : null; // Customize Form.
+      var privacyPolicy = null !== signupForm ? signupForm.querySelector('.privacy-policy-accept') : null;
+      var nouveauRegisterWrapper = document.querySelector('#register-page form[name="signup_form"] .layout-wrap');
+      var blogDetails = document.querySelector('#blog-details');
+      var blogCheckbox = document.querySelector('[name="signup_with_blog"]'); // Customize Form.
 
       if (null !== signupForm) {
         var hiddenField = document.createElement('input'); // Adds a dynamic field to check the user is a human.
@@ -178,10 +191,15 @@ var CPCustomize = /*#__PURE__*/function () {
 
         if (null !== extraTplNotices) {
           extraTplNotices.remove();
+        } // Moves Nouveau Template Pack Feedback selector into the Form.
+
+
+        if (null !== nouveauRegisterWrapper) {
+          nouveauRegisterWrapper.prepend(document.querySelector('#register-page aside.bp-feedback'));
         } // Adds extra inputs and labels of the Legacy template pack to the tags to remove.
 
 
-        if (bpMainContainer && !signupSubmit.classList.contains('buddypress-wrap')) {
+        if (bpMainContainer && !bpMainContainer.classList.contains('buddypress-wrap')) {
           this.tagsToRemove.push('#signup_password', '#pass-strength-result', 'label[for="signup_password_confirm"]', '#signup_password_confirm');
         } // Removes not needed tags.
 
@@ -192,14 +210,23 @@ var CPCustomize = /*#__PURE__*/function () {
           if (extraSelector.length) {
             extraSelector[0].remove();
           }
-        }); // Makes sure the Submit button style is consistent with the login form.
+        });
+
+        if (null !== blogDetails && null !== blogCheckbox) {
+          this.blogDetails = blogDetails;
+
+          if (!blogCheckbox.getAttribute('checked')) {
+            this.blogDetails.style.display = 'none';
+          }
+
+          blogCheckbox.addEventListener('click', this.toggleBlogForm.bind(this));
+        } // Makes sure the Submit button style is consistent with the login form.
+
 
         if (null !== privacyPolicy) {
-          var signupSections = signupForm.querySelectorAll('.register-section');
-
-          if (signupSections.length) {
-            signupSections[signupSections.length - 1].appendChild(privacyPolicy);
-          }
+          signupForm.insertBefore(privacyPolicy, signupSubmit.parentNode);
+          privacyPolicy.classList.add('register-section');
+          privacyPolicy.style.marginTop = '1.5em';
         } // Makes sure the Submit button style is consistent with the login form.
 
 
@@ -257,7 +284,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64063" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64954" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
