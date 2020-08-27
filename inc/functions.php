@@ -947,10 +947,19 @@ function communaute_protegee_email_header_logo() {
 		$site_icon = home_url( 'communaute-protegee-icon/84/' );
 	}
 
+	/**
+	 * Use this filter to override the `src` attribute value of the email logo.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $site_icon The `src` attribute value of the email logo.
+	 */
+	$site_icon = apply_filters( 'communaute_protegee_email_header_logo', $site_icon );
+
 	if ( $site_icon && communaute_protegee_email_site_icon_is_checked() ) {
 		?>
 			<a style="border: none; text-decoration: none;display: block;" href="<?php echo esc_url( home_url() ); ?>">
-				<img src="<?php echo esc_attr( $site_icon ); ?>" alt="<?php esc_attr_e( 'Logo du site', 'communaute-protegee' ); ?>">
+				<img src="<?php echo 0 === strpos( $site_icon, 'data:image' ) ? esc_attr( $site_icon ) : esc_url( $site_icon ); ?>" alt="<?php esc_attr_e( 'Logo du site', 'communaute-protegee' ); ?>">
 			</a>
 		<?php
 	}
