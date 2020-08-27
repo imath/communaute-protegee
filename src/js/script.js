@@ -117,9 +117,18 @@ class CPCustomize {
 	customizeSignupConfirmation() {
 		const confirmationFeedback = document.querySelector( 'aside.bp-feedback' );
 		const nouveauRegisterWrapper = document.querySelector( '#register-page form[name="signup_form"] .layout-wrap' );
+		const extraTplNotices = document.querySelectorAll( 'form[name="signup_form"] #template-notices' );
 
 		if ( null !== confirmationFeedback && null !== nouveauRegisterWrapper ) {
 			nouveauRegisterWrapper.prepend( confirmationFeedback );
+		}
+
+		if ( null !== extraTplNotices && 2 === extraTplNotices.length ) {
+			extraTplNotices[0].remove();
+			extraTplNotices[1].removeAttribute( 'id' );
+			extraTplNotices[1].removeAttribute( 'role' );
+			extraTplNotices[1].removeAttribute( 'aria-atomic' );
+			extraTplNotices[1].classList.add( 'register-section' );
 		}
 	}
 
