@@ -774,6 +774,28 @@ function communaute_protegee_hide_unsubscribe_link() {
 }
 
 /**
+ * Override the BP Email salutation when sending the privcy policy.
+ *
+ * @since 1.0.0
+ *
+ * @param BP_Email $email The BuddyPress Email object.
+ */
+function communautee_protegee_fix_email_salutation( BP_Email $email ) {
+	$recipients = $email->get( 'to' );
+	$recipient  = reset( $recipients );
+
+	if ( $recipient instanceof BP_Email_Recipient && ! $recipient->get_name() ) {
+		$template = str_replace(
+			bp_email_get_salutation(),
+			_x( 'Bonjour,', 'BP Email saluation for users without names', 'communaute-protegee' ),
+			$email->get( 'template' )
+		);
+
+		$email->set_template( $template );
+	}
+}
+
+/**
  * Sends an email containing the privacy policy to the user.
  *
  * @since 1.0.0
@@ -818,6 +840,8 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 	$text_content = str_replace( "\n\n", "\n", wp_kses( $html_content, array() ) );
 
 	add_action( 'bp_before_email_footer', 'communaute_protegee_hide_unsubscribe_link', 1 );
+	add_action( 'bp_send_email', 'communautee_protegee_fix_email_salutation', 10, 1 );
+
 	$sent = bp_send_email(
 		'communaute-protegee-privacy-policy',
 		$email,
@@ -831,6 +855,7 @@ function communaute_protegee_mail_privacy_policy( WP_Post $privacy_page ) {
 		)
 	);
 	remove_action( 'bp_before_email_footer', 'communaute_protegee_hide_unsubscribe_link', 1 );
+	remove_action( 'bp_send_email', 'communautee_protegee_fix_email_salutation', 10, 1 );
 
 	if ( $sent ) {
 		bp_core_redirect( add_query_arg( '_communaute_protegee_status', 'privacy-policy-sent', $register_url ) );
