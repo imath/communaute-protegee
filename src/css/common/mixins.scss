@@ -1,0 +1,66 @@
+// Mixins.
+
+@mixin layout() {
+	width: 50%;
+	padding: 8% 0px 0px;
+	margin: auto;
+}
+
+@mixin colomn( $dir: left ) {
+	float: $dir;
+	width: 48%;
+}
+
+@mixin field_feedback() {
+	background: #faa;
+	color: #a00;
+	margin: 0 0 10px 0;
+	padding: 6px;
+}
+
+@mixin updated_feedback( $type: info ) {
+	@if success == $type {
+		$type: #46b450;
+	} @else if error == $type {
+		$type: #dc3232;
+	} @else {
+		$type: #00a0d2;
+	}
+
+	border-left: 4px solid $type;
+    padding: 12px;
+    margin-left: 0;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+@mixin pass_strength_bad() {
+	background-color: #ffb78c;
+	border-color: #ff853c !important;
+	display: block;
+}
+
+@mixin pass_strength_good() {
+	background-color: #ffec8b;
+	border-color: #fc0 !important;
+	display: block;
+}
+
+@mixin pass_strength_short() {
+	background-color: #ffa0a0;
+	border-color: #f04040 !important;
+	display: block;
+}
+
+@mixin pass_strength_strong() {
+	background-color: #c3ff88;
+	border-color: #8dff1c !important;
+	display: block;
+}
+
+@mixin field_appearance() {
+	background: #fbfbfb;
+	font-size: 24px;
+	width: 100%;
+}

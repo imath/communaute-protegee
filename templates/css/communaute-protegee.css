@@ -1,0 +1,192 @@
+.login #buddypress fieldset {
+  border: none;
+}
+.login #buddypress fieldset legend {
+  font-size: 14px;
+  line-height: 1.5;
+  display: inline-block;
+  margin-bottom: 3px;
+}
+.login #buddypress .standard-form .editfield p.description:empty {
+  display: none;
+}
+.login #buddypress .standard-form .editfield.field_type_checkbox {
+  padding: 3px;
+  margin: 2px 6px 16px 0;
+}
+.login #buddypress .standard-form .editfield.field_type_checkbox label {
+  display: block;
+}
+
+#activate {
+  width: 50%;
+  padding: 8% 0px 0px;
+  margin: auto;
+}
+#activate p {
+  margin-bottom: 2em;
+}
+#activate aside.bp-feedback p {
+  margin-bottom: 0;
+}
+#activate aside.bp-feedback.success {
+  border-left: 4px solid #46b450;
+  padding: 12px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+#activate form {
+  padding-bottom: 26px;
+}
+
+#register {
+  width: 50%;
+  padding: 8% 0px 0px;
+  margin: auto;
+}
+#register div.register-section h2 {
+  margin-bottom: 2em;
+}
+#register:not(.completed-confirmation) p {
+  margin-bottom: 2em;
+}
+#register:not(.completed-confirmation) .register-section .bp-feedback.error p {
+  margin-bottom: 0;
+}
+#register.completed-confirmation form[name=signup_form] {
+  padding-bottom: 26px;
+}
+#register.completed-confirmation .bp-feedback.success, #register.completed-confirmation .bp-feedback.info {
+  border-left: 4px solid #46b450;
+  padding: 12px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+#register.completed-confirmation .bp-feedback.error {
+  border-left: 4px solid #dc3232;
+  padding: 12px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+#register form[name=signup_form].standard-form div div.error {
+  background: #faa;
+  color: #a00;
+  margin: 0 0 10px 0;
+  padding: 6px;
+}
+#register form[name=signup_form].standard-form .register-section .bp-feedback.error {
+  background: #faa;
+  color: #a00;
+  margin: 0 0 10px 0;
+  padding: 6px;
+}
+#register form[name=signup_form].standard-form .register-section .bp-feedback.error .bp-icon {
+  display: none;
+}
+#register form[name=signup_form].standard-form #basic-details-section {
+  float: left;
+  width: 48%;
+}
+#register form[name=signup_form].standard-form #basic-details-section #pass-strength-result {
+  background-color: #eee;
+  border-color: #ddd;
+  border-style: solid;
+  border-width: 1px;
+  display: none;
+  margin: 5px 5px 15px 0;
+  padding: 10px;
+  font-size: 120%;
+  text-align: center;
+  width: 100%;
+}
+#register form[name=signup_form].standard-form #basic-details-section #pass-strength-result.error, #register form[name=signup_form].standard-form #basic-details-section #pass-strength-result.bad {
+  background-color: #ffb78c;
+  border-color: #ff853c !important;
+  display: block;
+}
+#register form[name=signup_form].standard-form #basic-details-section #pass-strength-result.good {
+  background-color: #ffec8b;
+  border-color: #fc0 !important;
+  display: block;
+}
+#register form[name=signup_form].standard-form #basic-details-section #pass-strength-result.short {
+  background-color: #ffa0a0;
+  border-color: #f04040 !important;
+  display: block;
+}
+#register form[name=signup_form].standard-form #basic-details-section #pass-strength-result.strong {
+  background-color: #c3ff88;
+  border-color: #8dff1c !important;
+  display: block;
+}
+#register form[name=signup_form].standard-form #profile-details-section {
+  float: right;
+  width: 48%;
+}
+#register form[name=signup_form].standard-form #blog-details-section {
+  clear: both;
+  width: 100%;
+  color: #777;
+  font-size: 14px;
+}
+#register form[name=signup_form].standard-form #blog-details-section label {
+  display: block;
+}
+#register form[name=signup_form].standard-form #blog-details-section label[for=signup_blog_privacy_public], #register form[name=signup_form].standard-form #blog-details-section label[for=signup_blog_privacy_private] {
+  display: inline-block;
+  margin-right: 2em;
+}
+#register form[name=signup_form].standard-form #blog-details-section span.label {
+  color: #444;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 1em;
+}
+#register form[name=signup_form].standard-form #blog-details-section #signup_blog_url {
+  width: auto;
+}
+#register form[name=signup_form].standard-form div.submit {
+  clear: both;
+  float: right;
+  padding: 15px 0px 0px;
+}
+#register form[name=signup_form].standard-form input[type=email] {
+  line-height: 1.33333333;
+  /* 32px */
+  border-width: 0.0625rem;
+  padding: 0.1875rem 0.3125rem;
+  /* 3px 5px */
+  margin: 0 6px 16px 0;
+  min-height: 40px;
+  max-height: none;
+  background: #fbfbfb;
+  font-size: 24px;
+  width: 100%;
+}
+#register form[name=signup_form].standard-form input[type=password],
+#register form[name=signup_form].standard-form select,
+#register form[name=signup_form].standard-form textarea {
+  padding: 3px;
+  margin: 2px 6px 16px 0;
+  background: #fbfbfb;
+  font-size: 24px;
+  width: 100%;
+}
+
+#message.bp-template-notice.updated {
+  border-left: 4px solid #46b450;
+  padding: 12px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+#message.bp-template-notice p {
+  margin: 10px;
+}

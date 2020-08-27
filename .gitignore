@@ -12,3 +12,4 @@ vendor
 dist
 .cache
 communaute-protegee.zip
+templates/css/communaute-protegee.js

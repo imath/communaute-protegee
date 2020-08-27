@@ -331,7 +331,7 @@ function communaute_protegee_enqueue_scripts() {
 		// Enqueue style.
 		wp_enqueue_style(
 			'communaute-protegee-register-style',
-			communaute_protegee_locate_stylesheet( 'communaute-protegee-register' ),
+			communaute_protegee_locate_stylesheet( 'communaute-protegee' ),
 			array( 'login' ),
 			$cp->version
 		);

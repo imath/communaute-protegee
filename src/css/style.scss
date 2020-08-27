@@ -1,0 +1,237 @@
+// Registration styles.
+
+// Import our partials mixins.
+@import "./common/mixins";
+
+.login {
+
+	#buddypress {
+
+		fieldset {
+			border: none;
+
+			legend {
+				font-size: 14px;
+				line-height: 1.5;
+				display: inline-block;
+				margin-bottom: 3px;
+			}
+		}
+
+		.standard-form {
+
+			.editfield {
+
+				p.description:empty {
+					display:none;
+				}
+
+				&.field_type_checkbox {
+					padding: 3px;
+					margin: 2px 6px 16px 0;
+
+					label {
+						display: block;
+					}
+				}
+			}
+		}
+	}
+}
+
+#activate {
+
+	@include layout();
+
+	p {
+		margin-bottom: 2em;
+	}
+
+	aside.bp-feedback {
+		p {
+			margin-bottom: 0;
+		}
+
+		&.success {
+
+			@include updated_feedback( success );
+		}
+	}
+
+	form {
+		padding-bottom: 26px;
+	}
+}
+
+#register {
+
+	@include layout();
+
+	div.register-section h2 {
+		margin-bottom: 2em;
+	}
+
+	&:not( .completed-confirmation ) {
+		p {
+			margin-bottom: 2em;
+		}
+
+		.register-section .bp-feedback.error p {
+			margin-bottom: 0;
+		}
+	}
+
+	&.completed-confirmation {
+
+		form[name="signup_form"] {
+			padding-bottom: 26px;
+		}
+
+		.bp-feedback {
+
+			&.success,
+			&.info {
+
+				@include updated_feedback( success );
+			}
+
+			&.error {
+
+				@include updated_feedback( error );
+			}
+		}
+	}
+
+	form[name="signup_form"] {
+
+		&.standard-form {
+
+			div div.error {
+
+				@include field_feedback();
+			}
+
+			.register-section .bp-feedback.error {
+
+				@include field_feedback();
+
+				.bp-icon {
+					display: none;
+				}
+			}
+
+			#basic-details-section {
+
+				@include colomn();
+
+				#pass-strength-result {
+					background-color: #eee;
+					border-color: #ddd;
+					border-style: solid;
+					border-width: 1px;
+					display: none;
+					margin: 5px 5px 15px 0;
+					padding: 10px;
+					font-size: 120%;
+					text-align: center;
+					width: 100%;
+
+					&.error,
+					&.bad {
+
+						@include pass_strength_bad();
+					}
+
+					&.good {
+
+						@include pass_strength_good();
+					}
+
+					&.short {
+
+						@include pass_strength_short();
+					}
+
+					&.strong {
+
+						@include pass_strength_strong();
+					}
+				}
+			}
+
+			#profile-details-section {
+
+				@include colomn( right );
+			}
+
+			#blog-details-section {
+				clear:both;
+				width: 100%;
+				color: #777;
+				font-size: 14px;
+
+				label {
+					display: block;
+
+					&[for="signup_blog_privacy_public"],
+					&[for="signup_blog_privacy_private"] {
+						display: inline-block;
+						margin-right: 2em;
+					}
+				}
+
+				span.label {
+					color: #444;
+					font-size: 13px;
+					display: block;
+					margin-bottom: 1em;
+				}
+
+				#signup_blog_url {
+					width: auto;
+				}
+			}
+
+			div.submit {
+				clear: both;
+				float: right;
+				padding: 15px 0px 0px;
+			}
+
+			input[type="email"] {
+				line-height: 1.33333333; /* 32px */
+				border-width: 0.0625rem;
+				padding: 0.1875rem 0.3125rem; /* 3px 5px */
+				margin: 0 6px 16px 0;
+				min-height: 40px;
+				max-height: none;
+
+				@include field_appearance();
+			}
+
+			input[type="password"],
+			select,
+			textarea {
+				padding: 3px;
+				margin: 2px 6px 16px 0;
+
+				@include field_appearance();
+			}
+		}
+	}
+}
+
+#message {
+
+	&.bp-template-notice {
+
+		&.updated {
+
+			@include updated_feedback( success );
+		}
+
+		p {
+			margin: 10px;
+		}
+	}
+}
