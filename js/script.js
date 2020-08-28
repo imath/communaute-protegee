@@ -271,7 +271,7 @@ var CPCustomize = /*#__PURE__*/function () {
         activationSubmit.classList.add('button', 'button-primary', 'button-large');
       }
 
-      if (null !== activationPage) {
+      if (null !== activationPage && null !== activationForm) {
         for (var elt in activationPage.children) {
           if (1 === activationPage.children[elt].nodeType && 'activation-form' !== activationPage.children[elt].getAttribute('id') && 'template-notices' !== activationPage.children[elt].getAttribute('id') && activationPage.children[elt] !== nouveauFeedback) {
             activationForm.prepend(activationPage.children[elt]);
@@ -334,7 +334,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55210" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62723" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -142,7 +142,7 @@ class CPCustomize {
 			activationSubmit.classList.add( 'button', 'button-primary', 'button-large' );
 		}
 
-		if ( null !== activationPage ) {
+		if ( null !== activationPage && null !== activationForm ) {
 			for ( const elt in activationPage.children ) {
 				if ( 1 === activationPage.children[ elt ].nodeType && 'activation-form' !== activationPage.children[ elt ].getAttribute( 'id' ) && 'template-notices' !== activationPage.children[ elt ].getAttribute( 'id' ) && activationPage.children[ elt ] !== nouveauFeedback ) {
 					activationForm.prepend( activationPage.children[ elt ] );
