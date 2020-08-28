@@ -14,7 +14,8 @@
   },
   "scripts": {
     "package-plugin": "./bin/package-zip.sh",
-    "wpcs": "./vendor/bin/phpcs class-communaute-protegee.php inc/*.php templates/members/* --standard=WordPress",
+		"wpcs": "./vendor/bin/phpcs class-communaute-protegee.php inc/*.php templates/members/* --standard=WordPress",
+		"pot": "wp i18n make-pot . languages/communaute-protegee.pot --domain='communaute-protegee' --exclude=\".git,.cache,bin,node_modules,languages,src,vendor\" --headers='{\"Project-Id-Version\": \"Communauté Protégée 1.0.0\", \"Report-Msgid-Bugs-To\": \"https://github.com/imath/communaute-protegee/issues\", \"Last-Translator\": \"imath <contact@imathi.eu>\"}'",
     "start": "parcel watch src/js/* --out-dir js --no-source-maps",
     "dev": "parcel build src/js/* --out-dir js --no-source-maps --no-minify",
     "build": "parcel build src/js/* --out-dir js",
