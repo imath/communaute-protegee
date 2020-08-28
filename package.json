@@ -5,34 +5,21 @@
   },
   "description": "Restrict the access to your BuddyPress community",
   "devDependencies": {
-    "grunt": "~1.1.0",
-    "grunt-check-dependencies": "~1.0.0",
-    "grunt-checktextdomain": "~1.0.1",
-    "grunt-contrib-clean": "~1.1.0",
-    "grunt-contrib-copy": "~1.0.0",
-    "grunt-contrib-cssmin": "^3.0.0",
-    "grunt-contrib-uglify": "~3.0.1",
-    "grunt-contrib-imagemin": "^3.1.0",
-    "grunt-contrib-jshint": "~1.1.0",
-    "grunt-exec": "~2.0.0",
-    "grunt-jsvalidate": "~0.2.2",
-    "grunt-legacy-util": "^1.1.1",
-    "grunt-wp-i18n": "^1.0.2",
-    "matchdep": "^2.0.0",
     "parcel-bundler": "^1.12.4",
     "sass": "^1.26.8"
   },
   "engines": {
-    "node": "~10.13.0"
+    "node": "12.16.0",
+		"npm": "6.14.0"
   },
   "scripts": {
     "package-plugin": "./bin/package-zip.sh",
     "wpcs": "./vendor/bin/phpcs class-communaute-protegee.php inc/*.php templates/members/* --standard=WordPress",
     "start": "parcel watch src/js/* --out-dir js --no-source-maps",
     "dev": "parcel build src/js/* --out-dir js --no-source-maps --no-minify",
-		"build": "parcel build src/js/* --out-dir js",
-		"watch-scss" : "parcel watch src/css/style.scss --out-dir templates/css --out-file communaute-protegee.css --no-source-maps",
-		"build-scss" : "parcel build src/css/style.scss --out-dir templates/css --out-file communaute-protegee.css"
+    "build": "parcel build src/js/* --out-dir js",
+    "watch-scss": "parcel watch src/css/style.scss --out-dir templates/css --out-file communaute-protegee.css --no-source-maps",
+    "build-scss": "parcel build src/css/style.scss --out-dir templates/css --out-file communaute-protegee.css"
   },
   "keywords": [
     "buddypress",
