@@ -136,10 +136,15 @@ class CPCustomize {
 		const activationPage = document.querySelector( '#activate-page' );
 		const nouveauFeedback = document.querySelector( 'aside.bp-feedback' );
 		const activationForm = document.querySelector( '#activation-form' );
+		const activatedFormLink = document.querySelector( 'body.bp-nouveau .activation-result.successful a' );
 		const activationSubmit = null !== activationForm ? activationForm.querySelector( '#activate [name="submit"]' ) : null;
 
 		if ( null !== activationSubmit ) {
 			activationSubmit.classList.add( 'button', 'button-primary', 'button-large' );
+		}
+
+		if ( null !== activatedFormLink ) {
+			activatedFormLink.classList.add( 'button', 'button-primary', 'button-large' );
 		}
 
 		if ( null !== activationPage && null !== activationForm ) {

@@ -265,10 +265,15 @@ var CPCustomize = /*#__PURE__*/function () {
       var activationPage = document.querySelector('#activate-page');
       var nouveauFeedback = document.querySelector('aside.bp-feedback');
       var activationForm = document.querySelector('#activation-form');
+      var activatedFormLink = document.querySelector('body.bp-nouveau .activation-result.successful a');
       var activationSubmit = null !== activationForm ? activationForm.querySelector('#activate [name="submit"]') : null;
 
       if (null !== activationSubmit) {
         activationSubmit.classList.add('button', 'button-primary', 'button-large');
+      }
+
+      if (null !== activatedFormLink) {
+        activatedFormLink.classList.add('button', 'button-primary', 'button-large');
       }
 
       if (null !== activationPage && null !== activationForm) {
@@ -334,7 +339,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62723" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50370" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

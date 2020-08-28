@@ -628,6 +628,38 @@ function communaute_protegee_privacy_step() {
 add_action( 'bp_screens', 'communaute_protegee_privacy_step' );
 
 /**
+ * Outputs the closing tag of the successful registration container text.
+ *
+ * @since 1.0.0
+ *
+ * @return string HTML output.
+ */
+function communaute_protegee_before_activate_content() {
+	if ( ! bp_account_was_activated() ) {
+		return;
+	}
+	?>
+	<form class="standard-form activation-result successful">
+	<?php
+}
+
+/**
+ * Outputs the closing tag of the successful registration container text.
+ *
+ * @since 1.0.0
+ *
+ * @return string HTML output.
+ */
+function communaute_protegee_after_activate_content() {
+	if ( ! bp_account_was_activated() ) {
+		return;
+	}
+	?>
+	</form>
+	<?php
+}
+
+/**
  * Loads a template part when registration needs privacy policy acceptance.
  *
  * @since 1.0.0

@@ -51,6 +51,10 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 
 		// Add a security check when a user registers.
 		add_action( 'bp_signup_validate', 'communaute_protegee_js_validate_email' );
+
+		// Add a container to the activation positive result.
+		add_action( 'bp_before_activate_content', 'communaute_protegee_before_activate_content' );
+		add_action( 'bp_after_activate_content', 'communaute_protegee_after_activate_content' );
 	}
 
 	if ( true === (bool) $cp->use_site_icon || ( $cp->signup_allowed && ( empty( $cp->rsa_options['approach'] ) || 1 === $cp->rsa_options['approach'] ) ) ) {
