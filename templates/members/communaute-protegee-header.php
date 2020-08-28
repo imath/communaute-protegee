@@ -89,4 +89,4 @@ communaute_protegee()->register_header_url = apply_filters( 'login_headerurl', $
 communaute_protegee()->register_header_text = apply_filters( 'login_headertext', $register_header_text );
 ?>
 </head>
-	<body class="login wp-core-ui">
+	<body class="login wp-core-ui bp-<?php echo sanitize_html_class( bp_get_theme_package_id() ); ?>">

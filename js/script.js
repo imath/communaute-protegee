@@ -263,6 +263,7 @@ var CPCustomize = /*#__PURE__*/function () {
     key: "customizeSignupActivation",
     value: function customizeSignupActivation() {
       var activationPage = document.querySelector('#activate-page');
+      var nouveauFeedback = document.querySelector('aside.bp-feedback');
       var activationForm = document.querySelector('#activation-form');
       var activationSubmit = null !== activationForm ? activationForm.querySelector('#activate [name="submit"]') : null;
 
@@ -272,7 +273,7 @@ var CPCustomize = /*#__PURE__*/function () {
 
       if (null !== activationPage) {
         for (var elt in activationPage.children) {
-          if (1 === activationPage.children[elt].nodeType && 'activation-form' !== activationPage.children[elt].getAttribute('id') && 'template-notices' !== activationPage.children[elt].getAttribute('id')) {
+          if (1 === activationPage.children[elt].nodeType && 'activation-form' !== activationPage.children[elt].getAttribute('id') && 'template-notices' !== activationPage.children[elt].getAttribute('id') && activationPage.children[elt] !== nouveauFeedback) {
             activationForm.prepend(activationPage.children[elt]);
           }
         }
@@ -333,7 +334,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49833" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55210" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -134,6 +134,7 @@ class CPCustomize {
 
 	customizeSignupActivation() {
 		const activationPage = document.querySelector( '#activate-page' );
+		const nouveauFeedback = document.querySelector( 'aside.bp-feedback' );
 		const activationForm = document.querySelector( '#activation-form' );
 		const activationSubmit = null !== activationForm ? activationForm.querySelector( '#activate [name="submit"]' ) : null;
 
@@ -143,7 +144,7 @@ class CPCustomize {
 
 		if ( null !== activationPage ) {
 			for ( const elt in activationPage.children ) {
-				if ( 1 === activationPage.children[ elt ].nodeType && 'activation-form' !== activationPage.children[ elt ].getAttribute( 'id' ) && 'template-notices' !== activationPage.children[ elt ].getAttribute( 'id' ) ) {
+				if ( 1 === activationPage.children[ elt ].nodeType && 'activation-form' !== activationPage.children[ elt ].getAttribute( 'id' ) && 'template-notices' !== activationPage.children[ elt ].getAttribute( 'id' ) && activationPage.children[ elt ] !== nouveauFeedback ) {
 					activationForm.prepend( activationPage.children[ elt ] );
 				}
 			}
