@@ -56,6 +56,11 @@
 
 			@include updated_feedback( success );
 		}
+
+		&.error {
+
+			@include updated_feedback( error );
+		}
 	}
 
 	form {
@@ -85,6 +90,15 @@
 
 		form[name="signup_form"] {
 			padding-bottom: 26px;
+		}
+
+		.buddypress-wrap {
+
+			form[name="signup_form"] {
+				background: none;
+				border: none;
+				box-shadow: none;
+			}
 		}
 
 		.bp-feedback {
@@ -228,6 +242,11 @@
 		&.updated {
 
 			@include updated_feedback( success );
+		}
+
+		&.error {
+
+			@include updated_feedback( error );
 		}
 
 		p {

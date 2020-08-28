@@ -37,6 +37,14 @@
   background-color: #fff;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 }
+#activate aside.bp-feedback.error {
+  border-left: 4px solid #dc3232;
+  padding: 12px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
 #activate form {
   padding-bottom: 26px;
 }
@@ -57,6 +65,11 @@
 }
 #register.completed-confirmation form[name=signup_form] {
   padding-bottom: 26px;
+}
+#register.completed-confirmation .buddypress-wrap form[name=signup_form] {
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 #register.completed-confirmation .bp-feedback.success, #register.completed-confirmation .bp-feedback.info {
   border-left: 4px solid #46b450;
@@ -181,6 +194,14 @@
 
 #message.bp-template-notice.updated {
   border-left: 4px solid #46b450;
+  padding: 12px;
+  margin-left: 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+#message.bp-template-notice.error {
+  border-left: 4px solid #dc3232;
   padding: 12px;
   margin-left: 0;
   margin-bottom: 20px;
