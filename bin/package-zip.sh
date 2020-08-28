@@ -55,8 +55,8 @@ rm -f communaute-protegee.zip
 # Generate the plugin zip file
 status "Creating archive..."
 zip -r communaute-protegee.zip \
-    js \
-	inc \
+    inc \
+	js \
     languages \
     templates \
     class-communaute-protegee.php \
