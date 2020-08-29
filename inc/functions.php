@@ -380,6 +380,7 @@ function communaute_protegee_enqueue_scripts() {
 				document.querySelector( \'#pass-strength-result\' ).remove();
 				document.querySelector( \'#pass2\' ).remove();
 				document.querySelector( \'label[for="pass2"]\' ).remove();
+				document.querySelector( \'#your-profile .pw-weak\' ).style.display = \'none\';
 			} )();'
 		);
 
