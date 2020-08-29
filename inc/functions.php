@@ -180,7 +180,7 @@ function communaute_protegee_locate_stylesheet( $stylesheet_name = '' ) {
 	// Get the Plugin's main instance.
 	$cp = communaute_protegee();
 
-	$stylesheet_path = bp_locate_template( 'css/' . $stylesheet_name . $cp->minified . '.css' );
+	$stylesheet_path = bp_locate_template( 'css/' . $stylesheet_name . '.css' );
 
 	if ( 0 === strpos( $stylesheet_path, $cp->dir ) ) {
 		$stylesheet_uri = str_replace( $cp->dir, $cp->url, $stylesheet_path );
