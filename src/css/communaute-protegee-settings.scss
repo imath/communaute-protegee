@@ -1,0 +1,59 @@
+// Legacy member settings styles.
+
+body.buddypress.settings {
+
+	.wp-pwd {
+
+		button {
+			padding: 6px;
+			margin-top: 0;
+			margin-bottom: 3px;
+			vertical-align: middle;
+		}
+	}
+
+	#pass1,
+	#pass1-text,
+	#buddypress #pass-strength-result {
+		width: 16em;
+	}
+
+	#pass1-text,
+	.pw-weak,
+	#pass-strength-result {
+		display: none;
+	}
+
+	.show-password {
+
+		#pass1-text {
+			display: inline-block;
+		}
+
+		#pass1 {
+			display: none;
+		}
+	}
+
+	#your-profile #submit:disabled {
+		color: #767676;
+		opacity: 0.4;
+	}
+
+	&.js {
+
+		.wp-pwd,
+		.user-pass2-wrap {
+			display: none;
+		}
+	}
+
+	&.no-js {
+
+		.wp-generate-pw,
+		.wp-cancel-pw,
+		.wp-hide-pw {
+			display: none;
+		}
+	}
+}

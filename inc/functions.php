@@ -380,54 +380,19 @@ function communaute_protegee_enqueue_scripts() {
 				document.querySelector( \'#pass-strength-result\' ).remove();
 				document.querySelector( \'#pass2\' ).remove();
 				document.querySelector( \'label[for="pass2"]\' ).remove();
-				document.querySelector( \'#your-profile .pw-weak\' ).style.display = \'none\';
 			} )();'
 		);
 
-		wp_add_inline_style(
-			'bp-parent-css',
-			'body.settings #buddypress .wp-pwd button {
-				padding: 6px;
-				margin-top: 0;
-				margin-bottom: 3px;
-				vertical-align: middle;
-			}
-			body.buddypress.settings #pass1,
-			body.buddypress.settings #pass1-text,
-			#buddypress #pass-strength-result {
-				width: 16em;
-			}
+		$handle = 'bp-legacy-css';
+		if ( get_template() && get_stylesheet() !== get_template() ) {
+			$handle = 'bp-parent-css';
+		}
 
-			body.buddypress.settings #pass1-text,
-			body.buddypress.settings .pw-weak,
-			body.buddypress.settings #pass-strength-result {
-				display: none;
-			}
-
-			body.buddypress.settings .show-password #pass1-text {
-				display: inline-block;
-			}
-
-			body.buddypress.settings .show-password #pass1 {
-				display: none;
-			}
-
-			body.buddypress.settings #your-profile #submit:disabled {
-				color: #767676;
-				opacity: 0.4;
-			}
-
-			body.buddypress.settings.js .wp-pwd,
-			body.buddypress.settings.js .user-pass2-wrap {
-				display: none;
-			}
-
-			body.buddypress.settings.no-js .wp-generate-pw,
-			body.buddypress.settings.no-js .wp-cancel-pw,
-			body.buddypress.settings.no-js .wp-hide-pw {
-				display: none;
-			}',
-			'after'
+		wp_enqueue_style(
+			'communaute-protegee-settings-style',
+			communaute_protegee_locate_stylesheet( 'communaute-protegee-settings' ),
+			array( $handle ),
+			$cp->version
 		);
 
 		// Replace BuddyPress's way of setting the password by the WordPress's one.

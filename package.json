@@ -19,8 +19,8 @@
     "start": "parcel watch src/js/* --out-dir js --no-source-maps",
     "dev": "parcel build src/js/* --out-dir js --no-source-maps --no-minify",
     "build": "parcel build src/js/* --out-dir js",
-    "watch-scss": "parcel watch src/css/style.scss --out-dir templates/css --out-file communaute-protegee.css --no-source-maps",
-    "build-scss": "parcel build src/css/style.scss --out-dir templates/css --out-file communaute-protegee.css"
+    "watch-scss": "parcel watch src/css/*.scss --out-dir templates/css --no-source-maps",
+    "build-scss": "parcel build src/css/*.scss --out-dir templates/css"
   },
   "keywords": [
     "buddypress",

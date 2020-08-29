@@ -13,3 +13,4 @@ dist
 .cache
 communaute-protegee.zip
 templates/css/communaute-protegee.js
+templates/css/communaute-protegee-settings.js
