@@ -370,7 +370,7 @@ function communaute_protegee_enqueue_scripts() {
 		wp_dequeue_script( 'bp-legacy-password-verify-password-verify' );
 		wp_enqueue_script( 'user-profile' );
 
-		// Remove BuddyPress Password fields.
+		// Remove BP Legacy's Password fields.
 		wp_add_inline_script(
 			'user-profile',
 			'( function() {
@@ -384,9 +384,34 @@ function communaute_protegee_enqueue_scripts() {
 		);
 
 		$handle = 'bp-legacy-css';
-		if ( get_template() && get_stylesheet() !== get_template() ) {
+
+		// A child theme is completely overriding BP Legacy's stylesheet.
+		if ( is_child_theme() &&
+			(
+				file_exists( trailingslashit( get_stylesheet_directory() ) . 'css/buddypress.css' ) ||
+				file_exists( trailingslashit( get_stylesheet_directory() ) . 'buddypress/css/buddypress.css' ) ||
+				file_exists( trailingslashit( get_stylesheet_directory() ) . 'community/css/buddypress.css' )
+			)
+		) {
+			$handle = 'bp-child-css';
+
+			// A theme is completely overriding BP Legacy's stylesheet.
+		} elseif (
+			file_exists( trailingslashit( get_template_directory() ) . 'css/buddypress.css' ) ||
+			file_exists( trailingslashit( get_template_directory() ) . 'buddypress/css/buddypress.css' ) ||
+			file_exists( trailingslashit( get_template_directory() ) . 'community/css/buddypress.css' )
+		) {
 			$handle = 'bp-parent-css';
 		}
+
+		/**
+		 * Filter here to edit the dependency handle name.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $handle The BP stylesheet dependency handle name.
+		 */
+		$handle = apply_filters( 'communaute_protegee_settings_stylesheet_dependency', $handle );
 
 		wp_enqueue_style(
 			'communaute-protegee-settings-style',
