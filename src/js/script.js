@@ -48,6 +48,7 @@ class CPCustomize {
 		const nouveauRegisterWrapper = document.querySelector( '#register-page form[name="signup_form"] .layout-wrap' );
 		const blogDetails = document.querySelector( '#blog-details' );
 		const blogCheckbox = document.querySelector( '[name="signup_with_blog"]' );
+		const tagsToRemoveCompletely = this.tagsToRemove;
 
 		// Customize Form.
 		if ( null !== signupForm ) {
@@ -85,7 +86,14 @@ class CPCustomize {
 				const extraSelector = signupForm.querySelectorAll( selector );
 
 				if ( extraSelector.length ) {
-					extraSelector[0].remove();
+
+					if ( -1 === tagsToRemoveCompletely.indexOf( selector ) ) {
+						extraSelector[0].remove();
+					} else {
+						extraSelector.forEach( ( tag ) => {
+							tag.remove();
+						} );
+					}
 				}
 			} );
 

@@ -178,7 +178,8 @@ var CPCustomize = /*#__PURE__*/function () {
       var privacyPolicy = null !== signupForm ? signupForm.querySelector('.privacy-policy-accept') : null;
       var nouveauRegisterWrapper = document.querySelector('#register-page form[name="signup_form"] .layout-wrap');
       var blogDetails = document.querySelector('#blog-details');
-      var blogCheckbox = document.querySelector('[name="signup_with_blog"]'); // Customize Form.
+      var blogCheckbox = document.querySelector('[name="signup_with_blog"]');
+      var tagsToRemoveCompletely = this.tagsToRemove; // Customize Form.
 
       if (null !== signupForm) {
         var hiddenField = document.createElement('input'); // Adds a dynamic field to check the user is a human.
@@ -212,7 +213,13 @@ var CPCustomize = /*#__PURE__*/function () {
           var extraSelector = signupForm.querySelectorAll(selector);
 
           if (extraSelector.length) {
-            extraSelector[0].remove();
+            if (-1 === tagsToRemoveCompletely.indexOf(selector)) {
+              extraSelector[0].remove();
+            } else {
+              extraSelector.forEach(function (tag) {
+                tag.remove();
+              });
+            }
           }
         });
 
@@ -339,7 +346,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50370" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56132" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
