@@ -17,6 +17,12 @@
 .login #buddypress .standard-form .editfield.field_type_checkbox label {
   display: block;
 }
+.login #buddypress .standard-form p.description {
+  margin: -10px 0 5px;
+  color: #666;
+  font-size: 13px;
+  font-style: italic;
+}
 
 #activate {
   width: 50%;
@@ -163,6 +169,10 @@
 }
 #register form[name=signup_form].standard-form #blog-details-section #signup_blog_url {
   width: auto;
+}
+#register form[name=signup_form].standard-form .privacy-policy-accept.register-section {
+  clear: both;
+  padding-top: 1em;
 }
 #register form[name=signup_form].standard-form div.submit {
   clear: both;

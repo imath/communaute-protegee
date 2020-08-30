@@ -35,6 +35,13 @@
 					}
 				}
 			}
+
+			p.description {
+				margin: -10px 0 5px;
+				color: #666;
+				font-size: 13px;
+				font-style: italic;
+			}
 		}
 	}
 }
@@ -204,6 +211,11 @@
 				#signup_blog_url {
 					width: auto;
 				}
+			}
+
+			.privacy-policy-accept.register-section {
+				clear:both;
+				padding-top: 1em;
 			}
 
 			div.submit {
