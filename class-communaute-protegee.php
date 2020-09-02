@@ -11,7 +11,7 @@
  * Plugin Name:       Communauté Protégée
  * Plugin URI:        https://github.com/imath/communaute-protegee
  * Description:       Enrichit l'extension Restricted Site Access pour protéger l'accès aux sites communautaires motorisés par BuddyPress.
- * Version:           1.0.0-beta
+ * Version:           1.0.0
  * Author:            imath
  * Author URI:        https://github.com/imath
  * Text Domain:       communaute-protegee
