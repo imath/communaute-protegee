@@ -179,7 +179,7 @@ var CPCustomize = /*#__PURE__*/function () {
       var nouveauRegisterWrapper = document.querySelector('#register-page form[name="signup_form"] .layout-wrap');
       var blogDetails = document.querySelector('#blog-details');
       var blogCheckbox = document.querySelector('[name="signup_with_blog"]');
-      var tagsToRemoveCompletely = this.tagsToRemove; // Customize Form.
+      var tagsToRemoveCompletely = this.tagsToRemove.slice(0, 3); // Customize Form.
 
       if (null !== signupForm) {
         var hiddenField = document.createElement('input'); // Adds a dynamic field to check the user is a human.
@@ -346,7 +346,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56132" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54805" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

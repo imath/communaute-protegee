@@ -48,7 +48,7 @@ class CPCustomize {
 		const nouveauRegisterWrapper = document.querySelector( '#register-page form[name="signup_form"] .layout-wrap' );
 		const blogDetails = document.querySelector( '#blog-details' );
 		const blogCheckbox = document.querySelector( '[name="signup_with_blog"]' );
-		const tagsToRemoveCompletely = this.tagsToRemove;
+		const tagsToRemoveCompletely = this.tagsToRemove.slice( 0, 3 );
 
 		// Customize Form.
 		if ( null !== signupForm ) {
