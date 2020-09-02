@@ -46,8 +46,11 @@ git clean -xdf
 # Run the build
 status "Installing dependencies..."
 npm install
+composer install
 status "Generating release..."
-grunt release
+npm run wpcs
+npm run build
+npm run build-scss
 
 # Remove any existing zip file
 rm -f communaute-protegee.zip
