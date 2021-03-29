@@ -19,8 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param Communaute_Protegee $cp The main instance of the plugin.
  */
 function communaute_protegee_setup_hooks( $cp = null ) {
-	add_action( 'wp_head', 'wp_no_robots', 1 );
-	add_action( 'communaute_protegee_head', 'wp_no_robots', 1 );
+	add_action( 'communaute_protegee_head', 'wp_robots', 1 );
+	add_filter( 'wp_robots', 'communaute_protegee_no_robots', 1, 1 );
 
 	// Icon hooks.
 	add_filter( 'site_icon_image_sizes', 'communaute_protegee_login_screen_add_icon_size', 10, 1 );

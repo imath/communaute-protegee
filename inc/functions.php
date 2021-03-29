@@ -1051,3 +1051,18 @@ function communaute_protegee_customize_email_control( WP_Customize_Manager $wp_c
 		)
 	);
 }
+
+/**
+ * Adapts to WP 5.7 changes about Robots.
+ *
+ * @since 1.0.1
+ *
+ * @param array $array WP Robots settings.
+ * @return array Communauté protégée settings.
+ */
+function communaute_protegee_no_robots( $array ) {
+	$array = wp_robots_sensitive_page( $array );
+	$array['nofollow'] = true;
+
+	return $array;
+}
