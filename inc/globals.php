@@ -21,7 +21,7 @@ function communaute_protegee_globals() {
 	$cp = communaute_protegee();
 
 	// Version.
-	$cp->version = '1.0.1';
+	$cp->version = '1.0.2';
 
 	// Paths.
 	$cp->dir           = plugin_dir_path( dirname( __FILE__ ) );

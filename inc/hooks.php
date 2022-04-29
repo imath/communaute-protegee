@@ -35,9 +35,10 @@ function communaute_protegee_setup_hooks( $cp = null ) {
 	add_action( 'communaute_protegee_footer', 'wp_print_footer_scripts', 20 );
 	add_action( 'communaute_protegee_head', 'wp_print_styles', 20 );
 
+	// Register the template directory.
+	add_action( 'bp_register_theme_directory', 'communaute_protegee_register_template_dir' );
+
 	if ( isset( $cp->signup_allowed ) && $cp->signup_allowed ) {
-		// Register the template directory.
-		add_action( 'bp_register_theme_directory', 'communaute_protegee_register_template_dir' );
 
 		// Add Registration restrictions by email domain for non Multisite configs.
 		if ( ! is_multisite() && is_admin() ) {
